@@ -101,17 +101,17 @@ BEGIN
 			"0111111111111" after 100 ns,
 			"0111111111111" after 110 ns;
 			
-		inst <= "010" after 10 ns,
-			"000" after 20 ns,
-			"001" after 30 ns,
-			"001" after 40 ns,
-			"100" after 50 ns,
-			"100" after 60 ns,
-			"100" after 70 ns,
-			"011" after 80 ns,
-			"010" after 90 ns,
-			"010" after 100 ns,
-			"010" after 110 ns;
+		inst <= "010" after 10 ns, --MUL
+			"000" after 20 ns, --ADD
+			"001" after 30 ns, --SUB
+			"001" after 40 ns, --SUB
+			"100" after 50 ns, --SHRA
+			"100" after 60 ns, --SHRA
+			"100" after 70 ns, --SHRA
+			"110" after 80 ns, --NOR
+			"010" after 90 ns, --MUL
+			"010" after 100 ns, --MUL
+			"010" after 110 ns; --MUL
 
       wait;
    end process;
