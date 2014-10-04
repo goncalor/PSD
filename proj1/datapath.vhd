@@ -28,14 +28,14 @@ use IEEE.STD_LOGIC_UNSIGNED.ALL;
 --use UNISIM.VComponents.all;
 
 entity datapath is
-    Port ( rst : in  STD_LOGIC;
-           clk : in  STD_LOGIC;
-           scntl : in STD_LOGIC;
-           wren1 : in STD_LOGIC;
-           wren2 : in STD_LOGIC;
-           ent : in  STD_LOGIC_VECTOR (6 downto 0);
-           r1 : out  STD_LOGIC_VECTOR (6 downto 0);
-           r2 : out  STD_LOGIC_VECTOR (12 downto 0));
+    Port ( rst : in  STD_LOGIC;				-- Reset port
+           clk : in  STD_LOGIC;				-- Clock
+           scntl : in STD_LOGIC;			-- 2nd Register input multiplexer control
+           wren1 : in STD_LOGIC;			-- 1st Register's write-enable
+           wren2 : in STD_LOGIC;			-- 2nd Register's write-enable
+           ent : in  STD_LOGIC_VECTOR (6 downto 0);	-- Data in from switches
+           r1 : out  STD_LOGIC_VECTOR (6 downto 0);	-- Output for register 1 contents
+           r2 : out  STD_LOGIC_VECTOR (12 downto 0));	-- Output for register 2 contents
 end datapath;
 
 architecture Behavioral of datapath is
