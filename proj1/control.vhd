@@ -34,8 +34,10 @@ entity control is
            l1 : in  STD_LOGIC;
            l2 : in  STD_LOGIC;
            op : in  STD_LOGIC;
-           r1en : out  STD_LOGIC_VECTOR (0 downto 0);
-           r2en : out  STD_LOGIC_VECTOR (0 downto 0));
+           r1en : out  STD_LOGIC;
+           r2en : out  STD_LOGIC;
+           scntl : out STD_LOGIC
+			);
 end control;
 
 architecture Behavioral of control is
@@ -64,30 +66,33 @@ begin
 				elsif op = '1' then
 					nextstate <= s_op;
 				end if;
-					r1en <= "0";
-					r2en <= "0";
+					r1en <= '0';
+					r2en <= '0';
 	
 			when s_end =>
 				if(l1 = '0' and l2 = '0' and op = '0') then
 					nextstate <= s_initial;
 				end if;
-				r1en <= "0";
-				r2en <= "0";
+				r1en <= '0';
+				r2en <= '0';
 
 			when s_load1 =>
 				nextstate <= s_end;
-				r1en <= "1";
-				r2en <= "0";
+				scntl <= '0';	-- mux from r1
+				r1en <= '1';
+				r2en <= '0';
 
 			when s_load2 =>
 				nextstate <= s_end;
-				r1en <= "0";
-				r2en <= "1";
+				scntl <= '1';	-- mux from r2
+				r1en <= '0';
+				r2en <= '1';
 
 			when s_op =>
 				nextstate <= s_end;
-				r1en <= "0";
-				r2en <= "1";
+				scntl <= '1';	-- mux from r2
+				r1en <= '0';
+				r2en <= '1';
 		end case;
 	end process;
 
