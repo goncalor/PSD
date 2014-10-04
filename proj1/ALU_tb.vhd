@@ -44,7 +44,6 @@ ARCHITECTURE behavior OF ALU_test0_tb IS
          a : IN  std_logic_vector(6 downto 0);
          b : IN  std_logic_vector(12 downto 0);
          inst : IN  std_logic_vector(2 downto 0);
-			clk : IN std_logic;
          res : OUT  std_logic_vector(12 downto 0)
         );
     END COMPONENT;
@@ -54,14 +53,11 @@ ARCHITECTURE behavior OF ALU_test0_tb IS
    signal a : std_logic_vector(6 downto 0) := (others => '0');
    signal b : std_logic_vector(12 downto 0) := (others => '0');
    signal inst : std_logic_vector(2 downto 0) := (others => '0');
-	signal clk : std_logic := '0';
 
  	--Outputs
    signal res : std_logic_vector(12 downto 0);
    -- No clocks detected in port list. Replace clk below with 
    -- appropriate port name 
- 
-   constant clk_period : time := 10 ns;
  
 BEGIN
  
@@ -70,27 +66,15 @@ BEGIN
           a => a,
           b => b,
           inst => inst,
-			 clk => clk,
           res => res
         );
 
-   -- Clock process definitions
-   clk_process :process
-   begin
-		clk <= '0';
-		wait for clk_period/2;
-		clk <= '1';
-		wait for clk_period/2;
-   end process;
- 
 
    -- Stimulus process
    stim_proc: process
    begin		
       -- hold reset state for 100 ns.
-      wait for 100 ns;	
-
-      wait for clk_period*10;
+      wait for 200 ns;	
 
       -- insert stimulus here 
 		a <= "1111111" after 10 ns,

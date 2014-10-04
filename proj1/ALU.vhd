@@ -72,7 +72,7 @@ begin
 			
 		-- On the NOR gate, we chose to keep the signal bit in the
 		-- beginning as well, for the sake of coherence
-	nored <= (a(6) & "000000" & a(5 downto 0)) nor b(12 downto 0);
+	nored <= (a(6) & "000000" & a(5 downto 0)) nor b;
 	
 	
 	-- First multiplexers:
