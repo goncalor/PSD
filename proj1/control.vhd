@@ -30,14 +30,14 @@ use IEEE.STD_LOGIC_1164.ALL;
 --use UNISIM.VComponents.all;
 
 entity control is
-    Port ( rst, clk : in  STD_LOGIC;
-           l1 : in  STD_LOGIC;
-           l2 : in  STD_LOGIC;
-           op : in  STD_LOGIC;
-           r1en : out  STD_LOGIC;
-           r2en : out  STD_LOGIC;
-           scntl : out STD_LOGIC
-			);
+	Port ( rst, clk : in  STD_LOGIC;
+		l1 : in  STD_LOGIC;
+		l2 : in  STD_LOGIC;
+		op : in  STD_LOGIC;
+		r1en : out  STD_LOGIC;
+		r2en : out  STD_LOGIC;
+		scntl : out STD_LOGIC
+	);
 end control;
 
 architecture Behavioral of control is
@@ -56,7 +56,7 @@ begin
 	state_decision: process(l1, l2, op)
 	begin
 		nextstate <= currstate;		-- default: do not change state
-	
+		
 		case currstate is
 			when s_initial =>
 				if l1 = '1' then
@@ -66,13 +66,15 @@ begin
 				elsif op = '1' then
 					nextstate <= s_op;
 				end if;
-					r1en <= '0';
-					r2en <= '0';
+				scntl <= 'X'; -- Necessary so that scntl doesn't become a latch
+				r1en <= '0';
+				r2en <= '0';
 	
 			when s_end =>
 				if(l1 = '0' and l2 = '0' and op = '0') then
 					nextstate <= s_initial;
 				end if;
+				scntl <= 'X'; -- Necessary so that scntl doesn't become a latch
 				r1en <= '0';
 				r2en <= '0';
 
