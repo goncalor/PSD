@@ -12,13 +12,16 @@
 
 \section{Arquitectura}
 \subsection{Descrição}
-\indent A arquitectura que decidimos implementar divide-se em duas secções distintas, como na maioria das arquitecturas dedicadas:
+A arquitectura que decidimos implementar divide-se em duas secções distintas, como na maioria das arquitecturas dedicadas:
 \begin{itemize}
 \item Uma Unidade de Controlo, mais especificamente uma Máquina de Estados
 \item Uma Datapath, cuja especificação corresponde à disponibilizada no enunciado
 \end{itemize}
-\indent De modo a melhor fazer a interface com os elementos da placa de desenvolvimento, as várias componentes do sistema foram projectados com vista a fazer a interface com os botões, interruptores e displays da Basys.\\
-\indent Uma vez que da Datapath saem os valores dos registos, que posteriormente terão de ser seleccionados para ir para os displays de sete segmentos, é necessário um multiplexer no exterior da mesma, cujo sinal de selecção provém dos interruptores da placa de desenvolvimento.\\
+
+De modo a melhor fazer a interface com os elementos da placa de desenvolvimento, as várias componentes do sistema foram projectados com vista a fazer a interface com os botões, interruptores e displays da Basys.
+
+Uma vez que da Datapath saem os valores dos registos, que posteriormente terão de ser seleccionados para ir para os displays de sete segmentos, é necessário um multiplexer no exterior da mesma, cujo sinal de selecção provém dos interruptores da placa de desenvolvimento.
+
 \pagebreak
 \subsection{Esquemas}
 %Faltam aqui os esquemas, não sei se fazer esquemas no meu programa (dia) se incorporar os diagramas do RTL, mas acho que dia era melhor, menos técnico, mais abstracto
@@ -26,11 +29,17 @@
 
 \section{Datapath}
 \subsection{Descrição}
-\indent A decisão mais relevante na datapath foi a codificação de sinal utilizada nos registos e na Unidade Lógico-Aritmética.\\
-\indent De modo a compreender intuitivamente os valores em uso, os displays devem mostrar os valores com uma codificação sinal-módulo. Assim, e uma vez que os valores dos displays originam nos registos da Datapath, decidimos que todo o armazenamento de valores deve ser feito em formato sinal-módulo.\\
-\indent Esta decisão reflectiu-se não só nos formatos dos registos como também na ULA em si.\\
+A decisão mais relevante na datapath foi a codificação de sinal utilizada nos registos e na Unidade Lógico-Aritmética.
+
+De modo a compreender intuitivamente os valores em uso, os displays devem mostrar os valores com uma codificação sinal-módulo. Assim, e uma vez que os valores dos displays originam nos registos da Datapath, decidimos que todo o armazenamento de valores deve ser feito em formato sinal-módulo.
+
+Esta decisão reflectiu-se não só nos formatos dos registos como também na ULA em si.
+
+
 \subsection{Registos}
-\indent Os registos foram especificados através das funcionalidades de abstracção da linguagem VHDL, isto é, definimos uma arquitectura de registo com número de bits arbitrário. O tamanho de cada instância é depois determinado no código de instanciação.\\
+Os registos foram especificados através das funcionalidades de abstracção da linguagem VHDL, isto é, definimos uma arquitectura de registo com número de bits arbitrário. O tamanho de cada instância é depois determinado no código de instanciação.
+
+
 \subsection{Unidade Lógico-Aritmética}
 \subsubsection{Somador}
 \subsubsection{Multiplicador}
