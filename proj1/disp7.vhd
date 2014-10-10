@@ -21,7 +21,8 @@ architecture mixed of disp7 is
 
   type STATE_TYPE is (S0, S1, S2);
   signal cs, ns : STATE_TYPE;
-  signal d1, d2, d3, d4, en, hex : std_logic_vector(3 downto 0);
+  signal d1, d2, d3, d4, en : std_logic_vector(3 downto 0);
+  signal hex : std_logic_vector(4 downto 0);
   signal led : std_logic_vector(7 downto 0);
   signal count : std_logic_vector(1 downto 0);
   signal cnt_en, srg_en, en_oe : std_logic;
@@ -57,29 +58,31 @@ begin
 
 -- 4-to-1 Mux
   with count select
-    hex <= d4 when "00",
-    d3 when "01",
-    d2 when "10",
-    d1 when others;
+    hex <= "1" & d4 when "00",
+    "0" & d3 when "01",
+    "0" & d2 when "10",
+    "0" & d1 when others;
 
 -- hex2led (decimal point is MSB)
   with hex select
-    led <= "11111001" when "0001",   --1
-    "10100100" when "0010",   --2
-    "10110000" when "0011",   --3
-    "10011001" when "0100",   --4
-    "10010010" when "0101",   --5
-    "10000010" when "0110",   --6
-    "11111000" when "0111",   --7
-    "10000000" when "1000",   --8
-    "10010000" when "1001",   --9
-    "10001000" when "1010",   --A
-    "10000011" when "1011",   --b
-    "11000110" when "1100",   --C
-    "10100001" when "1101",   --d
-    "10000110" when "1110",   --E
-    "10001110" when "1111",   --F
-    "11000000" when others;   --0
+    led <= "11111001" when "00001",   --1
+    "10100100" when "00010",   --2
+    "10110000" when "00011",   --3
+    "10011001" when "00100",   --4
+    "10010010" when "00101",   --5
+    "10000010" when "00110",   --6
+    "11111000" when "00111",   --7
+    "10000000" when "01000",   --8
+    "10010000" when "01001",   --9
+    "10001000" when "01010",   --A
+    "10000011" when "01011",   --b
+    "11000110" when "01100",   --C
+    "10100001" when "01101",   --d
+    "10000110" when "01110",   --E
+    "10001110" when "01111",   --F
+    "11000000" when "00000",   --0
+	 "11111111" when "10000",	 -- No signal
+	 "10111111" when others;	 -- signal
 
 -- state machine
   cs <= ns when rising_edge(clk) else cs; 

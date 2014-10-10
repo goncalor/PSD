@@ -30,11 +30,11 @@ use IEEE.STD_LOGIC_1164.ALL;
 --use UNISIM.VComponents.all;
 
 entity fpga is
-    Port ( clk : in  STD_LOGIC;
+    Port ( mclk : in  STD_LOGIC;
            btn : in  STD_LOGIC_VECTOR (3 downto 0);
            sw : in  STD_LOGIC_VECTOR (7 downto 0);
            led : out  STD_LOGIC_VECTOR (7 downto 0);
-           dispsel : out  STD_LOGIC_VECTOR (3 downto 0);
+           an : out  STD_LOGIC_VECTOR (3 downto 0);
            seg : out  STD_LOGIC_VECTOR (6 downto 0);
            dp : out  STD_LOGIC);
 end fpga;
@@ -87,7 +87,7 @@ begin
 	disp <= "000" & pre_disp;	-- hm... signal bit will be 0 or 1 like this
 	
 	Inst_clkdiv: clkdiv PORT MAP(
-		clk => clk,
+		clk => mclk,
 		clk50M => clk50M,
 		clk10Hz => clk10Hz,
 		clk_disp => clk_disp
@@ -100,7 +100,7 @@ begin
 		disp1 => disp(3 downto 0),
 		clk => clk_disp,
 		aceso => "1111",
-		en_disp => dispsel,
+		en_disp => an,
 		segm => seg,
 		dp => dp
 	);

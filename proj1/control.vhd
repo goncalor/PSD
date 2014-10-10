@@ -80,19 +80,19 @@ begin
 
 			when s_load1 =>
 				nextstate <= s_end;
-				scntl <= '0';	-- mux from r1
+				scntl <= 'X';
 				r1en <= '1';
 				r2en <= '0';
 
 			when s_load2 =>
 				nextstate <= s_end;
-				scntl <= '1';	-- mux from r2
+				scntl <= '0'; -- mux from switches
 				r1en <= '0';
 				r2en <= '1';
 
 			when s_op =>
 				nextstate <= s_end;
-				scntl <= '1';	-- mux from r2
+				scntl <= '1';	-- mux from alu
 				r1en <= '0';
 				r2en <= '1';
 		end case;
