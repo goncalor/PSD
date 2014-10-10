@@ -33,18 +33,31 @@ A decisão mais relevante na datapath foi a codificação de sinal utilizada nos
 
 De modo a compreender intuitivamente os valores em uso, os displays devem mostrar os valores com uma codificação sinal-módulo. Assim, e uma vez que os valores dos displays originam nos registos da Datapath, decidimos que todo o armazenamento de valores deve ser feito em formato sinal-módulo.
 
-Esta decisão reflectiu-se não só nos formatos dos registos como também na ULA em si.
-
 
 \subsection{Registos}
 Os registos foram especificados através das funcionalidades de abstracção da linguagem VHDL, isto é, definimos uma arquitectura de registo com número de bits arbitrário. O tamanho de cada instância é depois determinado no código de instanciação.
 
+Neste caso, foram instanciados dois registos, um de sete bits e outro de 13 bits, consoante a arquitectura especificada no enunciado.
+
 
 \subsection{Unidade Lógico-Aritmética}
+Uma vez que os dois operadores das diversas unidades funcionais que compõem a ULA estão codificados no formato sinal-módulo, é necessário fazer a conversão de sinal-módulo para complemento para dois.
+
+O Somador (que efectua as operações soma e diferença) e o Multiplicador foram incluídos da biblioteca \emph{signed}, pelo que os seus operandos devem ser convertidos em complemento para dois à entrada, e o resultado deve ser convertido para sinal-módulo à saída.
+
+
 \subsubsection{Somador}
+O Somador efectua uma soma ou diferença, consoante os sinais de controlo, convencional, em complemento para dois.
+
 \subsubsection{Multiplicador}
+O multiplicador efectua um produto convencional em complemento para dois. Uma vez que o produto ocupa mais bits que aqueles disponíveis no registo que o deve armazenar, são desprezados vários dos bits do resultado.
+
 \subsubsection{Shift Right Aritmético}
+A função shift afecta apenas os bits de módulo do valor armazenado no registo 2. O bit de sinal permanece inalterado.
+
 \subsubsection{Função Lógica NOR}
+A função lógica NOR aplica-se aos bits de sinal dos dois operadores e aos 6 bits menos significativos dos dois operadores. Os restantes bits do segundo operador (de dimensão 13) são negados (isto é, NOR 0).
+
 \pagebreak
 \subsection{Simulações}
 \pagebreak
