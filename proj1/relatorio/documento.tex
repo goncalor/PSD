@@ -1,7 +1,12 @@
 \documentclass[a4paper]{article}
 
+\usepackage[portuguese]{babel}
+\usepackage{comment}
+\usepackage[T1]{fontenc}
 \usepackage[utf8]{inputenc}
 \usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage[hypcap]{caption} % makes \ref point to top of figures and tables
 
 \begin{document}
 
@@ -37,7 +42,7 @@ De modo a compreender intuitivamente os valores em uso, os displays devem mostra
 \subsection{Registos}
 Os registos foram especificados através das funcionalidades de abstracção da linguagem VHDL, isto é, definimos uma arquitectura de registo com número de bits arbitrário. O tamanho de cada instância é depois determinado no código de instanciação.
 
-Neste caso, foram instanciados dois registos, um de sete bits e outro de 13 bits, consoante a arquitectura especificada no enunciado.
+Neste caso, foram instanciados dois registos, um de 7 bits e outro de 13 bits, consoante a arquitectura especificada no enunciado.
 
 
 \subsection{Unidade Lógico-Aritmética}
@@ -50,7 +55,7 @@ O Somador (que efectua as operações soma e diferença) e o Multiplicador foram
 O Somador efectua uma soma ou diferença, consoante os sinais de controlo, convencional, em complemento para dois.
 
 \subsubsection{Multiplicador}
-O multiplicador efectua um produto convencional em complemento para dois. Uma vez que o produto ocupa mais bits que aqueles disponíveis no registo que o deve armazenar, são desprezados vários dos bits do resultado.
+O multiplicador efectua um produto convencional em complemento para dois. Uma vez que o produto ocupa mais bits que aqueles disponíveis no registo que o deve armazenar, são desprezados vários dos bits mais significativos do resultado.
 
 \subsubsection{Shift Right Aritmético}
 A função shift afecta apenas os bits de módulo do valor armazenado no registo 2. O bit de sinal permanece inalterado.
@@ -65,8 +70,21 @@ A função lógica NOR aplica-se aos bits de sinal dos dois operadores e aos 6 b
 
 \section{Unidade de Controlo}
 \subsection{Descrição}
+A Unidade de Controlo implementa a Máquina de Estados e é o componente responsável por controlar os multiplexers e os enables e sinais de reset dos registos da Datapath. Como input tem os sinais da FPGA que permitem escolher a operação a realizar.
+
 \subsection{Máquina de Estados}
+A Máquina de Estados implementada é a da Figura~\ref{fig:FSMdiagram}. Tem um estado inicial e um final, dois estados de load e um de operação. Nos estados \textit{load1} e \textit{load2} o valor à entrada da datapath é armazenado nos registo correspondente. No estado \textit{op} o resultado da ULA é armazendo no registo R2. A operação que a ULA deve realizar é controlada pelo utilizador sob a forma do sinal INST à entrada da datapath.
+
+\begin{figure}
+	\centering
+	\includegraphics[scale=1.2]{FSM}
+	\caption{Máquina de Estados}
+	\label{fig:FSMdiagram}
+\end{figure}
+
 \subsection{Sinais de Controlo}
+Os sinais que entram na Datapath vindos da Unidade de Controlo são três: dois sinais controlam a escrita nos registos R1 e R2; um outro sinal controla o multiplexer que existe antes de R2. No estado \textit{load1} o enable de R1 é posto a high. No estado \textit{load2} o enable de R2 fica a high e o multiplexer deixa passar o valor à entrada da datapath. Por fim no estado \textit{op} o enable de R2 é posto a high e o multiplexer deixa passar o sinal à saída da ULA.
+
 \pagebreak
 \subsection{Simulações}
 \pagebreak
