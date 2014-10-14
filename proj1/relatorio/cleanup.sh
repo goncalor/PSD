@@ -1,3 +1,3 @@
 #!/bin/sh
 
-rm ./*~ ./*.log ./*.dvi ./*.toc ./*.aux
+rm ./*~ ./*.log ./*.dvi ./*.toc ./*.aux ./*.out
