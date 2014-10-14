@@ -5,7 +5,7 @@
 \usepackage[T1]{fontenc}
 \usepackage[utf8]{inputenc}
 \usepackage{graphicx}
-\usepackage{hyperref}
+\usepackage{float}
 \usepackage[hypcap]{caption} % makes \ref point to top of figures and tables
 
 \begin{document}
@@ -20,7 +20,7 @@
 A arquitectura que decidimos implementar divide-se em duas secções distintas, como na maioria das arquitecturas dedicadas:
 \begin{itemize}
 \item Uma Unidade de Controlo, mais especificamente uma Máquina de Estados
-\item Uma Datapath, cuja especificação corresponde à disponibilizada no enunciado
+\item Uma Datapath, cuja especificação corresponde à disponibilizada no enunciado (ver Figura~\ref{fig:DPdiagram})
 \end{itemize}
 
 De modo a melhor fazer a interface com os elementos da placa de desenvolvimento, as várias componentes do sistema foram projectados com vista a fazer a interface com os botões, interruptores e displays da Basys.
@@ -29,7 +29,19 @@ Uma vez que da Datapath saem os valores dos registos, que posteriormente terão 
 
 \pagebreak
 \subsection{Esquemas}
-%Faltam aqui os esquemas, não sei se fazer esquemas no meu programa (dia) se incorporar os diagramas do RTL, mas acho que dia era melhor, menos técnico, mais abstracto
+\subsection{Esquemas}
+\begin{figure}[H]
+	\centering
+	\includegraphics[scale=0.28]{DP}
+	\caption{Datapath}
+	\label{fig:DPdiagram}
+\end{figure}
+\begin{figure}[H]
+	\centering
+	\includegraphics[scale=0.28]{ALU}
+	\caption{Unidade Lógico-Aritmética}
+	\label{fig:ALUdiagram}
+\end{figure}
 \pagebreak
 
 \section{Datapath}
@@ -48,7 +60,7 @@ Neste caso, foram instanciados dois registos, um de 7 bits e outro de 13 bits, c
 \subsection{Unidade Lógico-Aritmética}
 Uma vez que os dois operadores das diversas unidades funcionais que compõem a ULA estão codificados no formato sinal-módulo, é necessário fazer a conversão de sinal-módulo para complemento para dois.
 
-O Somador (que efectua as operações soma e diferença) e o Multiplicador foram incluídos da biblioteca \emph{signed}, pelo que os seus operandos devem ser convertidos em complemento para dois à entrada, e o resultado deve ser convertido para sinal-módulo à saída.
+O Somador (que efectua as operações soma e diferença) e o Multiplicador foram incluídos da biblioteca \emph{signed}, pelo que os seus operandos devem ser convertidos em complemento para dois à entrada, e o resultado deve ser convertido para sinal-módulo à saída (ver Figura~\ref{fig:ALUdiagram}).
 
 
 \subsubsection{Somador}
@@ -73,17 +85,23 @@ A função lógica NOR aplica-se aos bits de sinal dos dois operadores e aos 6 b
 A Unidade de Controlo implementa a Máquina de Estados e é o componente responsável por controlar os multiplexers e os enables e sinais de reset dos registos da Datapath. Como input tem os sinais da FPGA que permitem escolher a operação a realizar.
 
 \subsection{Máquina de Estados}
-A Máquina de Estados implementada é a da Figura~\ref{fig:FSMdiagram}. Tem um estado inicial e um final, dois estados de load e um de operação. Nos estados \textit{load1} e \textit{load2} o valor à entrada da datapath é armazenado nos registo correspondente. No estado \textit{op} o resultado da ULA é armazendo no registo R2. A operação que a ULA deve realizar é controlada pelo utilizador sob a forma do sinal INST à entrada da datapath.
+A Máquina de Estados implementada é a da Figura~\ref{fig:FSMdiagram}. Tem um estado inicial e um final, dois estados de load e um de operação.
+
+Nos estados \textit{load1} e \textit{load2} o valor à entrada da datapath é armazenado nos registo correspondente. No estado \textit{op} o resultado da ULA é armazendo no registo R2. A operação que a ULA deve realizar é controlada pelo utilizador sob a forma do sinal INST à entrada da datapath.
 
 \begin{figure}[h]
 	\centering
-	\includegraphics[scale=0.3]{FSM}
+	\includegraphics[scale=0.28]{FSM}
 	\caption{Máquina de Estados}
 	\label{fig:FSMdiagram}
 \end{figure}
 
 \subsection{Sinais de Controlo}
-Os sinais que entram na Datapath vindos da Unidade de Controlo são três: dois sinais controlam a escrita nos registos R1 e R2; um outro sinal controla o multiplexer que existe antes de R2. No estado \textit{load1} o enable de R1 é posto a high. No estado \textit{load2} o enable de R2 fica a high e o multiplexer deixa passar o valor à entrada da datapath. Por fim no estado \textit{op} o enable de R2 é posto a high e o multiplexer deixa passar o sinal à saída da ULA.
+Os sinais que entram na Datapath vindos da Unidade de Controlo são três: dois sinais controlam a escrita nos registos R1 e R2; um outro sinal controla o multiplexer que existe antes de R2.
+
+No estado \textit{load1} o enable de R1 é posto a high. No estado \textit{load2} o enable de R2 fica a high e o multiplexer deixa passar o valor à entrada da datapath.
+
+Por fim no estado \textit{op} o enable de R2 é posto a high e o multiplexer deixa passar o sinal à saída da ULA.
 
 \pagebreak
 \subsection{Simulações}
