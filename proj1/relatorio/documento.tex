@@ -29,7 +29,6 @@ Uma vez que da Datapath saem os valores dos registos, que posteriormente terão 
 
 \pagebreak
 \subsection{Esquemas}
-\subsection{Esquemas}
 \begin{figure}[H]
 	\centering
 	\includegraphics[scale=0.28]{DP}
@@ -75,8 +74,18 @@ A função shift afecta apenas os bits de módulo do valor armazenado no registo
 \subsubsection{Função Lógica NOR}
 A função lógica NOR aplica-se aos bits de sinal dos dois operadores e aos 6 bits menos significativos dos dois operadores. Os restantes bits do segundo operador (de dimensão 13) são negados (isto é, NOR 0).
 
-\pagebreak
-\subsection{Simulações}
+\subsubsection{Simulação}
+
+\begin{table}
+
+\end{table}
+
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=\textwidth]{ALU_sim}
+	\caption{Simulação da Unidade Lógico-Aritmética}
+	\label{fig:ALUsim}
+\end{figure}
 \pagebreak
 
 
@@ -103,8 +112,16 @@ No estado \textit{load1} o enable de R1 é posto a high. No estado \textit{load2
 
 Por fim no estado \textit{op} o enable de R2 é posto a high e o multiplexer deixa passar o sinal à saída da ULA.
 
-\pagebreak
-\subsection{Simulações}
+\subsection{Simulação}
+A simulação da Unidade de Controlo pode ser vista na Figura~\ref{fig:controlo_sim}. Nesta simulação pode verificar-se que a sequência de estados corresponde à descrita na Figura~\ref{fig:FSMdiagram} e que os sinais de controlo estão correctos.
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=\textwidth]{control_sim}
+	\caption{Simulação da Unidade de Controlo}
+	\label{fig:controlo_sim}
+\end{figure}
+
 \pagebreak
 
 
