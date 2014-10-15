@@ -53,7 +53,7 @@ begin
 		end if;
 	end process;
 
-	state_decision: process(l1, l2, op)
+	state_decision: process(l1, l2, op, currstate)
 	begin
 		nextstate <= currstate;		-- default: do not change state
 		
