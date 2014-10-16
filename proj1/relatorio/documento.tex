@@ -4,8 +4,10 @@
 \usepackage{comment}
 \usepackage[T1]{fontenc}
 \usepackage[utf8]{inputenc}
+\usepackage{hyperref}
 \usepackage{graphicx}
 \usepackage{float}
+\usepackage{multirow}
 \usepackage[hypcap]{caption} % makes \ref point to top of figures and tables
 
 \begin{document}
@@ -75,9 +77,32 @@ A função shift afecta apenas os bits de módulo do valor armazenado no registo
 A função lógica NOR aplica-se aos bits de sinal dos dois operadores e aos 6 bits menos significativos dos dois operadores. Os restantes bits do segundo operador (de dimensão 13) são negados (isto é, NOR 0).
 
 \subsubsection{Simulação}
-
-\begin{table}
-
+As operações realizadas na simulação são as indicadas na Tabela~\ref{tab:ALUsim}. É de notar que as operações não comutativas são efectuadas na ordem $ Op_2 \cdot \cdot \cdot Op_1 $.
+\begin{table}[h]
+	\begin{tabular}{|c | c || c | c | c|}
+		\hline
+		$Op_1$ & $Op_2$ & Operação & Código & Resultado \\
+		\hline
+		\texttt{-63} & \texttt{4} & \texttt{MUL} & \texttt{01X} & \texttt{-252} \\
+		\hline
+		\texttt{5} & \texttt{5} & \texttt{ADD} & \texttt{000} & \texttt{10} \\
+		\hline
+		\texttt{-5} & \texttt{6} & \multirow{2}{*}{\texttt{SUB}} & \multirow{2}{*}{\texttt{001}} & \texttt{11} \\
+		\texttt{5} & \texttt{-3} & & & \texttt{-8} \\
+		\hline
+		\texttt{0bXXX X001} & \texttt{0b0 0000 0000 0111} & \multirow{3}{*}{\texttt{SHR}} & \multirow{3}{*}{\texttt{10X}} & \texttt{0b0 0000 0000 0011} \\
+		\texttt{0bXXX X001} & \texttt{0b0 0000 0000 0011} & & & \texttt{0b0 0000 0000 0001} \\
+		\texttt{0bXXX X010} & \texttt{0b0 0000 0000 1111} & & & \texttt{0b0 0000 0000 0011} \\
+		\hline
+		\texttt{0b000 0001} & \texttt{0b0 0000 0000 0010} & \texttt{NOR} & \texttt{11X} & \texttt{0b1 1111 1111 1100} \\
+		\hline
+		\texttt{5} & \texttt{127} & \multirow{3}{*}{\texttt{MUL}} & \multirow{2}{*}{\texttt{01X}} & \texttt{635} \\
+		\texttt{63} & \texttt{4095} & & & \texttt{4033} \\
+		\texttt{-63} & \texttt{4095} & & & \texttt{-4033} \\
+		\hline
+	\end{tabular}
+	\caption{Operações da Simulação da Figura~\ref{fig:ALUsim}}
+        \label{tab:ALUsim}
 \end{table}
 
 \begin{figure}[h]
@@ -126,5 +151,13 @@ A simulação da Unidade de Controlo pode ser vista na Figura~\ref{fig:controlo_
 
 
 \section{Simulações}
+A simulação que verifica o correcto funcionamento dos diversos elementos em conjunção pode ser vista na Figura~\ref{fig:circuit_sim}. São realizadas algumas operações de significado trivial, com o único propósito de demonstrar a interligação dos diversos blocos. 
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=\textwidth]{circuit_sim}
+	\caption{Simulação do Circuito Completo}
+	\label{fig:circuit_sim}
+\end{figure}
 
 \end{document}
