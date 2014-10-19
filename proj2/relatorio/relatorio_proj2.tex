@@ -42,8 +42,9 @@ g & h & i
 Isto é, passámos de um algoritmo com 12 produtos para um algoritmo de 9 produtos.
 
 \section{Fluxo de Dados}
-\begin{center}
 \setlength{\unitlength}{0.75mm}
+\begin{figure}[H]
+\centering
 \begin{picture}(140,140)
 % Operandos iniciais:
 \put(15,130){\makebox(0,0){$e$}}
@@ -130,7 +131,12 @@ Isto é, passámos de um algoritmo com 12 produtos para um algoritmo de 9 produt
 \multiput(105,125)(20,0){2}{\makebox(0,0){\textcolor{orange}{$4$}}}
 \multiput(25,125)(20,0){4}{\makebox(0,0){\textcolor{red}{$5$}}}
 \end{picture}
+\caption{grafo de fluxo de dados e caminhos críticos}
+\label{fig:fluxodados}
+\end{figure}
 
+\begin{table}
+\centering
 \begin{tabular}{|c|c||c l|}
 \hline
 Operação & Tipo & Prioridade & \\
@@ -169,6 +175,8 @@ Operação & Tipo & Prioridade & \\
 \texttt{14} & \texttt{+} & \textcolor{blue}{$1$} & $ \leftarrow $ \texttt{12 , 13} \\
 \hline
 \end{tabular}
-\end{center}
+\caption{lista de prioridades correspondente à Figura~\ref{fig:fluxodados}}
+\label{listaprioridades}
+\end{table}
 
 \end{document}
