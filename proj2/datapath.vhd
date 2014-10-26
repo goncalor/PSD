@@ -21,7 +21,6 @@ library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
 use IEEE.STD_LOGIC_ARITH.ALL;
 use IEEE.STD_LOGIC_SIGNED.ALL;
---use IEEE.NUMERIC_STD.ALL;
 
 ---- Uncomment the following library declaration if instantiating
 ---- any Xilinx primitives in this code.
@@ -70,42 +69,43 @@ architecture Behavioral of datapath is
 	signal m1in2 : STD_LOGIC_VECTOR (31 downto 0);
 	signal m2in1 : STD_LOGIC_VECTOR (15 downto 0);
 	signal m2in2 : STD_LOGIC_VECTOR (31 downto 0);
-	signal asin1 : STD_LOGIC_VECTOR (31 downto 0);
-	signal asin2 : STD_LOGIC_VECTOR (31 downto 0);
+	signal asin1 : STD_LOGIC_VECTOR (47 downto 0);
+	signal asin2 : STD_LOGIC_VECTOR (47 downto 0);
 	signal m1out : STD_LOGIC_VECTOR (47 downto 0);
 	signal m2out : STD_LOGIC_VECTOR (47 downto 0);
-	signal asout : STD_LOGIC_VECTOR (31 downto 0);
+	signal asout : STD_LOGIC_VECTOR (47 downto 0);
 	signal RAin : STD_LOGIC_VECTOR (47 downto 0);
 	signal RBin : STD_LOGIC_VECTOR (47 downto 0);
 	signal RCin : STD_LOGIC_VECTOR (47 downto 0);
-	signal RDin : STD_LOGIC_VECTOR (47 downto 0);
+	signal RDin : STD_LOGIC_VECTOR (31 downto 0);
 	signal RAout : STD_LOGIC_VECTOR (47 downto 0);
 	signal RBout : STD_LOGIC_VECTOR (47 downto 0);
 	signal RCout : STD_LOGIC_VECTOR (47 downto 0);
-	signal RDout : STD_LOGIC_VECTOR (47 downto 0);
+	signal RDout : STD_LOGIC_VECTOR (31 downto 0);
+	-- extended signals
 	signal extf : STD_LOGIC_VECTOR (31 downto 0);
 	signal extg : STD_LOGIC_VECTOR (31 downto 0);
 	signal exth : STD_LOGIC_VECTOR (31 downto 0);
 	signal exti : STD_LOGIC_VECTOR (31 downto 0);
+
 begin
+
 	-- Register input assignments:
 	RAin <= m1out;
 	RBin <= m2out;
-	RCin <= (others => asout(31));
-	RCin(31 downto 0) <= asout;
-	RDin <= (others => asout(31));
-	RDin(31 downto 0) <= asout;
+	RCin <= asout;
+	RDin <= asout(31 downto 0);
 	
 	-- Input signal extension:
-	extf <= (others => f(15));
+	extf(31 downto 16) <= (others => f(15));
 	extf(15 downto 0) <= f;
-	extg <= (others => g(15));
+	extg(31 downto 16) <= (others => g(15));
 	extg(15 downto 0) <= g;
-	exth <= (others => h(15));
+	exth(31 downto 16) <= (others => h(15));
 	exth(15 downto 0) <= h;
-	exti <= (others => i(15));
+	exti(31 downto 16) <= (others => i(15));
 	exti(15 downto 0) <= i;
-	
+
 	-- Instances of reg:
 	-- RA:
 	reg_RA : reg
@@ -142,7 +142,7 @@ begin
 	
 	-- RD:
 	reg_RD : reg
-	GENERIC MAP( nbits => 48 )
+	GENERIC MAP( nbits => 32 )
 	PORT MAP(
 		en => en_d,
 		clk => clk,
@@ -162,11 +162,38 @@ begin
 			g when "01",
 			d when "10",
 			b when others;
+
 	with m1_ctl select
 		m1in2 <= exti when "00",
 			extf when "01",
 			exth when "10",
-			RDout(47)&RDout(30 downto 0) when others;
+			RDout when others;
+
+	-- Multiplier 2 Multiplexers:
+
+	with m2_ctl select
+		m2in1 <= f when "000",
+			d when "001",
+			e when "010",
+			a when "011",
+			c when others;
+
+	with m2_ctl select
+		m2in2 <= exth when "X00",
+			exti when "X01",
+			extg when "X10",
+			RCout(47) & RCout(30 downto 0) when others;
+
+	-- Add/Sub Multiplexers:
+
+	with as_ctl select
+		asin1 <= RAout when '0',
+			RCout when others;
+
+	asin2 <= RBout;
+
+	-- Datapath output:
+	res <= RCout;
 
 end Behavioral;
 
