@@ -178,10 +178,10 @@ begin
 			a when "011",
 			c when others;
 
-	with m2_ctl select
-		m2in2 <= exth when "X00",
-			exti when "X01",
-			extg when "X10",
+	with m2_ctl(1 downto 0) select
+		m2in2 <= exth when "00",
+			exti when "01",
+			extg when "10",
 			RCout(47) & RCout(30 downto 0) when others;
 
 	-- Add/Sub Multiplexers:
