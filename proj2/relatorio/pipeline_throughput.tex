@@ -1,0 +1,92 @@
+\begin{table}[h]
+\centering
+\begin{tabular}{|c||c|c|c|c|c|}
+\hline
+ & d & e & f & g & h  \\
+\hline
+\hline
+e & $-$ & $\times$ & $\times$ & $\times$ & $\times$  \\
+\hline
+f & $-$ & $-$ & $\times$ & $\times$ & $\times$ \\
+\hline
+g & $-$ & \checkmark & \checkmark & $\times$ & $\times$  \\
+\hline
+h & \checkmark & $-$ & \checkmark & $-$ & $\times$ \\
+\hline
+i & \checkmark & \checkmark & $-$ & $-$ & $-$ \\
+\hline
+\end{tabular}
+\caption{Produtos entre constantes a ler da memória}
+\label{tab:produtos}
+\end{table}
+
+De maneira a reduzir ao máximo o número de ciclos que o algoritmo leva, é adequado agrupar os pares de leitura da memória de maneira a que o produto seja feito e armazenado ao mesmo tempo da leitura.
+
+Uma operação é feita assim que os seus precedentes ficam disponíveis, quer via registos, quer via leitura directa da memória.
+
+Uma vez que o número de operandos a ler é ímpar ($9$), e como o objectivo é maximizar o \emph{throughput}, haverá dois tipos distintos de execução.
+
+\subsubsection{Execuções ímpares (1ª, 3ª, ...)}
+
+\begin{enumerate}
+\item %1
+\begin{table}[H]
+\centering
+\begin{tabular}{l|c|c}
+Operação & \multicolumn{2}{|c}{Operandos} \\
+\hline
+\texttt{READ} & $d$ & $h$ \\
+\hline
+\texttt{MUL} & $d$ & $h$ \\
+\hline
+\texttt{STORE} & $R_1$ & $d$ \\
+\texttt{STORE} & $R_2$ & $h$ \\
+\texttt{STORE} & $R_3$ & $dh$ \\
+\end{tabular}
+\caption{Operações do 1º ciclo de execução ímpar}
+\label{tab:odd_1}
+\end{table}
+
+\item %2
+\begin{table}[H]
+\centering
+\begin{tabular}{l|c|c}
+Operação & \multicolumn{2}{|c}{Operandos} \\
+\hline
+\texttt{READ} & $i$ & $e$ \\
+\hline
+\texttt{MUL} & $i$ & $e$ \\
+\texttt{MUL} & $i$ & $R_1$($d$) \\
+\hline
+\texttt{STORE} & $R_1$ & $di$ \\
+\texttt{STORE} & $R_4$ & $e$ \\
+\texttt{STORE} & $R_5$ & $ie$ \\
+\end{tabular}
+\caption{Operações do 2º ciclo de execução ímpar}
+\label{tab:odd_2}
+\end{table}
+
+\item %3
+\begin{table}[H]
+\centering
+\begin{tabular}{l|c|c}
+Operação & \multicolumn{2}{|c}{Operandos} \\
+\hline
+\texttt{READ} & $f$ & $g$ \\
+\hline
+\texttt{MUL} & $f$ & $g$ \\
+\texttt{MUL} & $f$ & $R_2$($h$) \\
+\texttt{MUL} & $g$ & $R_4$($e$) \\
+\hline
+\texttt{STORE} & $R_6$ & $fg$ \\
+\texttt{STORE} & $R_2$ & $fh$ \\
+\texttt{STORE} & $R_4$ & $ge$ \\
+\end{tabular}
+\caption{Operações do 3º ciclo de execução ímpar}
+\label{tab:odd_3}
+\end{table}
+
+
+\end{enumerate}
+
+\subsubsection{Execuções pares (2ª, 4ª, ...)}
