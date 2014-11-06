@@ -175,22 +175,27 @@ Operação & \multicolumn{2}{c}{Operandos} \\
 Igualmente, os ciclos 6 e 7 são idênticos em termos de operações aos das execuções ímpares (Ver Tabelas~\ref{tab:odd_6}~e~\ref{tab:odd_7}).
 
 \end{multicols}
+\noindent\rule{\linewidth}{0.4pt}
 
 \subsubsection{Diagrama de Execuções}
 
 \begin{figure}[H]
 \centering
-\begin{tabular}{|l||c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|}
+\begin{tabular}{|l||c|c|c|c|c|c|c|c|c|c|c|c|}
 \hline
-Execução $n$ & 1 & 2 & 3 & 4 & 5 & 6 & 7 &&&&&&&&&\\
+Execução $n$ & 1 & 2 & 3 & 4 & 5 & 6 & 7 &&&&&\\
 \hline
-Execução $n+1$ &&&&&& 1 & 2 & 3 & 4 & 5 & 6 & 7 &&&&\\
+Execução $n+1$ &&&&&& 1 & 2 & 3 & 4 & 5 & 6 & 7 \\
 \hline
-Execução $n+2$ &&&&&&&&&& 1 & 2 & 3 & 4 & 5 & 6 & 7 \\
-\hline
-Execução $n+3$ &&&&&&&&&&&&&&& 1 & 2 \\
+Execução $n+2$ &&&&&&&&&& 1 & 2 & 3 \\
 \hline
 \end{tabular}
 \caption{Diagrama de Execuções para $n$ ímpar}
 \label{fig:datapath}
 \end{figure}
+
+Com este tipo de execução, o número total de ciclos para processar 100 conjuntos de dados é:
+
+\[{100\over 2} \cdot 5 + {100\over 2} \cdot 4 + 3 =\]
+\[= 250 + 200 + 3 =\]
+\[= 453\]
