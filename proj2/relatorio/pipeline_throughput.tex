@@ -26,10 +26,9 @@ Uma operação é feita assim que os seus precedentes ficam disponíveis, quer v
 
 Uma vez que o número de operandos a ler é ímpar ($9$), e como o objectivo é maximizar o \emph{throughput}, haverá dois tipos distintos de execução.
 
-\subsubsection{Execuções ímpares (1ª, 3ª, ...)}
+\begin{multicols}{2}
 
-\begin{enumerate}
-\item %1
+\subsubsection{Execuções ímpares}
 
 \begin{table}[H]
 \centering
@@ -47,8 +46,6 @@ Operação & \multicolumn{2}{c}{Operandos} \\
 \caption{Operações do 1º ciclo de execução ímpar}
 \label{tab:odd_1}
 \end{table}
-
-\item %2
 
 \begin{table}[H]
 \centering
@@ -68,8 +65,6 @@ Operação & \multicolumn{2}{c}{Operandos} \\
 \label{tab:odd_2}
 \end{table}
 
-\item %3
-
 \begin{table}[H]
 \centering
 \begin{tabular}{l|c|c}
@@ -88,8 +83,6 @@ Operação & \multicolumn{2}{c}{Operandos} \\
 \caption{Operações do 3º ciclo de execução ímpar}
 \label{tab:odd_3}
 \end{table}
-
-\item %4
 
 \begin{table}[H]
 \centering
@@ -112,8 +105,6 @@ Operação & \multicolumn{2}{c}{Operandos} \\
 \label{tab:odd_4}
 \end{table}
 
-\item %5
-
 \begin{table}[H]
 \centering
 \begin{tabular}{l|c|c}
@@ -121,49 +112,85 @@ Operação & \multicolumn{2}{c}{Operandos} \\
 \hline
 \texttt{READ} & $c$ & $c_{n+1}$ \\
 \hline
-\texttt{MUL} & $R_4$($ei - fh$) & $R_1$($a$) \\
-\texttt{MUL} & $R_5$($fg - di$) & $R_2$($b$) \\
-\texttt{MUL} & $R_6$($dh - eg$) & $c$ \\
+\texttt{MUL} & $R_4$ & $R_1$ \\
+\texttt{MUL} & $R_5$ & $R_2$ \\
+\texttt{MUL} & $R_6$ & $c$ \\
 \hline
-\texttt{STORE} & \multicolumn{2}{c}{$R_4\leftarrow a(ei - fh)$} \\
-\texttt{STORE} & \multicolumn{2}{c}{$R_5\leftarrow b(fg - di)$} \\
-\texttt{STORE} & \multicolumn{2}{c}{$R_6\leftarrow c(dh - eg)$} \\
+\texttt{STORE} & \multicolumn{2}{c}{$R_4\leftarrow R_1R_4$} \\
+\texttt{STORE} & \multicolumn{2}{c}{$R_5\leftarrow R_2R_5$} \\
+\texttt{STORE} & \multicolumn{2}{c}{$R_6\leftarrow c R_6$} \\
 \texttt{STORE} & \multicolumn{2}{c}{$R_8\leftarrow c_{n+1}$} \\
 \end{tabular}
 \caption{Operações do 5º ciclo de execução ímpar}
 \label{tab:odd_5}
 \end{table}
 
-\item %6
-
 \begin{table}[H]
 \centering
 \begin{tabular}{l|c|c}
 Operação & \multicolumn{2}{c}{Operandos} \\
 \hline
-\texttt{ADD} & $R_4$($a(ei - fh)$) & $R_5$($b(fg - di)$) \\
+\texttt{ADD} & $R_4$ & $R_5$ \\
 \hline
-\texttt{STORE} &\multicolumn{2}{c}{$R_7\leftarrow a(ei - fh) + b(fg - di)$} \\
+\texttt{STORE} &\multicolumn{2}{c}{$R_7\leftarrow R_4R_5$} \\
 \end{tabular}
 \caption{Operações do 6º ciclo de execução ímpar}
 \label{tab:odd_6}
 \end{table}
 
-\item %7
-
 \begin{table}[H]
 \centering
 \begin{tabular}{l|c|c}
 Operação & \multicolumn{2}{c}{Operandos} \\
 \hline
-\texttt{ADD} & $R_7$ & $R_6$($c(dh - eg)$) \\
+\texttt{ADD} & $R_7$ & $R_6$ \\
 \hline
 \texttt{STORE} &\multicolumn{2}{c}{$R_7\leftarrow \left|\begin{matrix}a&b&c\\d&e&f\\g&h&i\end{matrix}\right|$} \\
 \end{tabular}
-\caption{Operações do 6º ciclo de execução ímpar}
-\label{tab:odd_6}
+\caption{Operações do 7º ciclo de execução ímpar}
+\label{tab:odd_7}
 \end{table}
 
-\end{enumerate}
+\subsubsection{Execuções pares}
 
-\subsubsection{Execuções pares (2ª, 4ª, ...)}
+Os primeiros 4 ciclos de execução par são idênticos aos da execução ímpar (Ver Tabelas~\ref{tab:odd_1}-\ref{tab:odd_3}).
+
+\begin{table}[H]
+\centering
+\begin{tabular}{l|c|c}
+Operação & \multicolumn{2}{c}{Operandos} \\
+\hline
+\texttt{MUL} & $R_4$ & $R_1$ \\
+\texttt{MUL} & $R_5$ & $R_2$ \\
+\texttt{MUL} & $R_6$ & $R_8$ \\
+\hline
+\texttt{STORE} & \multicolumn{2}{c}{$R_4\leftarrow R_1R_4$} \\
+\texttt{STORE} & \multicolumn{2}{c}{$R_5\leftarrow R_2R_5$} \\
+\texttt{STORE} & \multicolumn{2}{c}{$R_6\leftarrow R_3R_6$} \\
+\end{tabular}
+\caption{Operações do 5º ciclo de execução par}
+\label{tab:even_5}
+\end{table}
+
+Igualmente, os ciclos 6 e 7 são idênticos em termos de operações aos das execuções ímpares (Ver Tabelas~\ref{tab:odd_6}~e~\ref{tab:odd_7}).
+
+\end{multicols}
+
+\subsubsection{Diagrama de Execuções}
+
+\begin{figure}[H]
+\centering
+\begin{tabular}{|l||c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|}
+\hline
+Execução $n$ & 1 & 2 & 3 & 4 & 5 & 6 & 7 &&&&&&&&&\\
+\hline
+Execução $n+1$ &&&&&& 1 & 2 & 3 & 4 & 5 & 6 & 7 &&&&\\
+\hline
+Execução $n+2$ &&&&&&&&&& 1 & 2 & 3 & 4 & 5 & 6 & 7 \\
+\hline
+Execução $n+3$ &&&&&&&&&&&&&&& 1 & 2 \\
+\hline
+\end{tabular}
+\caption{Diagrama de Execuções para $n$ ímpar}
+\label{fig:datapath}
+\end{figure}
