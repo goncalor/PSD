@@ -381,6 +381,60 @@ A solução da Secção~\ref{sec:leitura_mem_2portos} permite-nos calcular 100 d
 \subsection{Adaptação da Arquitectura Prévia}
 \label{subsec:arqui_2portRAM_pipelined_lessHW}
 
+Nesta secção tentamos melhorar a solução da Secção~\ref{sec:leitura_mem_2portos} sem aumentar muito o custo em termos de hardware.
+
+Começamos por notar que as matrizes cujos determinantes queremos calcular têm 9 elementos. Estamos limitados pela memória a ler 2 elementos por ciclo. Então precisamos de um mínimo de 5 ciclos para ter disponível na datapath todos os elementos da matriz.
+
+Por outro lado note-se que o algoritmo para o cálculo do determinante requer 9 multiplicações e 5 adições/subtracções. Como temos disponíveis 2 multiplicadores seria interessante ter um deles a trabalhar com os dados de uma matriz e o segundo a trabalhar com os dados de outra em paralelo. Consequentemente é preciso que os dados de ambas as matrizes partilhem o único somador disponível. Com estes objectivos em mente faz-se o escalonamento da Figura~\ref{fig:scheduling_2portRAM_pipelined_lessHW}
+
+O número de ciclos de execução teve que ser aumentado para que em todos os momentos cada matriz esteja a usar apenas um multiplicador e que nunca precisem de usar o somador em simultâneo. Nos primeiros 6 ciclos são lidos todos os elementos de uma matriz e calculados alguns produtos. Nos últimos 6 ciclos a execução continua com base em resultados intermédios, ou seja não são precisas mais leituras da memória, pelo que se pode começar a ler uma nova matriz.
+
+\begin{figure}[h]
+\centering
+•
+\caption{Escalonamento com pipeline para uso de 2 multiplicadores, 1 somador e uma memória com 2 portos de leitura}
+\label{fig:scheduling_2portRAM_pipelined_lessHW}
+\end{figure}
+
+Naturalmente para que as leituras ocupem apenas os primeiros 6 ciclos é preciso armazenar alguns elementos da matriz em registos. A Tabela~\ref{tab:registers_XYZ} mostra durante que ciclos estão armazenados vários elementos da matriz em 3 registos: X, Y e Z.
+
+\begin{table}
+\centering
+•
+\caption{Ocupação dos registos X, Y e Z por elementos da matriz}
+\label{tab:registers_XYZ}
+\end{table}
+
+Observando o escalonamento da Figura~\ref{fig:scheduling_2portRAM_pipelined_lessHW} fazemos a distribuição dos resultados intermédios por registos como se pode ver na Tabela~\ref{tab:registers_A-H}. No total são usados 11 registos: 3 para armazenamento de elementos da matriz e 9 para armazenar operações intermédias.
+
+\begin{table}
+\centering
+•
+\caption{Ocupação dos registos X, Y e Z por elementos da matriz}
+\label{tab:registers_A-H}
+\end{table}
+
+As considerações anteriores resultam num esquema para a datapath patente na Figura~\ref{fig:datapath_pipelined_lessHW}. Como se pode ver são usados:
+
+\begin{itemize}
+\item 11 registos;
+\item 7 MUX de 2 entradas;
+\item 5 MUX de 3 entradas;
+\item 1 multiplicador 16$\times$16 e outro 16$\times$32;
+\item 1 somador/subtractor.
+\end{itemize}
+
+Em termos de MUX temos equivalentemente 17 MUX de 2 entradas, que não chega a ser o dobro dos usados em \ref{subsec:partilha_optim_registos}. Por outro lado conseguimos substituir um multiplicador 16$\times$32 por um 16$\times$16. Isto resulta do facto de o multiplicador M1 actuar apenas sobre elementos da matriz e nunca sobre resultados intermédios.
+
+Concluindo, com esta arquitectura é possível calcular 100 determinantes em $ $ ciclos. Isto corresponde a um speedup de $ 900/ = $ em comparação com a solução não pipelined em \ref{sec:leitura_mem_2portos}.
+
+\begin{figure}[h]
+\centering
+•
+\caption{Datapath resultante do escalonamento da Figura~\ref{fig:scheduling_2portRAM_pipelined_lessHW}}
+\label{fig:datapath_pipelined_lessHW}
+\end{figure}
+
 \pagebreak
 \subsection{Maximização do Throughput}
 \label{subsec:arqui_2portRAM_maxthroughput}
