@@ -30,47 +30,50 @@ Uma vez que o número de operandos a ler é ímpar ($9$), e como o objectivo é 
 
 \begin{enumerate}
 \item %1
+
 \begin{table}[H]
 \centering
 \begin{tabular}{l|c|c}
-Operação & \multicolumn{2}{|c}{Operandos} \\
+Operação & \multicolumn{2}{c}{Operandos} \\
 \hline
 \texttt{READ} & $d$ & $h$ \\
 \hline
 \texttt{MUL} & $d$ & $h$ \\
 \hline
-\texttt{STORE} & $R_1$ & $d$ \\
-\texttt{STORE} & $R_2$ & $h$ \\
-\texttt{STORE} & $R_3$ & $dh$ \\
+\texttt{STORE} & \multicolumn{2}{c}{$R_1\leftarrow d$} \\
+\texttt{STORE} & \multicolumn{2}{c}{$R_2\leftarrow h$} \\
+\texttt{STORE} & \multicolumn{2}{c}{$R_3\leftarrow dh$} \\
 \end{tabular}
 \caption{Operações do 1º ciclo de execução ímpar}
 \label{tab:odd_1}
 \end{table}
 
 \item %2
+
 \begin{table}[H]
 \centering
 \begin{tabular}{l|c|c}
-Operação & \multicolumn{2}{|c}{Operandos} \\
+Operação & \multicolumn{2}{c}{Operandos} \\
 \hline
 \texttt{READ} & $i$ & $e$ \\
 \hline
 \texttt{MUL} & $i$ & $e$ \\
 \texttt{MUL} & $i$ & $R_1$($d$) \\
 \hline
-\texttt{STORE} & $R_1$ & $di$ \\
-\texttt{STORE} & $R_4$ & $e$ \\
-\texttt{STORE} & $R_5$ & $ie$ \\
+\texttt{STORE} & \multicolumn{2}{c}{$R_1\leftarrow di$} \\
+\texttt{STORE} & \multicolumn{2}{c}{$R_4\leftarrow e$} \\
+\texttt{STORE} & \multicolumn{2}{c}{$R_5\leftarrow ei$} \\
 \end{tabular}
 \caption{Operações do 2º ciclo de execução ímpar}
 \label{tab:odd_2}
 \end{table}
 
 \item %3
+
 \begin{table}[H]
 \centering
 \begin{tabular}{l|c|c}
-Operação & \multicolumn{2}{|c}{Operandos} \\
+Operação & \multicolumn{2}{c}{Operandos} \\
 \hline
 \texttt{READ} & $f$ & $g$ \\
 \hline
@@ -78,14 +81,88 @@ Operação & \multicolumn{2}{|c}{Operandos} \\
 \texttt{MUL} & $f$ & $R_2$($h$) \\
 \texttt{MUL} & $g$ & $R_4$($e$) \\
 \hline
-\texttt{STORE} & $R_6$ & $fg$ \\
-\texttt{STORE} & $R_2$ & $fh$ \\
-\texttt{STORE} & $R_4$ & $ge$ \\
+\texttt{STORE} & \multicolumn{2}{c}{$R_6\leftarrow fg$} \\
+\texttt{STORE} & \multicolumn{2}{c}{$R_2\leftarrow fh$} \\
+\texttt{STORE} & \multicolumn{2}{c}{$R_4\leftarrow eg$} \\
 \end{tabular}
 \caption{Operações do 3º ciclo de execução ímpar}
 \label{tab:odd_3}
 \end{table}
 
+\item %4
+
+\begin{table}[H]
+\centering
+\begin{tabular}{l|c|c}
+Operação & \multicolumn{2}{c}{Operandos} \\
+\hline
+\texttt{READ} & $a$ & $b$ \\
+\hline
+\texttt{SUB} & $R_5$($ei$) & $R_2$($fh$) \\
+\texttt{SUB} & $R_6$($fg$) & $R_1$($di$) \\
+\texttt{SUB} & $R_3$($dh$) & $R_4$($eg$) \\
+\hline
+\texttt{STORE} & \multicolumn{2}{c}{$R_1\leftarrow a$} \\
+\texttt{STORE} & \multicolumn{2}{c}{$R_2\leftarrow b$} \\
+\texttt{STORE} & \multicolumn{2}{c}{$R_4\leftarrow ei - fh$} \\
+\texttt{STORE} & \multicolumn{2}{c}{$R_5\leftarrow fg - di$} \\
+\texttt{STORE} & \multicolumn{2}{c}{$R_6\leftarrow dh - eg$} \\
+\end{tabular}
+\caption{Operações do 4º ciclo de execução ímpar}
+\label{tab:odd_4}
+\end{table}
+
+\item %5
+
+\begin{table}[H]
+\centering
+\begin{tabular}{l|c|c}
+Operação & \multicolumn{2}{c}{Operandos} \\
+\hline
+\texttt{READ} & $c$ & $c_{n+1}$ \\
+\hline
+\texttt{MUL} & $R_4$($ei - fh$) & $R_1$($a$) \\
+\texttt{MUL} & $R_5$($fg - di$) & $R_2$($b$) \\
+\texttt{MUL} & $R_6$($dh - eg$) & $c$ \\
+\hline
+\texttt{STORE} & \multicolumn{2}{c}{$R_4\leftarrow a(ei - fh)$} \\
+\texttt{STORE} & \multicolumn{2}{c}{$R_5\leftarrow b(fg - di)$} \\
+\texttt{STORE} & \multicolumn{2}{c}{$R_6\leftarrow c(dh - eg)$} \\
+\texttt{STORE} & \multicolumn{2}{c}{$R_8\leftarrow c_{n+1}$} \\
+\end{tabular}
+\caption{Operações do 5º ciclo de execução ímpar}
+\label{tab:odd_5}
+\end{table}
+
+\item %6
+
+\begin{table}[H]
+\centering
+\begin{tabular}{l|c|c}
+Operação & \multicolumn{2}{c}{Operandos} \\
+\hline
+\texttt{ADD} & $R_4$($a(ei - fh)$) & $R_5$($b(fg - di)$) \\
+\hline
+\texttt{STORE} &\multicolumn{2}{c}{$R_7\leftarrow a(ei - fh) + b(fg - di)$} \\
+\end{tabular}
+\caption{Operações do 6º ciclo de execução ímpar}
+\label{tab:odd_6}
+\end{table}
+
+\item %7
+
+\begin{table}[H]
+\centering
+\begin{tabular}{l|c|c}
+Operação & \multicolumn{2}{c}{Operandos} \\
+\hline
+\texttt{ADD} & $R_7$ & $R_6$($c(dh - eg)$) \\
+\hline
+\texttt{STORE} &\multicolumn{2}{c}{$R_7\leftarrow \left|\begin{matrix}a&b&c\\d&e&f\\g&h&i\end{matrix}\right|$} \\
+\end{tabular}
+\caption{Operações do 6º ciclo de execução ímpar}
+\label{tab:odd_6}
+\end{table}
 
 \end{enumerate}
 
