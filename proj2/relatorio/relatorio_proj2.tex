@@ -338,7 +338,7 @@ Isto é equivalente a 11 multiplexers de 2 entradas. Esta alternativa é então 
 \section{Circuito}
 \subsection{Datapath}
 
-O circuito projectado tem por base a partilha de recursos descrita em \ref{subsec:partilha_optim_registos}. A datapath pode ser vista na Figura~\ref{fig:datapath}.
+O circuito projectado tem por base a partilha de recursos descrita em \ref{subsec:partilha_optim_registos}. A datapath pode ser vista na Figura~\ref{fig:datapath_original}.
 
 Como os elementos da matriz têm 16 bits e as multiplicações efectuadas são sempre entre elementos da matriz ou um elemento da matriz e um resultado intermédio de 32 bit os multiplicadores implementados têm uma entrada com 16 bits e outra com 32. O somador/subtractor é de 48 bits porque os seus operandos são resultados dos multiplicadores (48 bits). Por fim, todos os registos são de 48 bits de forma a acomodarem resultados com esse tamanho, excepto o registo $\mathrm{R_D}$ que tem apenas 32 bits porque o único valor que nele é armazenado corresponde à operação $\mathrm{z_8}$, que é uma subtracção de operandos com 32 bits.
 
@@ -346,14 +346,14 @@ Como os elementos da matriz têm 16 bits e as multiplicações efectuadas são s
 \centering
 •
 \caption{•}
-\label{fig:datapath}
+\label{fig:datapath_original}
 \end{figure}
 
 \subsection{Unidade de Controlo}
 
 Os sinais de saída da unidade de controlo controlam os MUX à entrada dos operadores e dos registos e controlam os sinais de enable. Como sinais de entrada tem \texttt{data\_ready} --- que informa a unidade de controlo de quando tem à sua entrada os operandos adequados --- e \texttt{rst} --- o sinal de reset. A UC tem ainda um sinal de saída \texttt{out\_ready} que adicionámos para que seja possível assinalar o fim do cálculo de um determinante. A máquina de estados está patente na Figura~\ref{fig:statemachine}.
 
-\begin{figure}
+\begin{figure}[h]
 \centering
 •
 \caption{•}
@@ -363,13 +363,27 @@ Os sinais de saída da unidade de controlo controlam os MUX à entrada dos opera
 \subsection{Simulação}
 
 \section{Leitura de Memória com Dois Portos}
+\label{sec:leitura_mem_2portos}
+
+Como a memória tem apenas dois portos de leitura temos que alterar o escalonamento de forma a que sejam feitas no máximo duas leituras por ciclo de relógio. Como as primeiras multiplicações do algoritmo precisam de seis operandos distintos é preciso distribuir as multiplicações por vários ciclos. Sem adicionar mais hardware ao circuito da Figura~\ref{fig:datapath_original} um novo escalonamento possível é o da Figura~\ref{fig:scheduling_2portRAM_basic}.
+
+\begin{figure}[h]
+\centering
+•
+\caption{Escalonamento para uma memória com dois portos de leitura}
+\label{fig:scheduling_2portRAM_basic}
+\end{figure}
 
 \section{Pipelining}
 
+A solução da Secção~\ref{sec:leitura_mem_2portos} permite-nos calcular 100 determinantes em $ 9 \times 100 = 900 $ ciclos de relógio. Nas secções que se seguem descrevemos duas soluções que permitem aumentar o \textit{throughput} da datapath. Na solução em \ref{subsec:arqui_2portRAM_pipelined_lessHW} tentamos aumentar o throughput sem um grande acréscimo da complexidade do hardware. Na solução em \ref{subsec:arqui_2portRAM_maxthroughput} apresentamos uma solução que aumenta ao máximo o throughput não olhando a custos de hardware.
+
 \subsection{Adaptação da Arquitectura Prévia}
+\label{subsec:arqui_2portRAM_pipelined_lessHW}
 
 \pagebreak
 \subsection{Maximização do Throughput}
+\label{subsec:arqui_2portRAM_maxthroughput}
 \input{./pipeline_throughput.tex}
 
 \end{document}
