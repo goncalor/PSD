@@ -5,15 +5,15 @@
 		& d & e & f & g & h  \\
 		\hline
 		\hline
-		e & $-$ & $\times$ & $\times$ & $\times$ & $\times$  \\
+		e &  & \# & \# & \# & \#  \\
 		\hline
-		f & $-$ & $-$ & $\times$ & $\times$ & $\times$ \\
+		f &  &  & \# & \# & \# \\
 		\hline
-		g & $-$ & \checkmark & \checkmark & $\times$ & $\times$	 \\
+		g &  & \texttt{x} & \texttt{x} & \# & \#	 \\
 		\hline
-		h & \checkmark & $-$ & \checkmark & $-$ & $\times$ \\
+		h & \texttt{x} &  & \texttt{x} &  & \# \\
 		\hline
-		i & \checkmark & \checkmark & $-$ & $-$ & $-$ \\
+		i & \texttt{x} & \texttt{x} &  &  &  \\
 		\hline
 	\end{tabular}
 	\caption{Produtos entre constantes a ler da memória}
@@ -24,7 +24,15 @@ De maneira a reduzir ao máximo o número de ciclos que o algoritmo leva, é ade
 
 Uma operação é feita assim que os seus precedentes ficam disponíveis, quer via registos, quer via leitura directa da memória.
 
+\begin{figure}[h]
+\centerline{\includegraphics[width=0.7\paperwidth]{scheduling_2portRAM_maxthrough}}
+\caption{Escalonamento para maximizar \textit{throughput}}
+\label{fig:scheduling_2portRAM_maxthrough}
+\end{figure}
+
 Uma vez que o número de operandos a ler é ímpar ($9$), e como o objectivo é maximizar o \emph{throughput}, haverá dois tipos distintos de execução.
+
+\noindent\rule{\linewidth}{0.4pt}
 
 \begin{multicols}{2}
 
@@ -176,6 +184,7 @@ Uma vez que o número de operandos a ler é ímpar ($9$), e como o objectivo é 
 
 \end{multicols}
 \noindent\rule{\linewidth}{0.4pt}
+
 
 \subsubsection{Diagrama de Execuções}
 
