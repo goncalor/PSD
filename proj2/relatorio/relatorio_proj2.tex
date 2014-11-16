@@ -13,6 +13,7 @@
 \usepackage{dingbat} %for \checkmark
 \usepackage{multicol} %for page layout on section Maximização do Throughput
 \usepackage[usenames,dvipsnames,svgnames,table]{xcolor}
+\usepackage{pdflscape}	% landscape pages
 
 \definecolor{yellow}{RGB}{230, 230, 0}
 \begin{document}
@@ -395,23 +396,49 @@ O número de ciclos de execução teve que ser aumentado para que em todos os mo
 \label{fig:scheduling_2portRAM_pipelined_lessHW}
 \end{figure}
 
-Naturalmente para que as leituras ocupem apenas os primeiros 6 ciclos é preciso armazenar alguns elementos da matriz em registos. A Tabela~\ref{tab:registers_XYZ} mostra durante que ciclos estão armazenados vários elementos da matriz em 3 registos: X, Y e Z.
+Naturalmente para que as leituras ocupem apenas os primeiros 6 ciclos é preciso armazenar alguns elementos da matriz em registos. A Tabela~\ref{tab:registers_A-H_XYZ} mostra durante que ciclos estão armazenados vários elementos da matriz em 3 registos: X, Y e Z.
 
-\begin{table}
+Observando o escalonamento da Figura~\ref{fig:scheduling_2portRAM_pipelined_lessHW} fazemos a distribuição dos resultados intermédios por registos como se pode ver na Tabela~\ref{tab:registers_A-H_XYZ}. No total são usados 11 registos: 3 para armazenamento de elementos da matriz e 8 para armazenar operações intermédias.
+
+\begin{landscape}
+\begin{table}[h]
 \centering
-•
-\caption{Ocupação dos registos X, Y e Z por elementos da matriz}
-\label{tab:registers_XYZ}
+\centerline{
+\begin{tabular}{|c||c|c|c|c|c|c|c|c||c|c|c|}
+\hline
+Ciclo & $\mathrm{R_A}$ & $\mathrm{R_B}$ & $\mathrm{R_C}$ & $\mathrm{R_D}$ & $\mathrm{R_E}$ & $\mathrm{R_F}$ & $\mathrm{R_G}$ & $\mathrm{R_H}$ & $\mathrm{R_X}$ & $\mathrm{R_Y}$ & $\mathrm{R_Z}$ \\ 
+\hline
+\hline
+1 & - & M1 (z8n+1) & - &  & - & - & - &  &  &  &  \\ 
+\hline 
+2 & M1 (z1n) &  & - &  & - & - & M2 (z10n+1) &  &  &  &  \\ 
+\hline 
+3 &  & M1 (z2n) & - &  & M2 (z9n+1) & - &  & - & f (n) &  &  \\ 
+\hline 
+4 & M1 (z3n) &  & A/S (z4n) & - &  & M2 (z11n+1) & M2 (z13n+1) & - & a (n) &  & g \\ 
+\hline 
+5 &  & M1 (z5n) & - & - & M2 (z12n+1) & - &  & - &  & d (n) &  \\ 
+\hline 
+6 & - &  & - & A/S (z7n) &  & - & - & M1 (z6n) &  & c (n) & b \\ 
+\hline 
+7 & - & M1 (z8n) & - &  & - & - & - &  &  &  &  \\ 
+\hline 
+8 & M1 (z1n+1) &  & - &  & - & - & - &  &  &  &  \\ 
+\hline 
+9 &  & M1 (z2n+1) & - &  & M2 (z9n) & - & A/S (z10n) & - & f (n+1) &  &  \\ 
+\hline 
+10 & M1 (z3n+1) &  & A/S (z4n+1) & - &  & M2 (z11n) &  & - & a (n+1) &  & g \\ 
+\hline 
+11 &  & M1 (z5n+1) & - & - & M2 (z12n) & - & A/S (z13n) & - &  & d (n+1) &  \\ 
+\hline 
+12 & - &  & - & A/S (z7n+1) &  & - &  & M1 (z6n+1) &  & c (n+1) & b \\ 
+\hline 
+\end{tabular}
+}
+\caption{Ocupação dos registos A a H e X, Y e Z}
+\label{tab:registers_A-H_XYZ}
 \end{table}
-
-Observando o escalonamento da Figura~\ref{fig:scheduling_2portRAM_pipelined_lessHW} fazemos a distribuição dos resultados intermédios por registos como se pode ver na Tabela~\ref{tab:registers_A-H}. No total são usados 11 registos: 3 para armazenamento de elementos da matriz e 9 para armazenar operações intermédias.
-
-\begin{table}
-\centering
-•
-\caption{Ocupação dos registos X, Y e Z por elementos da matriz}
-\label{tab:registers_A-H}
-\end{table}
+\end{landscape}
 
 As considerações anteriores resultam num esquema para a datapath patente na Figura~\ref{fig:datapath_pipelined_lessHW}. Como se pode ver são usados:
 
@@ -425,7 +452,7 @@ As considerações anteriores resultam num esquema para a datapath patente na Fi
 
 Em termos de MUX temos equivalentemente 17 MUX de 2 entradas, que não chega a ser o dobro dos usados em \ref{subsec:partilha_optim_registos}. Por outro lado conseguimos substituir um multiplicador 16$\times$32 por um 16$\times$16. Isto resulta do facto de o multiplicador M1 actuar apenas sobre elementos da matriz e nunca sobre resultados intermédios.
 
-Concluindo, com esta arquitectura é possível calcular 100 determinantes em $ $ ciclos. Isto corresponde a um speedup de $ 900/ = $ em comparação com a solução não pipelined em \ref{sec:leitura_mem_2portos}.
+Concluindo, com esta arquitectura é possível calcular 100 determinantes em $ 100 \times 12/2 + 6 = 606 $ ciclos. Isto corresponde a um \textit{speedup} de $ 900/606 = 1.48 $ em comparação com a solução não pipelined em \ref{sec:leitura_mem_2portos}.
 
 \begin{figure}[h]
 \centering
