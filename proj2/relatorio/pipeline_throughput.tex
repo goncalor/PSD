@@ -32,6 +32,8 @@ Uma operação é feita assim que os seus precedentes ficam disponíveis, quer v
 
 Uma vez que o número de operandos a ler é ímpar ($9$), e como o objectivo é maximizar o \emph{throughput}, haverá dois tipos distintos de execução.
 
+O hardware necessário para esta execução compreende 4 multiplicadores e 3 somadores/subtractores (ver Figura~\ref{fig:scheduling_2portRAM_maxthrough}).
+
 \noindent\rule{\linewidth}{0.4pt}
 
 \begin{multicols}{2}
@@ -206,5 +208,4 @@ Uma vez que o número de operandos a ler é ímpar ($9$), e como o objectivo é 
 Com este tipo de execução, o número total de ciclos para processar 100 conjuntos de dados é:
 
 \[ \frac{100}{2} \cdot 5 + \frac{100}{2} \cdot 4 + 3 = \]
-\[= 250 + 200 + 3 =\]
-\[= 453\]
+\[= 250 + 200 + 3 = 453\]

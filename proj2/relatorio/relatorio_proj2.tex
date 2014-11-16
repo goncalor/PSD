@@ -360,8 +360,7 @@ Os sinais de saída da unidade de controlo controlam os MUX à entrada dos opera
 	\label{fig:statemachine}
 \end{figure}
 
-\subsection{Simulação}
-
+\pagebreak
 \section{Leitura de Memória com Dois Portos}
 \label{sec:leitura_mem_2portos}
 
@@ -455,7 +454,7 @@ Em termos de MUX temos equivalentemente 17 MUX de 2 entradas, que não chega a s
 
 Concluindo, com esta arquitectura é possível calcular 100 determinantes em $ 100 \times 12/2 + 6 = 606 $ ciclos. Isto corresponde a um \textit{speedup} de $ 900/606 = 1.48 $ em comparação com a solução não pipelined em \ref{sec:leitura_mem_2portos}.
 
-\begin{figure}[h]
+\begin{figure}[H]
 \centering
 \centerline{\includegraphics[trim=0 750 0 80, clip, width=\paperwidth]{datapath_pipelined_lessHW}}
 \caption{Datapath resultante do escalonamento da Figura~\ref{fig:scheduling_2portRAM_pipelined_lessHW}}
