@@ -369,7 +369,7 @@ Como a memória tem apenas dois portos de leitura temos que alterar o escaloname
 
 \begin{figure}[h]
 	\centering
-	•
+	\includegraphics[width=\linewidth]{scheduling_2portRAM_basic}
 	\caption{Escalonamento para uma memória com dois portos de leitura}
 	\label{fig:scheduling_2portRAM_basic}
 \end{figure}
@@ -390,8 +390,7 @@ Por outro lado note-se que o algoritmo para o cálculo do determinante requer 9 
 O número de ciclos de execução teve que ser aumentado para que em todos os momentos cada matriz esteja a usar apenas um multiplicador e que nunca precisem de usar o somador em simultâneo. Nos primeiros 6 ciclos são lidos todos os elementos de uma matriz e calculados alguns produtos. Nos últimos 6 ciclos a execução continua com base em resultados intermédios, ou seja não são precisas mais leituras da memória, pelo que se pode começar a ler uma nova matriz.
 
 \begin{figure}[h]
-\centering
-•
+\centerline{\includegraphics[width=\paperwidth]{scheduling_2portRAM_pipelined_lessHW}}
 \caption{Escalonamento com pipeline para uso de 2 multiplicadores, 1 somador e uma memória com 2 portos de leitura}
 \label{fig:scheduling_2portRAM_pipelined_lessHW}
 \end{figure}
