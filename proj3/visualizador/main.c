@@ -42,6 +42,7 @@ int main(int argc, char** argv)
 	
 	uint8_t running;
 	uint8_t painting;
+	uint8_t save;
 	
 	uint16_t datasize;
 	uint16_t bytesize;
@@ -110,6 +111,8 @@ int main(int argc, char** argv)
 	
 	/* Main execution cycle: */
 	running = 1;
+	painting = 0;
+	save = 0;
 	
 	while(running)
 	{
@@ -118,7 +121,14 @@ int main(int argc, char** argv)
 			displayheight - 10 * VB_PIXELHEIGHT,
 			al_map_rgb(255,253,208)); /* Cream frame */
 		
-		/* Draw each pixel */
+		/* Draw Save Button: */
+		al_draw_filled_rectangle(0,displayheight - 10 * VB_PIXELHEIGHT,
+			displaywidth/2,displayheight,al_map_rgb(189,236,182));
+		al_draw_text(font,al_map_rgb(30,89,69),displaywidth/4,
+			displayheight - 5*VB_PIXELHEIGHT,ALLEGRO_ALIGN_CENTRE |
+			ALLEGRO_ALIGN_INTEGER,"save");
+		
+		/* Draw pixels: */
 		for(i=0;i<width;i++){
 			for(j=0;j<height;j++){
 				k = j*width + i;
@@ -140,6 +150,7 @@ int main(int argc, char** argv)
 			}
 		}
 		
+		/* Edit pixels: */
 		if(painting){
 			al_get_mouse_state(&mouse);
 			if(mouse.x > VB_PIXELWIDTH &&
@@ -158,12 +169,31 @@ int main(int argc, char** argv)
 			}
 		}
 		
+		/* Save current image: */
+		if(save){
+			picture = al_fopen(filename,"w");
+			if(picture == NULL) general_error("Error saving file");
+			
+			al_fwrite(picture,data,bytesize);
+			
+			al_fclose(picture);
+		}
+		
 		/* Event Processing: */
 		if(al_get_next_event(queue,&event)){
 			switch(event.type){
 				case ALLEGRO_EVENT_MOUSE_BUTTON_DOWN:
-					memcpy(paint_data,data,bytesize);
-					painting = 1;
+					if(event.mouse.y > (height + 2) *
+						VB_PIXELHEIGHT && event.mouse.y
+						< displayheight){
+						if(event.mouse.x < displaywidth/2)
+							save = 1;
+						else
+							running = 0;
+					}else{
+						memcpy(paint_data,data,bytesize);
+						painting = 1;
+					}
 					break;
 				case ALLEGRO_EVENT_MOUSE_BUTTON_UP:
 					painting = 0;
