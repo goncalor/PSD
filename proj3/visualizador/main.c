@@ -26,6 +26,7 @@ int main(int argc, char** argv)
 	ALLEGRO_DISPLAY* display;
 	ALLEGRO_EVENT_QUEUE* queue;
 	ALLEGRO_EVENT event;
+	ALLEGRO_FONT* font;
 	
 	ALLEGRO_FILE* picture;
 	
@@ -33,10 +34,16 @@ int main(int argc, char** argv)
 	uint8_t width;
 	uint8_t height;
 	
+	uint8_t i,j;
+	uint16_t k;
+	
 	uint8_t running;
 	
 	uint16_t datasize;
 	uint16_t bytesize;
+	
+	uint16_t displaywidth;
+	uint16_t displayheight;
 	
 	char filename[256];
 	
@@ -63,9 +70,11 @@ int main(int argc, char** argv)
 		bytesize += 1;
 	}
 	
+	/* Memory allocation for image: */
 	data = (uint8_t*) malloc(bytesize);
 	if(data == NULL) general_error("Out of Memory");
 	
+	/* File reading (if exists): */
 	picture = al_fopen(filename,"r");
 	if(picture == NULL){
 		memset((void*)data,0,bytesize);
@@ -75,11 +84,51 @@ int main(int argc, char** argv)
 		al_fclose(picture);
 	}
 	
+	/* Display initialization: */
+	displaywidth = (width + 2) * VB_PIXELWIDTH;
+	displayheight = (height + 2) * VB_PIXELHEIGHT + 10 * VB_PIXELHEIGHT;
+	
+	display = al_create_display(displaywidth,displayheight);
+	if(display == NULL) general_error("Display Creation Error");
+	
+	/* Font initialization: */
+	font = al_load_ttf_font("munro/Munro.ttf",10,ALLEGRO_TTF_MONOCHROME);
+	if(font == NULL) general_error("Font Loading Error");
+	
+	
+	/* Main execution cycle: */
 	running = 1;
 	
 	while(running)
 	{
+		/* Draw Frame: */
+		al_draw_filled_rectangle(0,0,displaywidth,
+			displayheight - 10 * VB_PIXELHEIGHT,
+			al_map_rgb(255,253,208)); /* Cream frame */
 		
+		/* Draw each pixel */
+		for(i=0;i<width;i++){
+			for(j=0;j<height;j++){
+				k = j*width + i;
+				if(GETBIT(data[k/8],k%8)){
+					al_draw_filled_rectangle(
+						(1+i)*VB_PIXELWIDTH,
+						(1+j)*VB_PIXELHEIGHT,
+						(2+i)*VB_PIXELWIDTH,
+						(2+j)*VB_PIXELHEIGHT,
+						al_map_rgb(0,0,0));
+				}else{
+					al_draw_filled_rectangle(
+						(1+i)*VB_PIXELWIDTH,
+						(1+j)*VB_PIXELHEIGHT,
+						(2+i)*VB_PIXELWIDTH,
+						(2+j)*VB_PIXELHEIGHT,
+						al_map_rgb(255,255,255));
+				}
+			}
+		}
+		
+		al_flip_display();
 	}
 	
 	
