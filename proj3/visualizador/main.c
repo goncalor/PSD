@@ -14,8 +14,8 @@
 #define RESETBIT(x,b) (x & ~(1<<b))
 
 /* Constants: */
-#define VB_PIXELWIDTH 4
-#define VB_PIXELHEIGHT 4
+#define VB_PIXELWIDTH 6
+#define VB_PIXELHEIGHT 6
 
 /* Subroutines: */
 void usage_error();
@@ -28,9 +28,12 @@ int main(int argc, char** argv)
 	ALLEGRO_EVENT event;
 	ALLEGRO_FONT* font;
 	
+	ALLEGRO_MOUSE_STATE mouse;
+	
 	ALLEGRO_FILE* picture;
 	
 	uint8_t* data;
+	uint8_t* paint_data;
 	uint8_t width;
 	uint8_t height;
 	
@@ -38,6 +41,7 @@ int main(int argc, char** argv)
 	uint16_t k;
 	
 	uint8_t running;
+	uint8_t painting;
 	
 	uint16_t datasize;
 	uint16_t bytesize;
@@ -72,7 +76,8 @@ int main(int argc, char** argv)
 	
 	/* Memory allocation for image: */
 	data = (uint8_t*) malloc(bytesize);
-	if(data == NULL) general_error("Out of Memory");
+	paint_data = (uint8_t*) malloc(bytesize);
+	if(data == NULL || paint_data == NULL) general_error("Out of Memory");
 	
 	/* File reading (if exists): */
 	picture = al_fopen(filename,"r");
@@ -135,18 +140,36 @@ int main(int argc, char** argv)
 			}
 		}
 		
+		if(painting){
+			al_get_mouse_state(&mouse);
+			if(mouse.x > VB_PIXELWIDTH &&
+				mouse.x < (width+1)*VB_PIXELWIDTH &&
+				mouse.y > VB_PIXELHEIGHT &&
+				mouse.y < (height+1)*VB_PIXELHEIGHT){
+				
+				i = (mouse.x / VB_PIXELWIDTH) - 1;
+				j = (mouse.y / VB_PIXELHEIGHT) - 1;
+				k = j*width + i;
+				if(GETBIT(paint_data[k/8],k%8)){
+					data[k/8] = RESETBIT(data[k/8],k%8);
+				}else{
+					data[k/8] = SETBIT(data[k/8],k%8);
+				}
+			}
+		}
+		
 		/* Event Processing: */
 		if(al_get_next_event(queue,&event)){
 			switch(event.type){
+				case ALLEGRO_EVENT_MOUSE_BUTTON_DOWN:
+					memcpy(paint_data,data,bytesize);
+					painting = 1;
+					break;
 				case ALLEGRO_EVENT_MOUSE_BUTTON_UP:
-					i = (event.mouse.x / VB_PIXELWIDTH) - 1;
-					j = (event.mouse.y / VB_PIXELHEIGHT) - 1;
-					k = j*width + i;
-					if(GETBIT(data[k/8],k%8)){
-						data[k/8] = RESETBIT(data[k/8],k%8);
-					}else{
-						data[k/8] = SETBIT(data[k/8],k%8);
-					}
+					painting = 0;
+					break;
+				case ALLEGRO_EVENT_DISPLAY_CLOSE:
+					running = 0;
 					break;
 				default:
 					break;
