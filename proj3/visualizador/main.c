@@ -95,6 +95,13 @@ int main(int argc, char** argv)
 	font = al_load_ttf_font("munro/Munro.ttf",10,ALLEGRO_TTF_MONOCHROME);
 	if(font == NULL) general_error("Font Loading Error");
 	
+	/* Event Queue initialization: */
+	queue = al_create_event_queue();
+	al_register_event_source(queue,al_get_keyboard_event_source());
+	al_register_event_source(queue,al_get_mouse_event_source());
+	al_register_event_source(queue,al_get_display_event_source(display));
+	
+	
 	
 	/* Main execution cycle: */
 	running = 1;
@@ -125,6 +132,24 @@ int main(int argc, char** argv)
 						(2+j)*VB_PIXELHEIGHT,
 						al_map_rgb(255,255,255));
 				}
+			}
+		}
+		
+		/* Event Processing: */
+		if(al_get_next_event(queue,&event)){
+			switch(event.type){
+				case ALLEGRO_EVENT_MOUSE_BUTTON_UP:
+					i = (event.mouse.x / VB_PIXELWIDTH) - 1;
+					j = (event.mouse.y / VB_PIXELHEIGHT) - 1;
+					k = j*width + i;
+					if(GETBIT(data[k/8],k%8)){
+						data[k/8] = RESETBIT(data[k/8],k%8);
+					}else{
+						data[k/8] = SETBIT(data[k/8],k%8);
+					}
+					break;
+				default:
+					break;
 			}
 		}
 		
