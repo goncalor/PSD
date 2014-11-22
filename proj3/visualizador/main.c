@@ -128,6 +128,13 @@ int main(int argc, char** argv)
 			displayheight - 5*VB_PIXELHEIGHT,ALLEGRO_ALIGN_CENTRE |
 			ALLEGRO_ALIGN_INTEGER,"save");
 		
+		/* Draw Quit Button: */
+		al_draw_filled_rectangle(displaywidth/2,
+			displayheight - 10 * VB_PIXELHEIGHT,displaywidth,
+			displayheight,al_map_rgb(255,164,164));
+		al_draw_text(font,al_map_rgb(150,89,89),3*displaywidth/4,
+			displayheight - 5*VB_PIXELHEIGHT,ALLEGRO_ALIGN_CENTRE |
+			ALLEGRO_ALIGN_INTEGER,"quit");
 		/* Draw pixels: */
 		for(i=0;i<width;i++){
 			for(j=0;j<height;j++){
