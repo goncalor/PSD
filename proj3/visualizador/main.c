@@ -33,7 +33,6 @@ int main(int argc, char** argv)
 	ALLEGRO_FILE* picture;
 	
 	uint8_t* data;
-	uint8_t* paint_data;
 	uint8_t width;
 	uint8_t height;
 	
@@ -77,8 +76,7 @@ int main(int argc, char** argv)
 	
 	/* Memory allocation for image: */
 	data = (uint8_t*) malloc(bytesize);
-	paint_data = (uint8_t*) malloc(bytesize);
-	if(data == NULL || paint_data == NULL) general_error("Out of Memory");
+	if(data == NULL) general_error("Out of Memory");
 	
 	/* File reading (if exists): */
 	picture = al_fopen(filename,"r");
@@ -94,6 +92,7 @@ int main(int argc, char** argv)
 	displaywidth = (width + 2) * VB_PIXELWIDTH;
 	displayheight = (height + 2) * VB_PIXELHEIGHT + 10 * VB_PIXELHEIGHT;
 	
+	al_set_new_display_option(ALLEGRO_SINGLE_BUFFER, 1, ALLEGRO_REQUIRE);
 	display = al_create_display(displaywidth,displayheight);
 	if(display == NULL) general_error("Display Creation Error");
 	
@@ -114,48 +113,50 @@ int main(int argc, char** argv)
 	painting = 0;
 	save = 0;
 	
-	while(running)
-	{
-		/* Draw Frame: */
-		al_draw_filled_rectangle(0,0,displaywidth,
-			displayheight - 10 * VB_PIXELHEIGHT,
-			al_map_rgb(255,253,208)); /* Cream frame */
-		
-		/* Draw Save Button: */
-		al_draw_filled_rectangle(0,displayheight - 10 * VB_PIXELHEIGHT,
-			displaywidth/2,displayheight,al_map_rgb(189,236,182));
-		al_draw_text(font,al_map_rgb(30,89,69),displaywidth/4,
-			displayheight - 5*VB_PIXELHEIGHT,ALLEGRO_ALIGN_CENTRE |
-			ALLEGRO_ALIGN_INTEGER,"save");
-		
-		/* Draw Quit Button: */
-		al_draw_filled_rectangle(displaywidth/2,
-			displayheight - 10 * VB_PIXELHEIGHT,displaywidth,
-			displayheight,al_map_rgb(255,164,164));
-		al_draw_text(font,al_map_rgb(150,89,89),3*displaywidth/4,
-			displayheight - 5*VB_PIXELHEIGHT,ALLEGRO_ALIGN_CENTRE |
-			ALLEGRO_ALIGN_INTEGER,"quit");
-		/* Draw pixels: */
-		for(i=0;i<width;i++){
-			for(j=0;j<height;j++){
-				k = j*width + i;
-				if(GETBIT(data[k/8],k%8)){
-					al_draw_filled_rectangle(
-						(1+i)*VB_PIXELWIDTH,
-						(1+j)*VB_PIXELHEIGHT,
-						(2+i)*VB_PIXELWIDTH,
-						(2+j)*VB_PIXELHEIGHT,
-						al_map_rgb(0,0,0));
-				}else{
-					al_draw_filled_rectangle(
-						(1+i)*VB_PIXELWIDTH,
-						(1+j)*VB_PIXELHEIGHT,
-						(2+i)*VB_PIXELWIDTH,
-						(2+j)*VB_PIXELHEIGHT,
-						al_map_rgb(255,255,255));
-				}
+	/* Draw Frame: */
+	al_draw_filled_rectangle(0,0,displaywidth,
+		displayheight - 10 * VB_PIXELHEIGHT,
+		al_map_rgb(255,253,208)); /* Cream frame */
+	
+	/* Draw Save Button: */
+	al_draw_filled_rectangle(0,displayheight - 10 * VB_PIXELHEIGHT,
+		displaywidth/2,displayheight,al_map_rgb(189,236,182));
+	al_draw_text(font,al_map_rgb(30,89,69),displaywidth/4,
+		displayheight - 5*VB_PIXELHEIGHT,ALLEGRO_ALIGN_CENTRE |
+		ALLEGRO_ALIGN_INTEGER,"save");
+	
+	/* Draw Quit Button: */
+	al_draw_filled_rectangle(displaywidth/2,
+		displayheight - 10 * VB_PIXELHEIGHT,displaywidth,
+		displayheight,al_map_rgb(255,164,164));
+	al_draw_text(font,al_map_rgb(150,89,89),3*displaywidth/4,
+		displayheight - 5*VB_PIXELHEIGHT,ALLEGRO_ALIGN_CENTRE |
+		ALLEGRO_ALIGN_INTEGER,"quit");
+	
+	/* Draw pixels: */
+	for(i=0;i<width;i++){
+		for(j=0;j<height;j++){
+			k = j*width + i;
+			if(GETBIT(data[k/8],k%8)){
+				al_draw_filled_rectangle(
+					(1+i)*VB_PIXELWIDTH,
+					(1+j)*VB_PIXELHEIGHT,
+					(2+i)*VB_PIXELWIDTH,
+					(2+j)*VB_PIXELHEIGHT,
+					al_map_rgb(0,0,0));
+			}else{
+				al_draw_filled_rectangle(
+					(1+i)*VB_PIXELWIDTH,
+					(1+j)*VB_PIXELHEIGHT,
+					(2+i)*VB_PIXELWIDTH,
+					(2+j)*VB_PIXELHEIGHT,
+					al_map_rgb(255,255,255));
 			}
 		}
+	}
+	
+	while(running)
+	{
 		
 		/* Edit pixels: */
 		if(painting){
@@ -168,16 +169,29 @@ int main(int argc, char** argv)
 				i = (mouse.x / VB_PIXELWIDTH) - 1;
 				j = (mouse.y / VB_PIXELHEIGHT) - 1;
 				k = j*width + i;
-				if(GETBIT(paint_data[k/8],k%8)){
-					data[k/8] = RESETBIT(data[k/8],k%8);
-				}else{
+				if(mouse.buttons & 0x01){
 					data[k/8] = SETBIT(data[k/8],k%8);
+					al_draw_filled_rectangle(
+						(1+i)*VB_PIXELWIDTH,
+						(1+j)*VB_PIXELHEIGHT,
+						(2+i)*VB_PIXELWIDTH,
+						(2+j)*VB_PIXELHEIGHT,
+						al_map_rgb(0,0,0));
+				}else if(mouse.buttons){
+					data[k/8] = RESETBIT(data[k/8],k%8);
+					al_draw_filled_rectangle(
+						(1+i)*VB_PIXELWIDTH,
+						(1+j)*VB_PIXELHEIGHT,
+						(2+i)*VB_PIXELWIDTH,
+						(2+j)*VB_PIXELHEIGHT,
+						al_map_rgb(255,255,255));
 				}
 			}
 		}
 		
 		/* Save current image: */
 		if(save){
+			save = 0;
 			picture = al_fopen(filename,"w");
 			if(picture == NULL) general_error("Error saving file");
 			
@@ -198,7 +212,6 @@ int main(int argc, char** argv)
 						else
 							running = 0;
 					}else{
-						memcpy(paint_data,data,bytesize);
 						painting = 1;
 					}
 					break;
