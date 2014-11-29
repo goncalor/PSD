@@ -1,0 +1,16 @@
+Essencialmente dividimos os processos em duas funções:
+
+Horizontal Alteration after Line Fetch (HALF)
+em que vamos buscar 32 bits à memória e aplicamos a esses 32 bits as alterações (contração ou dilatação) horizontais apenas
+
+O resultado disto armazenamos numa RAM intermédia
+
+O passo seguinte é o
+Storing Alterations after Vertical Expansion (SAVE)
+em que vamos buscar à ram intermédia 3 palavras (a anterior, a actual e a seguinte), e aplicamos uma função lógica nela (OR se for dilatação, NAND se for erosão).
+
+
+Para as operações compostas, o primeiro SAVE é feito para a RAM intermédia 2 e o segundo HALF é feito da RAM intermédia 2.
+
+
+Para a detecção de fronteiras precisamos de acrescentar mais um bocadinho de lógica, mas segue o mesmo mecanismo...
