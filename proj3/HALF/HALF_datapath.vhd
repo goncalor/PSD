@@ -37,6 +37,17 @@ entity HALF_datapath is
 		e_acc_en : in STD_LOGIC;
 		d_acc_en : in STD_LOGIC;
 		clk : in STD_LOGIC;
+		height : in std_logic_vector(7 downto 0);
+		i_rs : in STD_LOGIC;
+		e_rs : in STD_LOGIC;
+		d_rs : in STD_LOGIC;
+		i_os : in STD_LOGIC_VECTOR(2 downto 0);
+		e_os : in STD_LOGIC_VECTOR(2 downto 0);
+		d_os : in STD_LOGIC_VECTOR(2 downto 0);
+		stop : out STD_LOGIC;
+		i_address : out STD_LOGIC_VECTOR(8 downto 0);
+		e_address : out STD_LOGIC_VECTOR(8 downto 0);
+		d_address : out STD_LOGIC_VECTOR(8 downto 0);
 		output_e : out  STD_LOGIC_VECTOR (31 downto 0);
 		output_d : out  STD_LOGIC_VECTOR (31 downto 0));
 end HALF_datapath;
@@ -78,6 +89,15 @@ architecture Behavioral of HALF_datapath is
 		Q : OUT std_logic_vector(nbits-1 downto 0));
 	END COMPONENT;
 	
+	COMPONENT addman
+	PORT(
+		reset : IN std_logic;
+		clk : IN std_logic;
+		offset : IN std_logic_vector(2 downto 0);          
+		address : OUT std_logic_vector(8 downto 0)
+		);
+	END COMPONENT;
+	
 	signal e_accum_in : std_logic_vector(31 downto 0); -- E block accumulator input
 	signal e_accum_out : std_logic_vector(31 downto 0); -- E block accumulator output
 	signal e_carry_a : std_logic; -- E Carry accumulated
@@ -106,6 +126,8 @@ architecture Behavioral of HALF_datapath is
 	signal d_reg_in : std_logic_vector(34 downto 0);
 	signal d_reg_out : std_logic_vector(34 downto 0);
 	
+	signal input_address : std_logic_vector(8 downto 0);
+	signal address_compare : std_logic_vector(7 downto 0);
 begin
 	
 	e_accum_in <= data_in when mux_e = '0' else d_dod;
@@ -186,6 +208,33 @@ begin
 	output_e <= e_data_out;
 	
 	output_d <= d_data_out when bypass='0' else d_accum_out;
+	
+	-- Address Managers:
+	
+	i_addman: addman PORT MAP(
+		reset => i_rs,
+		clk => clk,
+		offset => i_os,
+		address => input_address
+	);
+	i_address <= input_address;
+	
+	e_addman: addman PORT MAP(
+		reset => e_rs,
+		clk => clk,
+		offset => e_os,
+		address => e_address
+	);
+	
+	d_addman: addman PORT MAP(
+		reset => d_rs,
+		clk => clk,
+		offset => d_os,
+		address => d_address
+	);
+	
+	address_compare <= height xor ("0"& input_address(8 downto 2));
+	stop <= '1' when address_compare = X"00" else '0';
 
 end Behavioral;
 
