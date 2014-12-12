@@ -52,124 +52,124 @@ use IEEE.STD_LOGIC_ARITH.ALL;
 use IEEE.STD_LOGIC_UNSIGNED.ALL;
 
 entity BramComCtrl is
-    generic(
-           constant n: integer := 11);	    --Bram Address Bus size
+	generic(
+		constant n: integer := 11);	    --Bram Address Bus size
 
-    Port ( 
-     -- Interface to the EppCtrl
-           stbData : in std_logic;  -- Epp Data Strobe
-           ctrlWr : in std_logic;   -- Epp Address Strobe
-           selBram : in std_logic;  -- BramComCtrl select signal 
-           busEppIn : in std_logic_vector(7 downto 0);   
+	Port ( 
+		-- Interface to the EppCtrl
+		stbData : in std_logic;  -- Epp Data Strobe
+		ctrlWr : in std_logic;   -- Epp Address Strobe
+		selBram : in std_logic;  -- BramComCtrl select signal 
+		busEppIn : in std_logic_vector(7 downto 0);   
 			      --input data bus from EppCtrlAsync
-           busEppOut : out std_logic_vector(7 downto 0); 
+		busEppOut : out std_logic_vector(7 downto 0); 
 			      --output data bus for EppCtrlAsync
-           busEppAdrIn : in std_logic_vector(4 downto 0);
+		busEppAdrIn : in std_logic_vector(4 downto 0);
 			      -- lower bits of EppAddress register
-     -- Interface to Bram
-           busBramAdr: out std_logic_vector(n-1 downto 0);
-               -- BRAM address bus
-           busBramIn : in std_logic_vector(7 downto 0);   
+		-- Interface to Bram
+		busBramAdr: out std_logic_vector(n-1 downto 0);
+		-- BRAM address bus
+		busBramIn : in std_logic_vector(7 downto 0);   
 			      --input data bus from BRAM
-           busBramOut : out std_logic_vector(7 downto 0); 
+		busBramOut : out std_logic_vector(7 downto 0); 
 			      --output data bus for BRAM
-           ctlEnBram : out std_logic;   -- Bram Enable
-           ctlWeBram : out std_logic;   -- BRAM Write Enable
-           clkBram : out std_logic);    -- BRAM clock
+		ctlEnBram : out std_logic;   -- Bram Enable
+		ctlWeBram : out std_logic;   -- BRAM Write Enable
+		clkBram : out std_logic);    -- BRAM clock
 
 
 end BramComCtrl;
 
 architecture Behavioral of BramComCtrl is
 
-constant adrBramDB:  std_logic_vector(1 downto 0) := "00"; 
-     --  0 Memory control register (read/write)
-constant adrBramAdrL:     std_logic_vector(1 downto 0) := "01";
-     --  1 Memory address bits 0-7 (read/write)
-constant adrBramAdrH:     std_logic_vector(1 downto 0) := "10";
-     --  2 Memory address bits 8-15 (read/write)
+	constant adrBramDB:  std_logic_vector(1 downto 0) := "00"; 
+	--  0 Memory control register (read/write)
+	constant adrBramAdrL:     std_logic_vector(1 downto 0) := "01";
+	--  1 Memory address bits 0-7 (read/write)
+	constant adrBramAdrH:     std_logic_vector(1 downto 0) := "10";
+	--  2 Memory address bits 8-15 (read/write)
 
-constant cstGnd: std_logic_vector(16-n-1 downto 0) := (others => '0');
+	constant cstGnd: std_logic_vector(16-n-1 downto 0) := (others => '0');
 
-signal carryOutL: std_logic; -- carry for regBramAdr
-signal regBramAdr: std_logic_vector(n-1 downto 0):= (others => '0');
+	signal carryOutL: std_logic; -- carry for regBramAdr
+	signal regBramAdr: std_logic_vector(n-1 downto 0):= (others => '0');
 
 begin
 
--- reading Bram data or Address Register 
-  busEppOut <= 
-    x"00"                  -- prepared for "OR"-ing
-      when selBram = '0' else                -- BramComCtrl not selected
-    busBramIn              -- transparent from BRAM 
-      when busEppAdrIn(1 downto 0) = adrBramDB else     -- BRAM selected
-    regBramAdr(7 downto 0) -- lower address byte
-	   when busEppAdrIn(1 downto 0) = adrBramAdrL else --adr low selected
-    cstGnd & regBramAdr(n-1 downto 8) --higher addr bits with leading 0s
-	   when busEppAdrIn(1 downto 0) = adrBramAdrH else--adr high selected
-    x"00";                 -- prepared for "OR"-ing when other address
+	-- reading Bram data or Address Register 
+	busEppOut <= 
+			x"00" -- prepared for "OR"-ing
+		when selBram = '0' else -- BramComCtrl not selected
+			busBramIn -- transparent from BRAM 
+		when busEppAdrIn(1 downto 0) = adrBramDB else -- BRAM selected
+			regBramAdr(7 downto 0) -- lower address byte
+		when busEppAdrIn(1 downto 0) = adrBramAdrL else --adr low selected
+			cstGnd & regBramAdr(n-1 downto 8) --higher addr bits with leading 0s
+		when busEppAdrIn(1 downto 0) = adrBramAdrH else --adr high selected
+			x"00"; -- prepared for "OR"-ing when other address
 
-  -- BramAddress Register/Counter
-  process (stbData, ctrlWr, selBram)
-    begin
-      if selBram = '1' then      -- access to BramComCtrl
-        if stbData'event and stbData = '1' then 
-		                           -- stbData rising edge (end)
-          if busEppAdrIn(1 downto 0) = adrBramDB then  
-			                        -- automatic memory cycle
-            regBramAdr(7 downto 0) <= regBramAdr(7 downto 0) + 1; 
-				                     -- increment address 
-          elsif ctrlWr = '0' and -- write
-			       busEppAdrIn(1 downto 0) = adrBramAdrL then  
-					                  -- to regBramAdr Low
-            regBramAdr(7 downto 0) <= busEppIn;     
-				                     -- update MemAdrL content
-          end if;
-        end if;
-      end if;
+	-- BramAddress Register/Counter
+	process (stbData, ctrlWr, selBram)
+	begin
+		if selBram = '1' then      -- access to BramComCtrl
+			if stbData'event and stbData = '1' then 
+				-- stbData rising edge (end)
+				if busEppAdrIn(1 downto 0) = adrBramDB then  
+					-- automatic memory cycle
+					regBramAdr(7 downto 0) <= regBramAdr(7 downto 0) + 1; 
+					-- increment address 
+				elsif ctrlWr = '0' and -- write
+				busEppAdrIn(1 downto 0) = adrBramAdrL then  
+					-- to regBramAdr Low
+					regBramAdr(7 downto 0) <= busEppIn;     
+					-- update MemAdrL content
+				end if;
+			end if;
+		end if;
 
-      if selBram = '1' then       -- access to BramComCtrl
-        if stbData'event and stbData = '1' then 
-		                            -- stbData rising edge (end)
-          if busEppAdrIn(1 downto 0) = adrBramDB and  
-			                         -- automatic memory cycle
-             carryOutL = '1' then -- lower byte rollover
-            regBramAdr(n-1 downto 8) <= regBramAdr(n-1 downto 8) + 1; 
-				                      -- inc. address 
-          elsif ctrlWr = '0' and  -- write
-			       busEppAdrIn(1 downto 0) = adrBramAdrH then  
-					                   -- to regBramAdr Low
-            regBramAdr(n-1 downto 8) <= busEppIn(n-8-1 downto 0);
-                                  -- update MemAdrL content
-          end if;
-        end if;
-      end if;
+		if selBram = '1' then       -- access to BramComCtrl
+			if stbData'event and stbData = '1' then 
+			-- stbData rising edge (end)
+				if busEppAdrIn(1 downto 0) = adrBramDB and  
+				-- automatic memory cycle
+				carryOutL = '1' then -- lower byte rollover
+					regBramAdr(n-1 downto 8) <= regBramAdr(n-1 downto 8) + 1; 
+					-- inc. address 
+				elsif ctrlWr = '0' and  -- write
+				busEppAdrIn(1 downto 0) = adrBramAdrH then  
+					-- to regBramAdr Low
+					regBramAdr(n-1 downto 8) <= busEppIn(n-8-1 downto 0);
+					-- update MemAdrL content
+				end if;
+			end if;
+		end if;
 
-  end process;
+	end process;
 
-    carryOutL <= '1' when regBramAdr(7 downto 0) = x"ff" else 
-                 '0';             -- Lower byte carry out
+	carryOutL <= '1' when regBramAdr(7 downto 0) = x"ff" else '0';
+	-- Lower byte carry out
 
--- BRAM interface
-  -- Bram clock
-clkBram <= not stbData;
+	-- BRAM interface
+	-- Bram clock
+	clkBram <= not stbData;
 
-  -- Bram En
-ctlEnBram <= 
-   '1' when selBram = '1' and   -- BramComCtrl selected
-            busEppAdrIn(1 downto 0) = adrBramDB else  --Bram Data access
-   '0';
+	-- Bram En
+	ctlEnBram <= 
+		'1' when selBram = '1' and   -- BramComCtrl selected
+		busEppAdrIn(1 downto 0) = adrBramDB else  --Bram Data access
+		'0';
 
-  -- Bram We
-ctlWeBram <= 
-   '1' when selBram = '1' and   -- BramComCtrl selected
-            ctrlWr = '0' and    -- write cycle
-	         busEppAdrIn(1 downto 0) = adrBramDB else  --Bram Data access
-   '0';
-  -- Bram DB
-busBramOut <= busEppIn;
+	-- Bram We
+	ctlWeBram <= 
+		'1' when selBram = '1' and   -- BramComCtrl selected
+		ctrlWr = '0' and    -- write cycle
+		busEppAdrIn(1 downto 0) = adrBramDB else  --Bram Data access
+		'0';
+	-- Bram DB
+	busBramOut <= busEppIn;
 
-  -- Bram Adr
-busBramAdr <= regBramAdr;
+	-- Bram Adr
+	busBramAdr <= regBramAdr;
 
 
 end Behavioral;

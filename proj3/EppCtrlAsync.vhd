@@ -48,25 +48,25 @@ use IEEE.STD_LOGIC_ARITH.ALL;
 use IEEE.STD_LOGIC_UNSIGNED.ALL;
 
 entity EppCtrlAsync is
-    Port (
--- Epp-like bus signals
-      EppAstb: in std_logic;        -- Address strobe
-      EppDstb: in std_logic;        -- Data strobe
-      EppWr  : in std_logic;        -- Port write signal
-      EppDB  : inout std_logic_vector(7 downto 0); -- port data bus
-      EppWait: out std_logic;        -- Port wait signal
--- select signals
-      sel0, sel2, sel4, sel6: inout std_logic; -- sel signals
-      sel8, selA, selC, selE: inout std_logic; -- sel signals
--- EppAdr out for extended selection 
-      outEppAdr: out std_logic_vector (4 downto 0); -- lower Epp address
--- data strobe
-      stbData: out std_logic;  -- data strobe for clients
-      ctlrWr: out std_logic;   -- write control signal for clients
--- application busses
-      busIn: in std_logic_vector(7 downto 0);  -- data from clients 
-      busOut: out std_logic_vector(7 downto 0) -- data to clients
-         );
+	Port (
+		-- Epp-like bus signals
+		EppAstb: in std_logic;        -- Address strobe
+		EppDstb: in std_logic;        -- Data strobe
+		EppWr  : in std_logic;        -- Port write signal
+		EppDB  : inout std_logic_vector(7 downto 0); -- port data bus
+		EppWait: out std_logic;        -- Port wait signal
+		-- select signals
+		sel0, sel2, sel4, sel6: inout std_logic; -- sel signals
+		sel8, selA, selC, selE: inout std_logic; -- sel signals
+		-- EppAdr out for extended selection 
+		outEppAdr: out std_logic_vector (4 downto 0); -- lower Epp address
+		-- data strobe
+		stbData: out std_logic;  -- data strobe for clients
+		ctlrWr: out std_logic;   -- write control signal for clients
+		-- application busses
+		busIn: in std_logic_vector(7 downto 0);  -- data from clients 
+		busOut: out std_logic_vector(7 downto 0) -- data to clients
+	);
 end EppCtrlAsync;
 
 architecture Behavioral of EppCtrlAsync is
@@ -75,9 +75,9 @@ architecture Behavioral of EppCtrlAsync is
 -- Constant and Signal Declarations
 ------------------------------------------------------------------------
 -- Epp address Register
-signal regEppAdr: std_logic_vector(7 downto 0):=x"00"; -- Epp address
+	signal regEppAdr: std_logic_vector(7 downto 0):=x"00"; -- Epp address
 
-signal busEppInternal: std_logic_vector(7 downto 0);
+	signal busEppInternal: std_logic_vector(7 downto 0);
  
 ------------------------------------------------------------------------
 -- Module Implementation
@@ -85,53 +85,53 @@ signal busEppInternal: std_logic_vector(7 downto 0);
     
 begin
 
--- Map basic select and control signals for clients
-  outEppAdr <= regEppAdr(4 downto 0);
-  stbData <= EppDstb;
-  ctlrWr <= EppWr;
+	-- Map basic select and control signals for clients
+	outEppAdr <= regEppAdr(4 downto 0);
+	stbData <= EppDstb;
+	ctlrWr <= EppWr;
 
--- Map output data bus for clients
-  busOut <= EppDB;
+	-- Map output data bus for clients
+	busOut <= EppDB;
 
--- register select signals for clients
-  sel0 <= '1' when regEppAdr(7 downto 5) = "000" else -- Epp address 0x, 1x 
-          '0';
-  sel2 <= '1' when regEppAdr(7 downto 5) = "001" else -- Epp address 2x, 3x 
-          '0';
-  sel4 <= '1' when regEppAdr(7 downto 5) = "010" else -- Epp address 4x, 5x 
-          '0';
-  sel6 <= '1' when regEppAdr(7 downto 5) = "011" else -- Epp address 6x, 7x
-          '0';
-  sel8 <= '1' when regEppAdr(7 downto 5) = "100" else -- Epp address 8x, 9x
-          '0';
-  selA <= '1' when regEppAdr(7 downto 5) = "101" else -- Epp address Ax, Bx
-          '0';
-  selC <= '1' when regEppAdr(7 downto 5) = "110" else -- Epp address Cx, Dx
-          '0';
-  selE <= '1' when regEppAdr(7 downto 5) = "111" else -- Epp address Ex, Fx
-          '0';    
--- Epp signals
-   -- Port signals
-   EppWait <= '1' when EppAstb = '0' or EppDstb = '0' else '0';
-             -- asynchronous Wait asserting (maximal Epp speed)
+	-- register select signals for clients
+	sel0 <= '1' when regEppAdr(7 downto 5) = "000" else -- Epp address 0x, 1x 
+		'0';
+	sel2 <= '1' when regEppAdr(7 downto 5) = "001" else -- Epp address 2x, 3x 
+		'0';
+	sel4 <= '1' when regEppAdr(7 downto 5) = "010" else -- Epp address 4x, 5x 
+		'0';
+	sel6 <= '1' when regEppAdr(7 downto 5) = "011" else -- Epp address 6x, 7x
+		'0';
+	sel8 <= '1' when regEppAdr(7 downto 5) = "100" else -- Epp address 8x, 9x
+		'0';
+	selA <= '1' when regEppAdr(7 downto 5) = "101" else -- Epp address Ax, Bx
+		'0';
+	selC <= '1' when regEppAdr(7 downto 5) = "110" else -- Epp address Cx, Dx
+		'0';
+	selE <= '1' when regEppAdr(7 downto 5) = "111" else -- Epp address Ex, Fx
+		'0';    
+	-- Epp signals
+	-- Port signals
+	EppWait <= '1' when EppAstb = '0' or EppDstb = '0' else '0';
+	-- asynchronous Wait asserting (maximal Epp speed)
 
-   -- three state for Epp data bus
-   EppDB <= busEppInternal when (EppWr = '1') else "ZZZZZZZZ";
+	-- three state for Epp data bus
+	EppDB <= busEppInternal when (EppWr = '1') else "ZZZZZZZZ";
 
-   -- combining client input data bus with reading regEppAdr
-   busEppInternal <= 
-       regEppAdr when EppAstb = '0' else
-       busIn;
+	-- combining client input data bus with reading regEppAdr
+	busEppInternal <= 
+	regEppAdr when EppAstb = '0' else
+	busIn;
 
-  -- EPP Address register
-  process (EppAstb)
-    begin
-      if EppAstb = '0' and EppAstb'Event then  -- EppAstb falling edge
-        if EppWr = '0' then            -- Epp Address write cycle
-          regEppAdr <= EppDB;          -- Epp Address register update
-        end if;
-      end if;
-    end process;
+	-- EPP Address register
+	process (EppAstb)
+	begin
+		if EppAstb = '0' and EppAstb'Event then  -- EppAstb falling edge
+			if EppWr = '0' then            -- Epp Address write cycle
+				regEppAdr <= EppDB;          -- Epp Address register update
+			end if;
+		end if;
+	end process;
 
 end Behavioral;
 
