@@ -6,7 +6,7 @@ em que vamos buscar 32 bits à memória e aplicamos a esses 32 bits as alteraç�
 O resultado disto armazenamos numa RAM intermédia
 
 O passo seguinte é o
-Storing Alterations after Vertical Expansion (SAVE)
+Storing Alterations after Vertical Exchange (SAVE)
 em que vamos buscar à ram intermédia 3 palavras (a anterior, a actual e a seguinte), e aplicamos uma função lógica nela (OR se for dilatação, NAND se for erosão).
 
 
