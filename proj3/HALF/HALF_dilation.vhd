@@ -41,7 +41,7 @@ architecture Behavioral of HALF_dilation is
 
 begin
 
-ANDGENERATE:
+ORGENERATE:
 for i in 1 to 30 generate
 	begin
 		data_out(i) <= data_in(i-1) or data_in(i) or data_in(i+1);
