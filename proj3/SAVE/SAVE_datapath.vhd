@@ -31,7 +31,8 @@ entity SAVE_datapath is
 	Port( clk : in STD_LOGIC;
 		orw_old : in STD_LOGIC;
 		orw_new : in STD_LOGIC;
-		ort : in STD_LOGIC;
+		m_ort : in STD_LOGIC;
+		c_ort : in STD_LOGIC;
 		e_is : in STD_LOGIC;
 		d_is : in STD_LOGIC;
 		cfs : in STD_LOGIC;
@@ -91,7 +92,8 @@ architecture Behavioral of SAVE_datapath is
 		);
 	END COMPONENT;
 	
-	signal override : std_logic_vector(31 downto 0);
+	signal m_override : std_logic_vector(31 downto 0);
+	signal c_override : std_logic_vector(31 downto 0);
 	signal su_m_old : std_logic_vector(31 downto 0);
 	signal su_m_cur : std_logic_vector(31 downto 0);
 	signal su_m_new : std_logic_vector(31 downto 0);
@@ -137,11 +139,12 @@ begin
 		out_2 => su_c_old
 	);
 	
-	override <= X"FFFFFFFF" when ort = '1' else X"00000000";
-	m_old <= override when orw_old = '1' else su_m_old;
-	m_new <= override when orw_new = '1' else su_m_new;
-	c_old <= override when orw_old = '1' else su_c_old;
-	c_new <= override when orw_new = '1' else su_c_new;
+	m_override <= X"FFFFFFFF" when m_ort = '1' else X"00000000";
+	c_override <= X"FFFFFFFF" when c_ort = '1' else X"00000000";
+	m_old <= m_override when orw_old = '1' else su_m_old;
+	m_new <= m_override when orw_new = '1' else su_m_new;
+	c_old <= c_override when orw_old = '1' else su_c_old;
+	c_new <= c_override when orw_new = '1' else su_c_new;
 	
 	e_in_new <= c_new when e_is = '1' else m_new;
 	e_in_old <= c_old when e_is = '1' else m_old;
