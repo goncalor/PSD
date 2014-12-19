@@ -39,12 +39,9 @@ entity SAVE_datapath is
 		cs : in STD_LOGIC;
 		ofs : in STD_LOGIC;
 		os : in STD_LOGIC;
-		o_rst : in STD_LOGIC;
-		o_offset : in STD_LOGIC_VECTOR(2 downto 0);
 		data_in : in STD_LOGIC_VECTOR(31 downto 0);
 		original : in STD_LOGIC_VECTOR(31 downto 0);
 		offset: in STD_LOGIC_VECTOR(1 downto 0);
-		o_address: out STD_LOGIC_VECTOR(8 downto 0);
 		output: out STD_LOGIC_VECTOR(31 downto 0)
 	);
 end SAVE_datapath;
@@ -81,14 +78,6 @@ architecture Behavioral of SAVE_datapath is
 		input_a : IN std_logic_vector(31 downto 0);
 		input_b : IN std_logic_vector(31 downto 0);          
 		output : OUT std_logic_vector(31 downto 0)
-		);
-	END COMPONENT;
-	COMPONENT addman
-	PORT(
-		reset : IN std_logic;
-		clk : IN std_logic;
-		offset : IN std_logic_vector(2 downto 0);          
-		address : OUT std_logic_vector(8 downto 0)
 		);
 	END COMPONENT;
 	
@@ -179,13 +168,6 @@ begin
 	);
 	
 	output <= s_out when os = '1' else f_out;
-	
-	o_addman: addman PORT MAP(
-		reset => o_rst,
-		clk => clk,
-		offset => o_offset,
-		address => o_address
-	);
 
 end Behavioral;
 

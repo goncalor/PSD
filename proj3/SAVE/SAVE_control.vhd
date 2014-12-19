@@ -33,7 +33,6 @@ entity SAVE_control is
 		clk : in  STD_LOGIC;
 		rst : in  STD_LOGIC;
 		final : in STD_LOGIC;
-		ww : in STD_LOGIC_VECTOR (1 downto 0);
 		op_type : in STD_LOGIC_VECTOR (2 downto 0);
 		
 		orw_old : out STD_LOGIC; -- Overwrite old word (for first words)
@@ -45,9 +44,7 @@ entity SAVE_control is
 		cfs : out STD_LOGIC; -- Composite Operation Function block select
 		cs : out STD_LOGIC; -- Composite block input select
 		ofs : out STD_LOGIC; -- Output function select
-		os : out STD_LOGIC; -- Output select
-		o_en : out STD_LOGIC; -- Write enable for output RAM
-		o_rst : out STD_LOGIC; -- Output Memory Address Manager reset offset
+		os : out STD_LOGIC); -- Output select
 end SAVE_control;
 
 architecture Behavioral of SAVE_control is
@@ -63,12 +60,12 @@ SYNC_PROC: process (clk)
 				state <= sm_idle;
 			else
 				state <= next_state;
-			end if;        
+			end if;
 		end if;
 	end process;
 
 	--MOORE State-Machine - Outputs based on state only
-	OUTPUT_DECODE: process (state)
+	OUTPUT_DECODE: process (state, op_type, final)
 	begin
 		case (state) is
 			when sm_idle =>
@@ -81,8 +78,6 @@ SYNC_PROC: process (clk)
 				cs <= 'X';
 				ofs <= 'X';
 				os <= 'X';
-				o_en <= '0';
-				o_rst <= '1';
 			when first_line =>
 				orw_old <= '1';
 				case (op_type) is
@@ -127,13 +122,11 @@ SYNC_PROC: process (clk)
 						c_ort <= 'X';
 						e_is <= '0';
 						d_is <= 'X';
-						cfs <= 'x';
+						cfs <= 'X';
 						cs <= '0';
 						ofs <= 'X';
 						os <= '1';
 				end case;
-				o_en <= '1';
-				o_rst <= '0';
 			when normal =>
 				orw_old <= '0';
 				case (op_type) is
@@ -178,13 +171,11 @@ SYNC_PROC: process (clk)
 						c_ort <= 'X';
 						e_is <= '0';
 						d_is <= 'X';
-						cfs <= 'x';
+						cfs <= 'X';
 						cs <= '0';
 						ofs <= 'X';
 						os <= '1';
 				end case;
-				o_en <= '1';
-				o_rst <= '0';
 			when others =>
 				orw_old <= 'X';
 				m_ort <= 'X';
@@ -195,11 +186,14 @@ SYNC_PROC: process (clk)
 				cs <= 'X';
 				ofs <= 'X';
 				os <= 'X';
-				o_en <= '0';
-				o_rst <= '0';
 		end case;
+		if (final = '1') then
+			orw_new <= '1';
+		else
+			orw_new <= '0';
+		end if;
 	end process;
-
+	
 	NEXT_STATE_DECODE: process (state, start, stop)
 	begin
 	--declare default state for next_state to avoid latches
@@ -207,18 +201,24 @@ SYNC_PROC: process (clk)
 		--insert statements to decode next_state
 		--below is a simple example
 		case (state) is
-			when st1_<name> =>
-				if <input_1> = '1' then
-					next_state <= st2_<name>;
+			when sm_idle =>
+				if start = '1' then
+					next_state <= first_line;
 				end if;
-			when st2_<name> =>
-				if <input_2> = '1' then
-					next_state <= st3_<name>;
+			when first_line =>
+				next_state <= normal;
+				if stop = '1' then
+					next_state <= sm_stop;
 				end if;
-			when st3_<name> =>
-				next_state <= st1_<name>;
+			when normal =>
+				next_state <= normal;
+				if stop = '1' then
+					next_state <= sm_stop;
+				end if;
 			when others =>
-				next_state <= st1_<name>;
+				if start = '0' then
+					next_state <= sm_idle;
+				end if;
 		end case;      
 	end process;
 end Behavioral;
