@@ -103,11 +103,12 @@ architecture Behavioral of SAVE_circuit is
 	signal start_3 : std_logic;
 	signal start_4 : std_logic;
 	signal start_5 : std_logic;
+	signal start_6 : std_logic;
 begin
 	
 	SAVE_FSM: SAVE_control PORT MAP(
 		stop => stop_5,
-		start => start_5,
+		start => start_6,
 		clk => clk,
 		rst => rst,
 		op_type => op_type,
@@ -151,6 +152,7 @@ begin
 					stop_3 <= stop_2;
 					stop_2 <= stop_1;
 					stop_1 <= stop;
+					start_6 <= start_5;
 					start_5 <= start_4;
 					start_4 <= start_3;
 					start_3 <= start_2;
@@ -162,6 +164,7 @@ begin
 					stop_3 <= stop_1;
 					stop_2 <= stop;
 					stop_1 <= stop;
+					start_6 <= start_5;
 					start_5 <= start_4;
 					start_4 <= start_2;
 					start_3 <= start_1;
@@ -173,6 +176,7 @@ begin
 					stop_3 <= stop;
 					stop_2 <= stop;
 					stop_1 <= stop;
+					start_6 <= start_5;
 					start_5 <= start_4;
 					start_4 <= start_1;
 					start_3 <= start;
@@ -184,6 +188,7 @@ begin
 					stop_3 <= stop;
 					stop_2 <= stop;
 					stop_1 <= stop;
+					start_6 <= start_5;
 					start_5 <= start_4;
 					start_4 <= start;
 					start_3 <= start;

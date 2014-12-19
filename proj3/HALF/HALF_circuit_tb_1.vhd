@@ -122,11 +122,11 @@ BEGIN
 	
 	ww <= "10" after 0 * clk_period; -- 2 words wide
 	
-	op_type <= "001" after 0 * clk_period; -- Dilation
+	op_type <= "000" after 0 * clk_period; -- Dilation
 	
 	height <= "00100000" after 0 * clk_period; -- 3 bits high image
 	
-	out_sel <= '1' after 0 * clk_period; -- Because it's a Dilation
+	out_sel <= '0' after 0 * clk_period; -- Because it's a Dilation
 	
 	data_in <= "11111111111111110000000000000000" after 2*clk_period,
 		"11111111111111110000000000000000" after 3*clk_period,
