@@ -32,11 +32,9 @@ entity SAVE_control is
 		start : in  STD_LOGIC;
 		clk : in  STD_LOGIC;
 		rst : in  STD_LOGIC;
-		final : in STD_LOGIC;
 		op_type : in STD_LOGIC_VECTOR (2 downto 0);
 		
 		orw_old : out STD_LOGIC; -- Overwrite old word (for first words)
-		orw_new : out STD_LOGIC; -- Overwrite new word (for last words)
 		m_ort : out STD_LOGIC; -- Overwrite type (if operation is dilation, 0, if erosion, 1, for instance)
 		c_ort : out STD_LOGIC;
 		e_is : out STD_LOGIC; -- E input select
@@ -65,7 +63,7 @@ SYNC_PROC: process (clk)
 	end process;
 
 	--MOORE State-Machine - Outputs based on state only
-	OUTPUT_DECODE: process (state, op_type, final)
+	OUTPUT_DECODE: process (state, op_type)
 	begin
 		case (state) is
 			when sm_idle =>
@@ -187,11 +185,6 @@ SYNC_PROC: process (clk)
 				ofs <= 'X';
 				os <= 'X';
 		end case;
-		if (final = '1') then
-			orw_new <= '1';
-		else
-			orw_new <= '0';
-		end if;
 	end process;
 	
 	NEXT_STATE_DECODE: process (state, start, stop)

@@ -30,8 +30,14 @@ use IEEE.STD_LOGIC_UNSIGNED.ALL;
 entity SAVE_circuit is
 	PORT(
 		clk : IN STD_LOGIC;
+		rst : IN STD_LOGIC;
 		stop : IN STD_LOGIC;
+		start : IN STD_LOGIC;
+		op_type : IN std_logic_vector(2 downto 0);  
 		data_in : IN std_logic_vector(31 downto 0);
+		original : IN std_logic_vector(31 downto 0);
+		offset : IN std_logic_vector(1 downto 0);
+		output : OUT std_logic_vector(31 downto 0)
 	);
 end SAVE_circuit;
 
@@ -42,10 +48,8 @@ architecture Behavioral of SAVE_circuit is
 		start : IN std_logic;
 		clk : IN std_logic;
 		rst : IN std_logic;
-		final : IN std_logic;
 		op_type : IN std_logic_vector(2 downto 0);          
 		orw_old : OUT std_logic;
-		orw_new : OUT std_logic;
 		m_ort : OUT std_logic;
 		c_ort : OUT std_logic;
 		e_is : OUT std_logic;
@@ -71,46 +75,90 @@ architecture Behavioral of SAVE_circuit is
 		os : IN std_logic;
 		data_in : IN std_logic_vector(31 downto 0);
 		original : IN std_logic_vector(31 downto 0);
-		offset : IN std_logic_vector(1 downto 0);          
+		offset : IN std_logic_vector(1 downto 0);
 		output : OUT std_logic_vector(31 downto 0)
 		);
 	END COMPONENT;
+	
+	signal orw_old : std_logic;
+	signal m_ort : std_logic;
+	signal c_ort : std_logic;
+	signal e_is : std_logic;
+	signal d_is : std_logic;
+	signal cfs : std_logic;
+	signal cs : std_logic;
+	signal ofs : std_logic;
+	signal os : std_logic;
+	
+	signal stop_1 : std_logic;
+	signal stop_2 : std_logic;
+	signal stop_3 : std_logic;
+	signal stop_4 : std_logic;
+	
 begin
-
+	
 	SAVE_FSM: SAVE_control PORT MAP(
-		stop => ,
-		start => ,
+		stop => stop_4,
+		start => start,
 		clk => clk,
-		rst => ,
-		final => ,
-		op_type => ,
-		orw_old => ,
-		orw_new => ,
-		m_ort => ,
-		c_ort => ,
-		e_is => ,
-		d_is => ,
-		cfs => ,
-		cs => ,
-		ofs => ,
-		os => 
+		rst => rst,
+		op_type => op_type,
+		orw_old => orw_old,
+		m_ort => m_ort,
+		c_ort => c_ort,
+		e_is => e_is,
+		d_is => d_is,
+		cfs => cfs,
+		cs => cs,
+		ofs => ofs,
+		os => os
 	);
 	SAVE_D: SAVE_datapath PORT MAP(
 		clk => clk,
-		orw_old => ,
-		orw_new => ,
-		m_ort => ,
-		c_ort => ,
-		e_is => ,
-		d_is => ,
-		cfs => ,
-		cs => ,
-		ofs => ,
-		os => ,
-		data_in => ,
-		original => ,
-		offset => ,
-		output => 
+		orw_old => orw_old,
+		orw_new => stop_1,
+		m_ort => m_ort,
+		c_ort => c_ort,
+		e_is => e_is,
+		d_is => d_is,
+		cfs => cfs,
+		cs => cs,
+		ofs => ofs,
+		os => os,
+		data_in => data_in,
+		original => original,
+		offset => offset,
+		output => output
 	);
+	
+	-- Registers:
+	REG_PROC: process (clk)
+	begin
+		if (clk'event and clk = '1') then
+			case (offset) is
+				when "00" =>
+					stop_4 <= stop_3;
+					stop_3 <= stop_2;
+					stop_2 <= stop_1;
+					stop_1 <= stop;
+				when "01" =>
+					stop_4 <= stop_2;
+					stop_3 <= stop_1;
+					stop_2 <= stop;
+					stop_1 <= stop;
+				when "10" =>
+					stop_4 <= stop_1;
+					stop_3 <= stop;
+					stop_2 <= stop;
+					stop_1 <= stop;
+				when others =>
+					stop_4 <= stop;
+					stop_3 <= stop;
+					stop_2 <= stop;
+					stop_1 <= stop;
+			end case;
+		end if;
+	end process;
+	
 end Behavioral;
 
