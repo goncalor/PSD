@@ -31,6 +31,7 @@ entity padder_datapath is
 	Port ( data_in : in  STD_LOGIC_VECTOR (31 downto 0);
 			width : in  STD_LOGIC_VECTOR (5 downto 0);
 			en_wdec : in  STD_LOGIC;
+			pass_data : in STD_LOGIC;
 			savebit_en : in  STD_LOGIC;
 			clk : in  STD_LOGIC;
 			data_out : out  STD_LOGIC_VECTOR (31 downto 0));
@@ -41,7 +42,8 @@ architecture Behavioral of padder_datapath is
 	COMPONENT wdec
 	PORT(
 		width_minusone : IN std_logic_vector(4 downto 0);
-		en : IN std_logic;          
+		en : IN std_logic;
+		pass_data: in  std_logic;
 		wdec_out : OUT std_logic_vector(31 downto 0)
 		);
 	END COMPONENT;
@@ -61,6 +63,7 @@ begin
 	Inst_wdec: wdec PORT MAP(
 		width_minusone => width_minusone,
 		en => en_wdec,
+		pass_data => pass_data,
 		wdec_out => wdec_out
 	);
 

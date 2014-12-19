@@ -29,18 +29,19 @@ use IEEE.STD_LOGIC_UNSIGNED.ALL;
 
 entity wdec is
 	Port ( width_minusone : in  STD_LOGIC_VECTOR (4 downto 0);
-		en : in  STD_LOGIC;
+		pass_data: in  STD_LOGIC;
+		en: in  STD_LOGIC;
 		wdec_out : out  STD_LOGIC_VECTOR (31 downto 0));
 end wdec;
 
 architecture Behavioral of wdec is
 
 	signal before_en : STD_LOGIC_VECTOR (31 downto 0);
-
+	signal pass : STD_LOGIC_VECTOR (31 downto 0);
 begin
-	with width_minusone select
 
-	before_en <= X"80000000" when "00000",
+	with width_minusone select
+		before_en <= X"80000000" when "00000",
 				X"C0000000" when "00001",
 				X"E0000000" when "00010",
 				X"F0000000" when "00011",
@@ -73,7 +74,8 @@ begin
 				X"FFFFFFFE" when "11110",
 				X"FFFFFFFF" when others;
 
-	wdec_out <= before_en when en = '1' else X"FFFFFFFF";
-		
+	pass <= X"FFFFFFFF" when pass_data = '1' else X"00000000";
+	wdec_out <= before_en when en = '1' else pass;
+
 end Behavioral;
 
