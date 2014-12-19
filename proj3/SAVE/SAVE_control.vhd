@@ -42,7 +42,8 @@ entity SAVE_control is
 		cfs : out STD_LOGIC; -- Composite Operation Function block select
 		cs : out STD_LOGIC; -- Composite block input select
 		ofs : out STD_LOGIC; -- Output function select
-		os : out STD_LOGIC); -- Output select
+		os : out STD_LOGIC;
+		valid : out STD_LOGIC); -- Output select
 end SAVE_control;
 
 architecture Behavioral of SAVE_control is
@@ -76,8 +77,10 @@ SYNC_PROC: process (clk)
 				cs <= 'X';
 				ofs <= 'X';
 				os <= 'X';
+				valid <= '0';
 			when first_line =>
 				orw_old <= '1';
+				valid <= '1';
 				case (op_type) is
 					when "000" => -- Erosion
 						m_ort <= '1';
@@ -127,6 +130,7 @@ SYNC_PROC: process (clk)
 				end case;
 			when normal =>
 				orw_old <= '0';
+				valid <= '1';
 				case (op_type) is
 					when "000" => -- Erosion
 						m_ort <= '1';
@@ -184,6 +188,7 @@ SYNC_PROC: process (clk)
 				cs <= 'X';
 				ofs <= 'X';
 				os <= 'X';
+				valid <= '0';
 		end case;
 	end process;
 	

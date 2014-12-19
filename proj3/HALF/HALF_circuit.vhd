@@ -36,6 +36,7 @@ entity HALF_circuit is
 		data_in : in  STD_LOGIC_VECTOR (31 downto 0);
 		height : in std_logic_vector(7 downto 0);
 		out_sel : in STD_LOGIC;
+		stop : out STD_LOGIC;
 		i_en : out  STD_LOGIC;
 		f_os : out  STD_LOGIC_VECTOR (1 downto 0);
 		i_address : out STD_LOGIC_VECTOR(8 downto 0);
@@ -99,7 +100,7 @@ architecture Behavioral of HALF_circuit is
 	signal d_delay : STD_LOGIC;
 	signal i_rs : STD_LOGIC;
 	signal i_os : STD_LOGIC_VECTOR(2 downto 0);
-	signal stop : STD_LOGIC;
+	signal stop_s : STD_LOGIC;
 	
 	signal f_os_out : STD_LOGIC_VECTOR (1 downto 0);
 	signal f_os_1 : STD_LOGIC_VECTOR (1 downto 0);
@@ -123,7 +124,7 @@ begin
 		d_delay => d_delay,
 		i_rs => i_rs,
 		i_os => i_os,
-		stop => stop,
+		stop => stop_s,
 		i_address => i_address, --to outside
 		output_func => output_func, --to outside
 		output_orig => output_orig --to outside
@@ -142,7 +143,7 @@ begin
 	f_os <= f_os_2 when f_os_s = '1' else f_os_1;
 	
 	HALF_FSM: HALF_control PORT MAP(
-		stop => stop,
+		stop => stop_s,
 		start => start, --from outside
 		clk => clk, --from outside
 		rst => rst, --from outside
@@ -161,6 +162,8 @@ begin
 		i_os => i_os,
 		f_os => f_os_out --to delay
 	);
-
+	
+	stop <= stop_s;
+	
 end Behavioral;
 

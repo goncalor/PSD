@@ -37,6 +37,7 @@ entity SAVE_circuit is
 		data_in : IN std_logic_vector(31 downto 0);
 		original : IN std_logic_vector(31 downto 0);
 		offset : IN std_logic_vector(1 downto 0);
+		valid : OUT std_logic;
 		output : OUT std_logic_vector(31 downto 0)
 	);
 end SAVE_circuit;
@@ -57,7 +58,8 @@ architecture Behavioral of SAVE_circuit is
 		cfs : OUT std_logic;
 		cs : OUT std_logic;
 		ofs : OUT std_logic;
-		os : OUT std_logic
+		os : OUT std_logic;
+		valid : OUT std_logic
 		);
 	END COMPONENT;
 	COMPONENT SAVE_datapath
@@ -94,12 +96,18 @@ architecture Behavioral of SAVE_circuit is
 	signal stop_2 : std_logic;
 	signal stop_3 : std_logic;
 	signal stop_4 : std_logic;
+	signal stop_5 : std_logic;
 	
+	signal start_1 : std_logic;
+	signal start_2 : std_logic;
+	signal start_3 : std_logic;
+	signal start_4 : std_logic;
+	signal start_5 : std_logic;
 begin
 	
 	SAVE_FSM: SAVE_control PORT MAP(
-		stop => stop_4,
-		start => start,
+		stop => stop_5,
+		start => start_5,
 		clk => clk,
 		rst => rst,
 		op_type => op_type,
@@ -111,7 +119,8 @@ begin
 		cfs => cfs,
 		cs => cs,
 		ofs => ofs,
-		os => os
+		os => os,
+		valid => valid
 	);
 	SAVE_D: SAVE_datapath PORT MAP(
 		clk => clk,
@@ -137,25 +146,49 @@ begin
 		if (clk'event and clk = '1') then
 			case (offset) is
 				when "00" =>
+					stop_5 <= stop_4;
 					stop_4 <= stop_3;
 					stop_3 <= stop_2;
 					stop_2 <= stop_1;
 					stop_1 <= stop;
+					start_5 <= start_4;
+					start_4 <= start_3;
+					start_3 <= start_2;
+					start_2 <= start_1;
+					start_1 <= start;
 				when "01" =>
+					stop_5 <= stop_4;
 					stop_4 <= stop_2;
 					stop_3 <= stop_1;
 					stop_2 <= stop;
 					stop_1 <= stop;
+					start_5 <= start_4;
+					start_4 <= start_2;
+					start_3 <= start_1;
+					start_2 <= start;
+					start_1 <= start;
 				when "10" =>
+					stop_5 <= stop_4;
 					stop_4 <= stop_1;
 					stop_3 <= stop;
 					stop_2 <= stop;
 					stop_1 <= stop;
+					start_5 <= start_4;
+					start_4 <= start_1;
+					start_3 <= start;
+					start_2 <= start;
+					start_1 <= start;
 				when others =>
+					stop_5 <= stop_4;
 					stop_4 <= stop;
 					stop_3 <= stop;
 					stop_2 <= stop;
 					stop_1 <= stop;
+					start_5 <= start_4;
+					start_4 <= start;
+					start_3 <= start;
+					start_2 <= start;
+					start_1 <= start;
 			end case;
 		end if;
 	end process;

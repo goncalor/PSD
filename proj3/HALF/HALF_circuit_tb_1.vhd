@@ -124,7 +124,7 @@ BEGIN
 	
 	op_type <= "001" after 0 * clk_period; -- Dilation
 	
-	height <= "00000011" after 0 * clk_period; -- 3 bits high image
+	height <= "00100000" after 0 * clk_period; -- 3 bits high image
 	
 	out_sel <= '1' after 0 * clk_period; -- Because it's a Dilation
 	

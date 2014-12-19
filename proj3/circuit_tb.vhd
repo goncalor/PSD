@@ -49,6 +49,7 @@ ARCHITECTURE behavior OF circuit_tb IS
          out_sel : IN  std_logic;
          i_en : OUT  std_logic;
          i_address : OUT  std_logic_vector(8 downto 0);
+         valid : OUT std_logic;
          output : OUT  std_logic_vector(31 downto 0)
         );
     END COMPONENT;
@@ -68,6 +69,7 @@ ARCHITECTURE behavior OF circuit_tb IS
    signal i_en : std_logic;
    signal i_address : std_logic_vector(8 downto 0);
    signal output : std_logic_vector(31 downto 0);
+   signal valid : std_logic;
 
    -- Clock period definitions
    constant clk_period : time := 10ns;
@@ -86,6 +88,7 @@ BEGIN
           out_sel => out_sel,
           i_en => i_en,
           i_address => i_address,
+          valid => valid,
           output => output
         );
 

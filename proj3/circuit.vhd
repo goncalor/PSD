@@ -39,6 +39,7 @@ entity circuit is
 		out_sel : IN std_logic;
 		i_en : out std_logic;
 		i_address : OUT std_logic_vector(8 downto 0);
+		valid : OUT std_logic;
 		output : OUT std_logic_vector(31 downto 0)
 	);
 end circuit;
@@ -71,7 +72,8 @@ architecture Behavioral of circuit is
 		op_type : IN std_logic_vector(2 downto 0);
 		data_in : IN std_logic_vector(31 downto 0);
 		original : IN std_logic_vector(31 downto 0);
-		offset : IN std_logic_vector(1 downto 0);          
+		offset : IN std_logic_vector(1 downto 0);
+		valid : OUT std_logic;
 		output : OUT std_logic_vector(31 downto 0)
 		);
 	END COMPONENT;
@@ -108,6 +110,7 @@ begin
 		data_in => data_HALF,
 		original => data_orig,
 		offset => offset,
+		valid => valid,
 		output => output
 	);
 	
