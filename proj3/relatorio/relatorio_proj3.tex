@@ -22,8 +22,24 @@
 \pagebreak
 
 \section{Introdução}
+O presente trabalho tem por objectivo o desenho e implementação de um processador dedicado para processamento morfológico de imagens binárias i.e.\ imagens cujos pixeis podem ter apenas dois valores distintos.
+
+As operações a realizar sobre as imagens são cinco: erosão, dilatação, fecho (dilatação seguida de erosão), abertura (erosão seguida de dilatação) e extração de contornos (diferença entre a imagem original e a sua erosão).
+
+O elemento estruturante considerado é um quadrado de $3\times3$ pixeis---por exemplo na operação de erosão analisa-se uma área $3\times3$ px centrada nesse pixel para decidir se o mesmo deve ser erodido.
+
+As imagens consideradas têm no máximo $128\times128$ px. Uma imagem é transferida de um computador para a uma BRAM da FPGA via USB e o processador dedicado deve ler dessa BRAM de entrada e escrever a imagem transformada numa BRAM de saída. A imagem transformada é depois transferida de volta PC, onde pode ser visualizada.
+
+O desempenho do circuito é avaliado pelo tempo de processamento dos dados entre as duas memórias.
 
 \section{Formato das Imagens}
+O formato das imagens não é definido no enunciado do projecto. É esperado que os alunos desenvolvam um formato de imagem que julguem mais adequado.
+
+As imagens têm no máximo $128\times128\times1$ bits (2 kB), que é precisamente a dimensão de cada uma das 4 BRAMs existentes na FPGA XC3S-100E-4CP132. Como tal no caso das imagens maiores a BRAM de entrada é completamente preenchida, o que significa que não sobram bits para representar por exemplo as dimensões da imagem. Assim, essa informação não pode fazer parte do formato da imagem.
+
+Decidiu-se então que as dimensões da imagem (largura e altura) são passadas ao processador dedicado fazendo uso dos 8 interruptores existentes na placa de desenvolvimento. Introduz-se primeiro a largura e pressiona-se um botão de pressão para armazenar essa dimensão. De seguida faz-se o mesmo para a altura.
+
+A imagem é representada em memória sempre como 4 palavras de 32 bits por cada linha da imagem. Se a imagem tiver menos que 128 bits de largura é introduzido \textit{padding} que perfaça 128 bits. O \textit{padding} utilizado consiste na extensão do último bit válido de cada linha da imagem. Estas características foram escolhida de forma a facilitar o processamento da imagem.
 
 \section{Arquitectura}
 % intro à arquitectura
