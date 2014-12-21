@@ -68,7 +68,7 @@ A arquitectura projectada faz uso desta propriedade e como tal tem duas datapath
 		\caption{}
 		\label{fig:poc_SAVE}
 	\end{subfigure}
-	\caption{imagem (a) original (b) após HALF (c) após HALF e SAVE}
+	\caption{Imagem (a) original (b) após HALF (c) após HALF e SAVE}
 	\label{fig:poc}
 \end{figure}
 
@@ -118,7 +118,7 @@ O diagrama da datapath da HALF está patente na \autoref{fig:HALF_datapath}. Nã
 	\centerline{
 		\includegraphics[width=.95\paperwidth]{HALF_datapath}
 	}
-	\caption{datapath da HALF}
+	\caption{Datapath da HALF}
 	\label{fig:HALF_datapath}
 \end{figure}
 
@@ -130,7 +130,7 @@ A máquina de estados da HALF pode ser vista na \autoref{fig:HALF_FSM}.
 \begin{figure}
 	\centering
 	\includegraphics[width=0.8\linewidth]{HALF_FSM}
-	\caption{máquina de estados da HALF}
+	\caption{Máquina de estados da HALF}
 	\label{fig:HALF_FSM}
 \end{figure}
 
@@ -228,10 +228,35 @@ Finalmente, caso a operação seja detecção de limites, a imagem erodida horiz
 
 \subsection{\textit{Padder}}
 % intro ao padder
+Visto que o formato de imagem desenvolvido usa como \textit{padding} a extensão do último bit válido há que gerar esse \textit{padding} antes de fazer o armazenamento na BRAM de saída. Para além disso há que acrescentar palavras que tenham sido suprimidas durante o processamento (i.e.\ palavras constituídas somente por \textit{padding}). São estas as funções do \textit{padder} descrito nesta secção.
 
 \subsubsection{Datapath}
+O \textit{padder} recebe palavras de 32 bits. Para fazer o \textit{padding} é necessário aceder ao último bit válido de uma linha. Esse bit pode estar em qualquer uma de 4 palavras de 32 bits que constituem a linha. Para obter o bit de interesse usa-se um mux de 32 entradas.
+
+O número de bits da palavra de entrada que passam para a palavra de saída depende da largura da imagem. Como tal, existe uma espécie de descodificador que selecciona que bits da palavra de entrada devem passar intocados. Os bits da palavra que não passarem são substituídos pelo bit de \textit{padding}.
+
+Há palavras de saída que serão compostas apenas pelo bit de \textit{padding}. Para que isso seja possível o bit de \textit{padding} é guardado num registo para que possa ser usado nas palavras subsequentes da mesma linha.
+
+O esquema da datapath do \textit{padder} descrito está patente na \autoref{fig:padder_datapath}.
+
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=.8\linewidth]{padder_datapath}
+	\caption{Datapath do \textit{padder}}
+	\label{fig:padder_datapath}
+\end{figure}
 
 \subsubsection{FSM}
+A máquina de estados do \textit{padder} é uma máquina de Moore e consta na \autoref{fig:padder_FSM}.
+
+Nos estados representados a amarelo toda a informação da palavra é informação válida e portanto a palavra passa intocada. Nos estados a verde o último bit válido encontra-se algures nessa palavra e portanto é feita extensão desse bit e o mesmo é guardado no registo da datapath. Nos estados a azul todos os bits à saída são \textit{padding}, com o mesmo valor do bit guardado no estado a verde anterior. O processo de \textit{padding} repete-se para todas as linhas, até que o sinal \texttt{stop} seja activado.
+
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=.9\linewidth]{padder_FSM}
+	\caption{Máquina de estados do \textit{padder}}
+	\label{fig:padder_FSM}
+\end{figure}
 
 \subsection{Interligação dos Componentes}	% titulo melhor ?
 
