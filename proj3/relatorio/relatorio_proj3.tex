@@ -185,7 +185,14 @@ O módulo SAVE recebe a imagem já processada horizontalmente, e procede à sua 
 
 \subsubsection{Datapath}
 
-% Falta aqui a unidade de armazenamento
+Para ter disponíveis as ditas três palavras, que estão separadas entre si por 3 outras palavras, é necessário uma unidade de armazenamento algo particular. O conceito para esta unidade está representado na \autoref{fig:SAVE_storageunit_1}.
+
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=0.8\linewidth]{SAVE_storageunit_1}
+	\caption{Unidade de Armazenamento do módulo SAVE}
+	\label{fig:SAVE_storageunit_1}
+\end{figure}
 
 Uma vez disponíveis as três palavras relevantes (ou duas, no caso da primeira e última palavra, que não têm antecessor nem sucessor, respectivamente), são sobre si efectuadas as operações lógicas correspondentes à operação morfológica a realizar sobre a imagem (ver \autoref{fig:SAVE_datapath_E_D}).
 
