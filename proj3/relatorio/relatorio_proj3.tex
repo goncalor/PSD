@@ -29,7 +29,7 @@ As operações a realizar sobre as imagens são cinco: erosão, dilatação, fec
 
 O elemento estruturante considerado é um quadrado de $3\times3$ pixeis---por exemplo na operação de erosão analisa-se uma área $3\times3$ px centrada nesse pixel para decidir se o mesmo deve ser erodido.
 
-As imagens consideradas têm no máximo $128\times128$ px. Uma imagem é transferida de um computador para a uma BRAM da FPGA via USB e o processador dedicado deve ler dessa BRAM de entrada e escrever a imagem transformada numa BRAM de saída. A imagem transformada é depois transferida de volta PC, onde pode ser visualizada.
+As imagens consideradas têm no máximo $128\times128$ px. Uma imagem é transferida de um computador para a uma BRAM da FPGA via USB e o processador dedicado deve ler dessa BRAM de entrada e escrever a imagem transformada numa BRAM de saída. A imagem transformada é depois transferida de volta para o PC, onde pode ser visualizada.
 
 O desempenho do circuito é avaliado pelo tempo de processamento dos dados entre as duas memórias.
 
@@ -37,17 +37,17 @@ O desempenho do circuito é avaliado pelo tempo de processamento dos dados entre
 \label{sec:formato_imagens}
 O formato das imagens não é definido no enunciado do projecto. É esperado que os alunos desenvolvam um formato de imagem que julguem mais adequado.
 
-As imagens têm no máximo $128\times128\times1$ bits (2 kB), que é precisamente a dimensão de cada uma das 4 BRAMs existentes na FPGA XC3S-100E-4CP132. Como tal no caso das imagens maiores a BRAM de entrada é completamente preenchida, o que significa que não sobram bits para representar por exemplo as dimensões da imagem. Assim, essa informação não pode fazer parte do formato da imagem.
+As imagens têm no máximo $128\times128\times1$ bits (2 kB), que é precisamente a dimensão de cada uma das 4 BRAMs existentes na FPGA XC3S-100E-4CP132. Como tal, no caso das imagens maiores, a BRAM de entrada é completamente preenchida, o que significa que não sobram bits para representar por exemplo as dimensões da imagem. Assim, essa informação não pode fazer parte do formato da imagem.
 
 Decidiu-se então que as dimensões da imagem (largura e altura) são passadas ao processador dedicado fazendo uso dos 8 interruptores existentes na placa de desenvolvimento. Introduz-se primeiro a largura e pressiona-se um botão de pressão para armazenar essa dimensão. De seguida faz-se o mesmo para a altura.
 
-A imagem é representada em memória sempre como 4 palavras de 32 bits por cada linha da imagem. Se a imagem tiver menos que 128 bits de largura é introduzido \textit{padding} que perfaça 128 bits. O \textit{padding} utilizado consiste na extensão do último bit válido de cada linha da imagem. Estas características foram escolhida de forma a facilitar o processamento da imagem.
+A imagem é representada em memória sempre como 4 palavras de 32 bits por cada linha da imagem. Se a imagem tiver menos que 128 bits de largura é introduzido \textit{padding} que perfaça 128 bits. O \textit{padding} utilizado consiste na extensão do último bit válido de cada linha da imagem. Estas características foram escolhidas de forma a facilitar o processamento da imagem.
 
 \section{Arquitectura}
 % intro à arquitectura
-As operações elementares (dilatação e erosão) podem ser realizadas em dois passos distintos: primeiro executa-se a operação apenas na horizontal, i.e. usando um elemento estruturante de dimensão $3\times1$; de seguida expande-se o resultado para a linha acima e para abaixo.
+As operações elementares (dilatação e erosão) podem ser realizadas em dois passos distintos: primeiro executa-se a operação apenas na horizontal, i.e. usando um elemento estruturante de dimensão $3\times1$; de seguida expande-se o resultado para a linha acima e abaixo.
 
-A arquitectura projectada faz uso desta propriedade e como tal tem duas datapaths pricipais. A primeira, que realiza alterações apenas na horizontal, é designada por \textit{Horizontal Alteration after Line Fetch} (HALF). A segunda faz a expansão vertical e chama-se \textit{Storing Alterations after Vertical Exchange} (SAVE). Cada uma destas datapahts tem uma FSM respectiva. A \autoref{fig:poc} ilustra as duas fases de processamento.
+A arquitectura projectada faz uso desta propriedade e como tal tem duas FSMDs principais. A primeira, que realiza alterações apenas na horizontal, é designada por \textit{Horizontal Alteration after Line Fetch} (HALF). A segunda faz a expansão vertical e chama-se \textit{Storing Alterations after Vertical Exchange} (SAVE). A \autoref{fig:poc} ilustra as duas fases de processamento.
 
 \begin{figure}[h]
 	\centering
@@ -80,7 +80,7 @@ Para além dessas duas componentes principais do circuito existe ainda outra que
 HALF é responsável por fazer as transformações horizontais de cada linha da imagem, como exemplificado na \autoref{fig:poc_HALF}.
 
 \subsubsection{Datapath}
-A datapath da HALF tem por base dois módulos: um bloco de dilatação (D) e outro de erosão (E). Uma dilatação horizontal corresponde basicamente a fazer um OR de cada bit com o bit à sua esquerda e à sua direita; da mesma forma uma erosão corresponde a um AND. Assim, os blocos D e E são \textit{arrays} dessas portas de forma a processar palavras 32 bits de cada vez. Existe, naturalmente, alguma lógica extra que é responsável por expansões de uma palavra para outra---por exemplo se uma imagem tiver como largura duas palavras de 32 bits a dilatação horizontal da primeira pode afectar o primeiro bit da segunda; e o primeiro bit da segunda pode afectar o último bit da primeira. O circuito dos blocos D e E pode ver-se na \autoref{fig:HALF_E_D_blocks}.
+A datapath da HALF tem por base dois módulos: um bloco de dilatação (D) e outro de erosão (E). Uma dilatação horizontal corresponde basicamente a fazer um \texttt{OR} de cada bit com o bit à sua esquerda e à sua direita; da mesma forma, uma erosão corresponde a um \texttt{AND}. Assim, os blocos D e E são \textit{arrays} dessas portas de forma a processar palavras 32 bits de cada vez. Existe, naturalmente, alguma lógica extra que é responsável por expansões de uma palavra para outra---por exemplo se uma imagem tiver como largura duas palavras de 32 bits a dilatação horizontal da primeira pode afectar o primeiro bit da segunda; e o primeiro bit da segunda pode afectar o último bit da primeira. O circuito dos blocos D e E pode ver-se na \autoref{fig:HALF_E_D_blocks}.
 
 \begin{figure}[h]
 	\centering
@@ -101,17 +101,17 @@ A datapath da HALF tem por base dois módulos: um bloco de dilatação (D) e out
 \end{figure}
 
 %explicar carry e accum
-A entrada \texttt{c\_in} permite que o MSB (\textit{most significant bit}) de uma palavra seja alterado tendo em conta o LSB (\textit{least significant bit}) da palabra anterior. Por outro lado, a entrada \texttt{acc\_in} permite que o LSB de uma palavra seja alterado tomando em consideração o MSB da palavra seguinte. As entradas \texttt{c\_en} e \texttt{acc\_en} permitem indicar se tanto \texttt{c\_in} como \texttt{acc\_in} têm valores válidos. Na primeira palavra de cada imagem \texttt{c\_en} deve estar a \texttt{0} e na última palavra \texttt{acc\_en} deve estar a \texttt{0}. Nos restantes casos esses sinais devem estar a \texttt{1}.
+A entrada \texttt{c\_in} permite que o MSB (\textit{most significant bit}) de uma palavra seja alterado tendo em conta o LSB (\textit{least significant bit}) da palavra anterior. Por outro lado, a entrada \texttt{acc\_in} permite que o LSB de uma palavra seja alterado tomando em consideração o MSB da palavra seguinte. As entradas \texttt{c\_en} e \texttt{acc\_en} permitem indicar se tanto \texttt{c\_in} como \texttt{acc\_in} têm valores válidos. Na primeira palavra de cada imagem \texttt{c\_en} deve estar a \texttt{0} e na última palavra \texttt{acc\_en} deve estar a \texttt{0}. Nos restantes casos esses sinais devem estar a \texttt{1}.
 
-Poder usar o sinal \texttt{acc\_in} significa necessariamente que quando uma palavra é processada por um dos blocos da \autoref{fig:HALF_E_D_blocks} a palavra seguinte já tem que ser sido lida da memória. Para isso existe na arquitectura um registo \texttt{\_accum} para cada bloco. Este registo permite pôr a palavra $n$ em espera até que a palavra $n+1$ seja lida. Quando a palavra $n+1$ é lida tem-se toda a informação necessária ao processamento da palavra $n$. O mesmo registo põe em espera o \textit{c\_out} da palavra $n-1$ para que possa ser usado no processamento da $n$. Estes registos podem ser vistos na \autoref{fig:HALF_datapath}.
+Poder usar o sinal \texttt{acc\_in} significa necessariamente que quando uma palavra é processada por um dos blocos da \autoref{fig:HALF_E_D_blocks} a palavra seguinte já tem que ter ser sido lida da memória. Para isso existe na arquitectura um registo \texttt{\_accum} para cada bloco. Este registo permite pôr a palavra $n$ em espera até que a palavra $n+1$ seja lida. Quando a palavra $n+1$ é lida tem-se toda a informação necessária ao processamento da palavra $n$. O mesmo registo põe em espera o \textit{c\_out} da palavra $n-1$ para que possa ser usado no processamento da $n$. Estes registos podem ser vistos na \autoref{fig:HALF_datapath}.
 
 Outra particularidade da datapath da HALF é que para realizar as operações compostas o output das operações elementares pode ser redireccionado para a entrada do bloco complementar. Assim um fecho horizontal pode ser calculado passando \texttt{data\_in} pelo bloco D e redireccionando o output para a entrada do bloco E. À saída teremos o fecho horizontal da palavra em \texttt{data\_in}.
 
-Para que o redireccionamento de uma palavra de um bloco para outro não aumentasse não criasse um caminho crítico dentro do bloco introduziu-se um registo \texttt{\_delay\_reg} à saída dos blocos D e E. Estes registos permitem que nas operações de abertura e fecho se faça armazenamento do resultado intermédio para que o caminho crítico não possa ser o percurso desde \texttt{data\_in} até ao \texttt{data\_out} do segundo bloco.
+Para que o redireccionamento de uma palavra de um bloco para outro não criasse um caminho crítico dentro do bloco introduziu-se um registo \texttt{\_delay\_reg} à saída dos blocos D e E. Estes registos permitem que nas operações de abertura e fecho se faça armazenamento do resultado intermédio para que o caminho crítico não deva ser o percurso desde \texttt{data\_in} até ao \texttt{data\_out} passando pelo segundo bloco.
 
-Devido aos atrasos causados pelos registos \texttt{\_accum} e \texttt{\_delay\_reg} é necessário fazer uma compensação---i.e.\ um atraso---dos sinais de controlo da datapath. Para isso os sinais de controlo \texttt{\_carry\_en} e \texttt{\_accum\_en} são passados por um ou dois registos, conforme se trate, respectivamente, de uma operação elementar ou de uma composta. Esse atraso variável é controlado pelos sinais \texttt{\_delay}.
+Devido aos atrasos causados pelos registos \texttt{\_accum} e \texttt{\_delay\_reg} é necessário fazer uma compensação---i.e.\ um atraso---dos sinais de controlo da datapath. Para isso os sinais de controlo \texttt{\_carry\_en} e \texttt{\_accum\_en} são passados por um ou dois registos conforme se trate, respectivamente, de uma operação elementar ou de uma composta. Esse atraso variável é controlado pelos sinais \texttt{\_delay}.
 
-Paralelamente à saída \texttt{output\_func} existe também a \textit{bus} \texttt{output\_orig} que é a palavra original correspondente à palavra transformada durante a HALF. A palavra original é usada apenas durante a SAVE e somente no caso da operação de extracção de contornos. A palavra original é atrasada fazendo uso do registo \texttt{d\_accum\_en}, que não é usado para outro fim durante extracções de contornos. Assim, a palavra original e transformada saem da datapath sincronizadas.
+Paralelamente à saída \texttt{output\_func} existe também a \textit{bus} \texttt{output\_orig} que é a palavra original correspondente à palavra transformada durante a HALF. A palavra original é usada apenas durante a SAVE e somente na operação de extracção de contornos. A palavra original é atrasada fazendo uso do registo \texttt{d\_accum\_en}, que não é usado para outro fim durante extracções de contornos. Assim, a palavra original e transformada saem da datapath sincronizadas.
 
 O diagrama da datapath da HALF está patente na \autoref{fig:HALF_datapath}. Não são representados sinais de relógio.
 
@@ -313,12 +313,25 @@ Do \textit{padder} saem $4\times m$ resultados independentemente do valor de $w$
 
 Tendo em conta que as imagens a serem processadas têm no máximo 32 bits de largura, ou seja $w=4$, a complexidade da arquitectura desenhada é na sua totalidade $O(m)$, em que $m$ é o número de linhas da imagem.
 
-Cada um dos 3 blocos principais da arquitectura foi sintetizado e a frequência máxima de cada bloco é mostrada na \autoref{tab:freqs_operacao}.
+Cada um dos 3 blocos principais da arquitectura foi sintetizado e a frequência máxima de cada bloco é mostrada na \autoref{tab:freqs_operacao}. O módulo mais lento é o SAVE.
 
 \begin{table}
 \centering
-•
-\caption{•}
+\begin{tabular}{|c|c|}
+\cline{2-2}
+\multicolumn{1}{c|}{} & Frequência Máxima \\ 
+\cline{2-2}
+\hline
+HALF & 167 MHz \\ 
+\hline 
+SAVE & 115 MHz \\ 
+\hline 
+padder & 217 MHz \\ 
+\hline 
+HALF + SAVE & 109 MHz \\ 
+\hline 
+\end{tabular} 
+\caption{Frequência máxima de operação dos módulos da arquitectura}
 \label{tab:freqs_operacao}
 \end{table}
 
