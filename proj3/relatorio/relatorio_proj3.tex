@@ -347,6 +347,14 @@ Cada um dos 3 blocos principais da arquitectura foi sintetizado e a frequência 
 %   Maximum combinational path delay: 7.058ns
 
 
+\section{Visualizador}
+
+De maneira a produzir ficheiros binários com imagens, foi programado em \texttt{C} um visualizador/editor de imagens binárias (recorrendo à biblioteca gráfica \emph{Allegro}).
+
+O visualizador em questão foi produzido antes da introdução do \textit{padding} no formato, pelo que para ser utilizado na encarnação actual do projecto precisaria de alterações adicionais.
+
+O visualizador recebe como parâmetros a largura e altura da imagem, e o nome do ficheiro. Caso exista, é mostrado e pode ser editado. Caso não exista, é criado um buffer inicializado a zeros, que pode posteriormente ser gravado.
+
 \section{Conclusões e Comentários}
 
 Infelizmente, não foi possível concluir o projecto devido a limitações temporais.
@@ -369,6 +377,8 @@ No caso de ser feita uma adenda ao projecto e à arquitectura, serão feitas as 
 No entanto este ganho não é suficiente para justificar o elevado custo de hardware de todos os multiplexers extra. Esta Unidade de Armazenamento seria substituída pelo conceito simplificado da \autoref{fig:SAVE_storageunit_1}.
 
         \item Os atrasos necessários para os sinais entre os diversos módulos devem ser feitos de maneira consistente e coerente.
+
+        \item Colocando um registo entre o bloco de erosão e o bloco de subtracção diminuiria o caminho crítico, pelo que aumentaria a frequência, e, consequentemente, a \textit{performance} do projecto.
 
 \end{itemize}
 
