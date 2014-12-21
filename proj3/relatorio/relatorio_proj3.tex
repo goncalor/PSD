@@ -106,7 +106,46 @@ O circuito dos blocos D e E pode ver-se na \autoref{fig:SAVE_E_D_blocks}.
 \subsection{SAVE}
 % intro ao SAVE
 
+O módulo SAVE recebe a imagem já processada horizontalmente, e procede à sua ``expansão'' na vertical. Para isto precisa de três palavras (correspondentes às linhas actual, anterior e seguinte).
+
 \subsubsection{Datapath}
+
+% Falta aqui a unidade de armazenamento
+
+Uma vez disponíveis as três palavras relevantes (ou duas, no caso da primeira e última palavra, que não têm antecessor nem sucessor, respectivamente), são sobre si efectuadas as operações lógicas correspondentes à operação morfológica a realizar sobre a imagem (ver \autoref{fig:SAVE_datapath_E_D}).
+
+\begin{figure}[h]
+	\centering
+	\begin{subfigure}[b]{0.45\textwidth}
+		\centering
+		\includegraphics[width=\linewidth]{SAVE_datapath_D}
+		\caption{Dilatação}
+		\label{fig:SAVE_datapath_D}
+	\end{subfigure}
+	\begin{subfigure}[b]{0.45\textwidth}
+		\centering
+		\includegraphics[width=\linewidth]{SAVE_datapath_E}
+		\caption{Erosão}
+		\label{fig:SAVE_datapath_E}
+	\end{subfigure}
+	\caption{Unidades funcionais da Datapath do SAVE}
+	\label{fig:SAVE_datapath_E_D}
+\end{figure}
+
+Estes blocos são dispostos na arquitectura especificada na \autoref{fig:SAVE_Datapath}, de maneira a realizar as várias operações.
+
+Caso a operação seja simples, o resultado do módulo HALF é direccionado para a unidade de armazenamento principal, e a sua saída para os blocos lógicos, cujo resultado vai para a saída.
+
+No caso de ser uma operação composta (abertura ou fecho), a saída da primeira operação é redireccionada para uma segunda unidade de armazenamento, a partir da qual é realizada a última operação antes do armazenamento na memória.
+
+Finalmente, caso a operação seja detecção de limites, a imagem erodida horizontalmente é direccionada para a unidade de armazenamento principal, e posteriormente erodida verticalmente. Simultaneamente, a imagem original, inalterada, é direccionada para a segunda unidade de armazenamento, cuja saída é direccionada para o bloco de Subtracção, cuja única operação é uma \texttt{XOR} bit-a-bit entre os dois operandos.
+
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=0.6\linewidth]{SAVE_Datapath}
+	\caption{Datapath do módulo SAVE}
+	\label{fig:SAVE_Datapath}
+\end{figure}
 
 \subsubsection{FSM}
 
