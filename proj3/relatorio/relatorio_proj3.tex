@@ -291,7 +291,15 @@ Nos estados representados a amarelo toda a informação da palavra é informaç�
 	\label{fig:padder_FSM}
 \end{figure}
 
-\subsection{Interligação dos Componentes}	% titulo melhor ?
+\subsection{União dos módulos}
+
+Uma vez desenhados os três módulos componentes da arquitectura, é necessário ligá-los entre si.
+
+O módulo SAVE recebe como entradas alguns sinais de controlo, provenientes da interface com o utilizador (interruptores e botões da placa \textit{Basys2}), e os \textit{outputs} do módulo HALF.
+
+Por sua vez, os resultados do SAVE deveriam ser utilizados pelo módulo de \textit{padding} para completar as lacunas com a extensão do bit relevante. No entanto, devido às limitações de tempo, esta ligação não foi implementada em VHDL.
+
+Alguns dos sinais de controlo ou endereços correspondem apenas ao atraso de outros sinais, pelo que o circuito que instancia os vários módulos tem também uma série de registos, de maneira a fazer este atraso.
 
 \section{\textit{Performance}}	% titulo melhor ?
 
