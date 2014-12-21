@@ -13,6 +13,7 @@
 \usepackage{multicol} %for page layout on section Maximização do Throughput
 %\usepackage[usenames,dvipsnames,svgnames,table]{xcolor}
 \usepackage{pdflscape}	% landscape pages
+\usepackage{subcaption}
 
 \begin{document}
 
@@ -43,11 +44,62 @@ A imagem é representada em memória sempre como 4 palavras de 32 bits por cada 
 
 \section{Arquitectura}
 % intro à arquitectura
+As operações elementares (dilatação e erosão) podem ser realizadas em dois passos distintos: primeiro executa-se a operação apenas na horizontal, i.e. usando um elemento estruturante de dimensão $3\times1$; de seguida expande-se o resultado para a linha acima e para abaixo.
+
+A arquitectura projectada faz uso desta propriedade e como tal tem duas datapaths pricipais. A primeira, que realiza alterações apenas na horizontal, é designada por \textit{Horizontal Alteration after Line Fetch} (HALF). A segunda faz a expansão vertical e chama-se \textit{Storing Alterations after Vertical Exchange} (SAVE). Cada uma destas datapahts tem uma FSM respectiva. A \autoref{fig:poc} ilustra as duas fases de processamento.
+
+\begin{figure}[h]
+	\centering
+	\begin{subfigure}[b]{0.32\textwidth}
+		\centering
+		\includegraphics[width=\linewidth]{poc_orig}
+		\caption{}
+		\label{fig:por_orig}
+	\end{subfigure}
+	\begin{subfigure}[b]{0.32\textwidth}
+		\centering
+		\includegraphics[width=\linewidth]{poc_HALF}
+		\caption{}
+		\label{fig:poc_HALF}
+	\end{subfigure}
+	\begin{subfigure}[b]{0.32\textwidth}
+		\centering
+		\includegraphics[width=\linewidth]{poc_SAVE}
+		\caption{}
+		\label{fig:poc_SAVE}
+	\end{subfigure}
+	\caption{imagem (a) original (b) após HALF (c) após HALF e SAVE}
+	\label{fig:poc}
+\end{figure}
+
+Para além dessas duas componentes principais do circuito existe ainda outra que é responsável por fazer o \textit{padding} de cada linha antes do armazenamento na BRAM de saída.
 
 \subsection{HALF}
 % intro ao HALF
+HALF é responsável por fazer as transformações horizontais de cada linha da imagem, como exemplificado na \autoref{fig:poc_HALF}.
 
 \subsubsection{Datapath}
+A datapath da HALF tem por base dois módulos: um bloco de dilatação (D) e outro de erosão (E). Uma dilatação horizontal corresponde basicamente a fazer um OR de cada bit com o bit à sua esquerda e à sua direita; da mesma forma uma erosão corresponde a um AND. Assim, os blocos D e E são \textit{arrays} dessas portas de forma a processar palavras 32 bits de cada vez. Existe, naturalmente, alguma lógica extra que é responsável por expansões de uma palavra para outra---por exemplo se uma imagem tiver como largura duas palavras de 32 bits a dilatação horizontal da primeira pode afectar o primeiro bit da segunda; e o primeiro bit da segunda pode afectar o último bit da primeira.
+
+O circuito dos blocos D e E pode ver-se na \autoref{fig:SAVE_E_D_blocks}.
+
+\begin{figure}[h]
+	\centering
+	\begin{subfigure}[b]{0.45\textwidth}
+		\centering
+		\includegraphics[width=\linewidth]{SAVE_D_block}
+		\caption{}
+		\label{fig:SAVE_D_block}
+	\end{subfigure}
+	\begin{subfigure}[b]{0.45\textwidth}
+		\centering
+		\includegraphics[width=\linewidth]{SAVE_E_block}
+		\caption{}
+		\label{fig:SAVE_E_block}
+	\end{subfigure}
+	\caption{(a) bloco de dilatação (b) bloco de erosão}
+	\label{fig:SAVE_E_D_blocks}
+\end{figure}
 
 \subsubsection{FSM}
 
