@@ -79,27 +79,50 @@ Para além dessas duas componentes principais do circuito existe ainda outra que
 HALF é responsável por fazer as transformações horizontais de cada linha da imagem, como exemplificado na \autoref{fig:poc_HALF}.
 
 \subsubsection{Datapath}
-A datapath da HALF tem por base dois módulos: um bloco de dilatação (D) e outro de erosão (E). Uma dilatação horizontal corresponde basicamente a fazer um OR de cada bit com o bit à sua esquerda e à sua direita; da mesma forma uma erosão corresponde a um AND. Assim, os blocos D e E são \textit{arrays} dessas portas de forma a processar palavras 32 bits de cada vez. Existe, naturalmente, alguma lógica extra que é responsável por expansões de uma palavra para outra---por exemplo se uma imagem tiver como largura duas palavras de 32 bits a dilatação horizontal da primeira pode afectar o primeiro bit da segunda; e o primeiro bit da segunda pode afectar o último bit da primeira.
-
-O circuito dos blocos D e E pode ver-se na \autoref{fig:SAVE_E_D_blocks}.
+A datapath da HALF tem por base dois módulos: um bloco de dilatação (D) e outro de erosão (E). Uma dilatação horizontal corresponde basicamente a fazer um OR de cada bit com o bit à sua esquerda e à sua direita; da mesma forma uma erosão corresponde a um AND. Assim, os blocos D e E são \textit{arrays} dessas portas de forma a processar palavras 32 bits de cada vez. Existe, naturalmente, alguma lógica extra que é responsável por expansões de uma palavra para outra---por exemplo se uma imagem tiver como largura duas palavras de 32 bits a dilatação horizontal da primeira pode afectar o primeiro bit da segunda; e o primeiro bit da segunda pode afectar o último bit da primeira. O circuito dos blocos D e E pode ver-se na \autoref{fig:HALF_E_D_blocks}.
 
 \begin{figure}[h]
 	\centering
 	\begin{subfigure}[b]{0.45\textwidth}
 		\centering
-		\includegraphics[width=\linewidth]{SAVE_D_block}
+		\includegraphics[width=\linewidth]{HALF_D_block}
 		\caption{}
-		\label{fig:SAVE_D_block}
+		\label{fig:HALF_D_block}
 	\end{subfigure}
 	\begin{subfigure}[b]{0.45\textwidth}
 		\centering
-		\includegraphics[width=\linewidth]{SAVE_E_block}
+		\includegraphics[width=\linewidth]{HALF_E_block}
 		\caption{}
-		\label{fig:SAVE_E_block}
+		\label{fig:HALF_E_block}
 	\end{subfigure}
 	\caption{(a) bloco de dilatação (b) bloco de erosão}
-	\label{fig:SAVE_E_D_blocks}
+	\label{fig:HALF_E_D_blocks}
 \end{figure}
+
+%explicar carry e accum
+A entrada \texttt{c\_in} permite que o MSB (\textit{most significant bit}) de uma palavra seja alterado tendo em conta o LSB (\textit{least significant bit}) da palabra anterior. Por outro lado, a entrada \texttt{acc\_in} permite que o LSB de uma palavra seja alterado tomando em consideração o MSB da palavra seguinte. As entradas \texttt{c\_en} e \texttt{acc\_en} permitem indicar se tanto \texttt{c\_in} como \texttt{acc\_in} têm valores válidos. Na primeira palavra de cada imagem \texttt{c\_en} deve estar a \texttt{0} e na última palavra \texttt{acc\_en} deve estar a \texttt{0}. Nos restantes casos esses sinais devem estar a \texttt{1}.
+
+Poder usar o sinal \texttt{acc\_in} significa necessariamente que quando uma palavra é processada por um dos blocos da \autoref{fig:HALF_E_D_blocks} a palavra seguinte já tem que ser sido lida da memória. Para isso existe na arquitectura um registo \texttt{\_accum} para cada bloco. Este registo permite pôr a palavra $n$ em espera até que a palavra $n+1$ seja lida. Quando a palavra $n+1$ é lida tem-se toda a informação necessária ao processamento da palavra $n$. O mesmo registo põe em espera o \textit{c\_out} da palavra $n-1$ para que possa ser usado no processamento da $n$. Estes registos podem ser vistos na \autoref{fig:HALF_datapath}.
+
+Outra particularidade da datapath da HALF é que para realizar as operações compostas o output das operações elementares pode ser redireccionado para a entrada do bloco complementar. Assim um fecho horizontal pode ser calculado passando \texttt{data\_in} pelo bloco D e redireccionando o output para a entrada do bloco E. À saída teremos o fecho horizontal da palavra em \texttt{data\_in}.
+
+Para que o redireccionamento de uma palavra de um bloco para outro não aumentasse não criasse um caminho crítico dentro do bloco introduziu-se um registo \texttt{\_delay\_reg} à saída dos blocos D e E. Estes registos permitem que nas operações de abertura e fecho se faça armazenamento do resultado intermédio para que o caminho crítico não possa ser o percurso desde \texttt{data\_in} até ao \texttt{data\_out} do segundo bloco.
+
+Devido aos atrasos causados pelos registos \texttt{\_accum} e \texttt{\_delay\_reg} é necessário fazer uma compensação---i.e.\ um atraso---dos sinais de controlo da datapath. Para isso os sinais de controlo \texttt{\_carry\_en} e \texttt{\_accum\_en} são passados por um ou dois registos, conforme se trate, respectivamente, de uma operação elementar ou de uma composta. Esse atraso variável é controlado pelos sinais \texttt{\_delay}.
+
+Paralelamente à saída \texttt{output\_func} existe também a \textit{bus} \texttt{output\_orig} que é a palavra original correspondente à palavra transformada durante a HALF. A palavra original é usada apenas durante a SAVE e somente no caso da operação de extracção de contornos. A palavra original é atrasada fazendo uso do registo \texttt{d\_accum\_en}, que não é usado para outro fim durante extracções de contornos. Assim, a palavra original e transformada saem da datapath sincronizadas.
+
+O diagrama da datapath da HALF está patente na \autoref{fig:HALF_datapath}.
+
+\begin{figure}[H]
+	\centerline{
+		\includegraphics[width=.95\paperwidth]{HALF_datapath}
+	}
+	\caption{datapath da HALF}
+	\label{fig:HALF_datapath}
+\end{figure}
+
+O bloco \texttt{i\_addman} é o \textit{address manager} da BRAM de entrada. Este bloco é um contador que regista qual o endereço a ser lido da BRAM de entrada. Com base no endereço actual e na altura da imagem é possível calcular o sinal \texttt{stop}, que indica à FSM se o trabalho da HALF terminou.
 
 \subsubsection{FSM}
 
