@@ -34,6 +34,7 @@ As imagens consideradas têm no máximo $128\times128$ px. Uma imagem é transfe
 O desempenho do circuito é avaliado pelo tempo de processamento dos dados entre as duas memórias.
 
 \section{Formato das Imagens}
+\label{sec:formato_imagens}
 O formato das imagens não é definido no enunciado do projecto. É esperado que os alunos desenvolvam um formato de imagem que julguem mais adequado.
 
 As imagens têm no máximo $128\times128\times1$ bits (2 kB), que é precisamente a dimensão de cada uma das 4 BRAMs existentes na FPGA XC3S-100E-4CP132. Como tal no caso das imagens maiores a BRAM de entrada é completamente preenchida, o que significa que não sobram bits para representar por exemplo as dimensões da imagem. Assim, essa informação não pode fazer parte do formato da imagem.
@@ -302,6 +303,49 @@ Por sua vez, os resultados do SAVE deveriam ser utilizados pelo módulo de \text
 Alguns dos sinais de controlo ou endereços correspondem apenas ao atraso de outros sinais, pelo que o circuito que instancia os vários módulos tem também uma série de registos, de maneira a fazer este atraso.
 
 \section{\textit{Performance}}	% titulo melhor ?
+%A aquitectura desenhada processa as imagens com complexidade $O(m)$, sendo $m$ o número de linhas da imagem.
+
+A HALF tem tempo de processamento proporcional ao número de palavras da imagem que não sejam constituídas exclusivamente por \textit{padding}, ou seja tem complexidade $O(w m)$, em que $w$ é o número de palavras que não são \textit{padding} e $m$ é o número de linhas da imagem. Cada ciclo de execução processa uma palavra, sendo que as operações compostas custam apenas mais um ciclo que as elementares.
+
+A SAVE processa com complexidade $O(w m)$. Mais uma vez esta unidade processa apenas palavras que não sejam exclusivamente \textit{padding}. O \textit{throughput} desta unidade é inferior a 1 palavra por ciclo visto que em imagens com largura superior a uma palavra de 32 bits há que esperar que a unidade de armazenamento da SAVE seja preenchida até que existam palavras correspondentes de linhas seguidas. As operações compostas podem demorar até mais 4 ciclos do que as operações elementares.
+
+Do \textit{padder} saem $4\times m$ resultados independentemente do valor de $w$, devido à expansão das linhas para 4 palavras de forma a que seja respeitado o formato definido para a imagem na \autoref{sec:formato_imagens}. No entanto é possível acelerar a escrita na BRAM de saída de forma a que as palavras de \textit{padding} sejam escritas mais rapidamente que as restantes, fazendo com que o \textit{padder} não seja um ponto de ``engarrafamentos''.
+
+Tendo em conta que as imagens a serem processadas têm no máximo 32 bits de largura, ou seja $w=4$, a complexidade da arquitectura desenhada é na sua totalidade $O(m)$, em que $m$ é o número de linhas da imagem.
+
+Cada um dos 3 blocos principais da arquitectura foi sintetizado e a frequência máxima de cada bloco é mostrada na \autoref{tab:freqs_operacao}.
+
+\begin{table}
+\centering
+•
+\caption{•}
+\label{tab:freqs_operacao}
+\end{table}
+
+% HALF
+%   Minimum period: 5.968ns (Maximum Frequency: 167.560MHz)
+%   Minimum input arrival time before clock: 4.963ns
+%   Maximum output required time after clock: 6.890ns
+%   Maximum combinational path delay: 5.885ns
+
+% SAVE
+%   Minimum period: 8.686ns (Maximum Frequency: 115.133MHz)
+%   Minimum input arrival time before clock: 7.343ns
+%   Maximum output required time after clock: 6.977ns
+%   Maximum combinational path delay: 5.634ns
+
+% padder 
+%	Minimum period: 4.596ns (Maximum Frequency: 217.580MHz)
+%	Minimum input arrival time before clock: 4.309ns
+%	Maximum output required time after clock: 7.953ns
+%	Maximum combinational path delay: 8.057ns
+
+% HALF + SAVE
+%   Minimum period: 9.159ns (Maximum Frequency: 109.182MHz)
+%   Minimum input arrival time before clock: 9.426ns
+%   Maximum output required time after clock: 6.822ns
+%   Maximum combinational path delay: 7.058ns
+
 
 \section{Conclusões e Comentários}
 
