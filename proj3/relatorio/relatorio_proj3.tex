@@ -186,7 +186,7 @@ O sinal de \textit{reset} do \texttt{addman} é activado apenas no estado \textt
 O módulo SAVE recebe a imagem já processada horizontalmente, e procede à sua ``expansão'' na vertical. Para isto precisa de três palavras (correspondentes às linhas actual, anterior e seguinte).
 
 \subsubsection{Datapath}
-
+\label{sssec:SAVE_Datapath}
 Para ter disponíveis as ditas três palavras, que estão separadas entre si por 3 outras palavras, é necessário uma unidade de armazenamento algo particular. O conceito para esta unidade está representado na \autoref{fig:SAVE_storageunit_1}.
 
 \begin{figure}[h]
@@ -242,6 +242,23 @@ Finalmente, caso a operação seja detecção de limites, a imagem erodida horiz
 
 \subsubsection{FSM}
 
+A máquina de estados que controla o módulo SAVE pode ser observada na \autoref{fig:SAVE_fsm}. A máquina de estados apenas distingue o primeiro ciclo dos restantes, uma vez que no primeiro ciclo é necessário forçar o barramento correspondente à palavra anterior à actualmente processada de maneira a não ``contaminar'' as informações relativas à palavra actual e à seguinte com os dados de um registo não inicializado.
+
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=0.6\linewidth]{SAVE_fsm}
+	\caption{Máquina de estados do módulo SAVE}
+	\label{fig:SAVE_fsm}
+\end{figure}
+
+Quanto à distinção de operações, esta é feita via os três bits de controlo que especificam a operação, que determinam qual o percurso dos dados no interior do módulo.
+
+Se se tratar de uma erosão ou de uma dilatação, o multiplexer à entrada do bloco correspondente selecciona a Unidade de Armazenamento principal, o multiplexer de função selecciona a saída desse mesmo bloco, e o multiplexer de saída selecciona o \textit{output} do multiplexer de função.
+
+No caso de uma abertura ou fecho, um multiplexer de entrada dos blocos é configurado para a unidade de armazenamento principal, o outro para a secundária, e as saídas desses blocos são configuradas para a unidade secundária e para o \textit{output}, respectivamente.
+
+Finalmente, no caso de uma Extracção de Contornos, a configuração é idêntica à de uma erosão, excepto pelo facto de que a imagem original é direccionada para a Unidade de Armazenamento secundária, e o \textit{output} provém do bloco de subtracção (isto é, à operação \texttt{XOR} -- os bits iguais entre as imagens são apagados, e os diferentes marcados).
+
 \subsection{\textit{Padder}}
 % intro ao padder
 
@@ -254,5 +271,9 @@ Finalmente, caso a operação seja detecção de limites, a imagem erodida horiz
 \section{\textit{Performance}}	% titulo melhor ?
 
 \section{Conclusões e Comentários}
+
+A Unidade de Armazenamento descrita em \ref{sssec:SAVE_Datapath} e representada na \autoref{fig:SAVE_storage_unit_wmux} é desnecessariamente complexa, a sua única funcionalidade é prevenir um pequeno atraso \textit{overhead} (de entre 1 a 3 ciclos) nas situações em que há padding.
+
+No entanto este ganho não é suficiente para justificar o elevado custo de hardware de todos os multiplexers extra. Numa adenda a este trabalho, esta Unidade de Armazenamento seria substituída pelo conceito simplificado da \autoref{fig:SAVE_storageunit_1}.
 
 \end{document}
