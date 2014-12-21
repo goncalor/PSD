@@ -125,6 +125,58 @@ O diagrama da datapath da HALF está patente na \autoref{fig:HALF_datapath}.
 O bloco \texttt{i\_addman} é o \textit{address manager} da BRAM de entrada. Este bloco é um contador que regista qual o endereço a ser lido da BRAM de entrada. Com base no endereço actual e na altura da imagem é possível calcular o sinal \texttt{stop}, que indica à FSM se o trabalho da HALF terminou.
 
 \subsubsection{FSM}
+A máquina de estados da HALF pode ser vista na \autoref{fig:HALF_FSM}.
+
+\begin{figure}
+	\centering
+	\includegraphics[width=0.8\linewidth]{HALF_FSM}
+	\caption{máquina de estados da HALF}
+	\label{fig:HALF_FSM}
+\end{figure}
+
+Existem duas classes de outputs nesta máquina de estados: uns dependem apenas do estado actual, sendo independentes do tipo de operação; os outros dependem apenas do tipo de operação.
+
+Da primeira classe fazem parte os \textit{enables} dos blocos D e E, reset do \texttt{addman}, offset da BRAM de entrada e o offset da unidade de armazenamento do SAVE.
+
+Da outra classe fazem parte os sinais de controlo de multiplexers e os sinais de \textit{delay}.
+
+%\begin{table}
+%\small
+%\centerline{
+%\begin{tabular}{|c||c|c|c|c|c|c|c|c|c|c|c|c|}
+%\hline 
+%& idle & read1\_1 & read2\_1 & read2\_2 & read3\_1 & read3\_2 & read3\_3 & read4\_1 & read4\_2 & read4\_3 & read4\_4 & stop\\ 
+%\hline 
+%\hline
+%mux\_e & • & • & • & • & • & • & • & • & • & • & • & • \\ 
+%\hline 
+%mux\_d & • & • & • & • & • & • & • & • & • & • & • & • \\ 
+%\hline 
+%e\_carry\_en & • & • & • & • & • & • & • & • & • & • & • & • \\ 
+%\hline 
+%d\_carry\_en & • & • & • & • & • & • & • & • & • & • & • & • \\ 
+%\hline 
+%e\_acc\_en & • & • & • & • & • & • & • & • & • & • & • & • \\ 
+%\hline 
+%d\_acc\_en & • & • & • & • & • & • & • & • & • & • & • & • \\ 
+%\hline 
+%e\_delay & • & • & • & • & • & • & • & • & • & • & • & • \\ 
+%\hline 
+%d\_delay & • & • & • & • & • & • & • & • & • & • & • & • \\ 
+%\hline 
+%i\_rs & • & • & • & • & • & • & • & • & • & • & • & • \\ 
+%\hline
+%i\_en & • & • & • & • & • & • & • & • & • & • & • & • \\ 
+%\hline 
+%i\_os & • & • & • & • & • & • & • & • & • & • & • & • \\ 
+%\hline 
+%f\_os & • & • & • & • & • & • & • & • & • & • & • & • \\ 
+%\hline 
+%\end{tabular}
+%}
+%\caption{sinais de saída da FSM para cada estado}
+%\label{tab:HALF_FSM_outputs}
+%\end{table}
 
 \subsection{SAVE}
 % intro ao SAVE
