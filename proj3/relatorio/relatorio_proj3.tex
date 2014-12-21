@@ -197,7 +197,7 @@ Para ter disponíveis as ditas três palavras, que estão separadas entre si por
 	\label{fig:SAVE_storageunit_1}
 \end{figure}
 
-No entanto, uma vez que o módulo HALF salta os blocos de padding, o conceito foi expandido de maneira a permitir ``saltos''. Assim, o que foi implementado está representado na \autoref{fig:SAVE_storage_unit_wmux}.
+No entanto, uma vez que o módulo HALF salta os blocos de \textit{padding}, o conceito foi expandido de maneira a permitir ``saltos''. Assim, o que foi implementado está representado na \autoref{fig:SAVE_storage_unit_wmux}.
 
 \begin{figure}[h]
 	\centering
@@ -232,7 +232,7 @@ Caso a operação seja simples, o resultado do módulo HALF é direccionado para
 
 No caso de ser uma operação composta (abertura ou fecho), a saída da primeira operação é redireccionada para uma segunda unidade de armazenamento, a partir da qual é realizada a última operação antes do armazenamento na memória.
 
-Finalmente, caso a operação seja detecção de limites, a imagem erodida horizontalmente é direccionada para a unidade de armazenamento principal, e posteriormente erodida verticalmente. Simultaneamente, a imagem original, inalterada, é direccionada para a segunda unidade de armazenamento, cuja saída é direccionada para o bloco de Subtracção, cuja única operação é uma \texttt{XOR} bit-a-bit entre os dois operandos.
+Finalmente, caso a operação seja extracção de limites, a imagem erodida horizontalmente é direccionada para a unidade de armazenamento principal, e posteriormente erodida verticalmente. Simultaneamente, a imagem original, inalterada, é direccionada para a segunda unidade de armazenamento, cuja saída é direccionada para o bloco de Subtracção, cuja única operação é uma \texttt{XOR} bit-a-bit entre os dois operandos.
 
 \begin{figure}[h]
 	\centering
@@ -258,14 +258,14 @@ Se se tratar de uma erosão ou de uma dilatação, o multiplexer à entrada do b
 
 No caso de uma abertura ou fecho, um multiplexer de entrada dos blocos é configurado para a unidade de armazenamento principal, o outro para a secundária, e as saídas desses blocos são configuradas para a unidade secundária e para o \textit{output}, respectivamente.
 
-Finalmente, no caso de uma Extracção de Contornos, a configuração é idêntica à de uma erosão, excepto pelo facto de que a imagem original é direccionada para a Unidade de Armazenamento secundária, e o \textit{output} provém do bloco de subtracção (isto é, à operação \texttt{XOR} -- os bits iguais entre as imagens são apagados, e os diferentes marcados).
+Finalmente, no caso de uma extracção de contornos, a configuração é idêntica à de uma erosão, excepto pelo facto de que a imagem original é direccionada para a Unidade de Armazenamento secundária, e o \textit{output} provém do bloco de subtracção (isto é, da operação \texttt{XOR}---os bits iguais entre as imagens são apagados, e os diferentes marcados).
 
 \subsection{\textit{Padder}}
 % intro ao padder
-Visto que o formato de imagem desenvolvido usa como \textit{padding} a extensão do último bit válido há que gerar esse \textit{padding} antes de fazer o armazenamento na BRAM de saída. Para além disso há que acrescentar palavras que tenham sido suprimidas durante o processamento (i.e.\ palavras constituídas somente por \textit{padding}). São estas as funções do \textit{padder} descrito nesta secção.
+Visto que o formato de imagem desenvolvido usa como \textit{padding} a extensão do último bit válido de cada linha, há que gerar esse \textit{padding} antes de fazer o armazenamento na BRAM de saída. Para além disso é preciso acrescentar palavras que tenham sido suprimidas durante o processamento (i.e.\ palavras constituídas somente por \textit{padding}). São estas as funções do \textit{padder} descrito nesta secção.
 
 \subsubsection{Datapath}
-O \textit{padder} recebe palavras de 32 bits. Para fazer o \textit{padding} é necessário aceder ao último bit válido de uma linha. Esse bit pode estar em qualquer uma de 4 palavras de 32 bits que constituem a linha. Para obter o bit de interesse usa-se um mux de 32 entradas.
+O \textit{padder} recebe palavras de 32 bits. Para fazer o \textit{padding} é necessário aceder ao último bit válido de uma linha. Esse bit pode estar em qualquer uma de 4 palavras de 32 bits que constituem a linha. Para obter o bit de interesse usa-se um multiplexer de 32 entradas.
 
 O número de bits da palavra de entrada que passam para a palavra de saída depende da largura da imagem. Como tal, existe uma espécie de descodificador que selecciona que bits da palavra de entrada devem passar intocados. Os bits da palavra que não passarem são substituídos pelo bit de \textit{padding}.
 
@@ -292,11 +292,11 @@ Nos estados representados a amarelo toda a informação da palavra é informaç�
 	\label{fig:padder_FSM}
 \end{figure}
 
-\subsection{União dos módulos}
+\subsection{União dos Módulos}
 
 Uma vez desenhados os três módulos componentes da arquitectura, é necessário ligá-los entre si.
 
-O módulo SAVE recebe como entradas alguns sinais de controlo, provenientes da interface com o utilizador (interruptores e botões da placa \textit{Basys2}), e os \textit{outputs} do módulo HALF.
+O módulo SAVE recebe como entradas alguns sinais de controlo, provenientes da interface com o utilizador (interruptores e botões da placa \textit{Basys2}), e os \textit{outputs} do módulo HALF. O módulo HALF recebe também informação sobre a largura e altura da imagem.
 
 Por sua vez, os resultados do SAVE deveriam ser utilizados pelo módulo de \textit{padding} para completar as lacunas com a extensão do bit relevante. No entanto, devido às limitações de tempo, esta ligação não foi implementada em VHDL.
 
@@ -305,9 +305,9 @@ Alguns dos sinais de controlo ou endereços correspondem apenas ao atraso de out
 \section{\textit{Performance}}	% titulo melhor ?
 %A aquitectura desenhada processa as imagens com complexidade $O(m)$, sendo $m$ o número de linhas da imagem.
 
-A HALF tem tempo de processamento proporcional ao número de palavras da imagem que não sejam constituídas exclusivamente por \textit{padding}, ou seja tem complexidade $O(w m)$, em que $w$ é o número de palavras que não são \textit{padding} e $m$ é o número de linhas da imagem. Cada ciclo de execução processa uma palavra, sendo que as operações compostas custam apenas mais um ciclo que as elementares.
+A HALF tem tempo de processamento proporcional ao número de palavras da imagem que não sejam constituídas exclusivamente por \textit{padding}, ou seja tem complexidade $O(w m)$, em que $w$ é o número de palavras de cada linha que não são \textit{padding} e $m$ é o número de linhas da imagem. Cada ciclo de execução processa uma palavra, sendo que as operações compostas custam apenas mais um ciclo que as elementares.
 
-A SAVE processa com complexidade $O(w m)$. Mais uma vez esta unidade processa apenas palavras que não sejam exclusivamente \textit{padding}. O \textit{throughput} desta unidade é inferior a 1 palavra por ciclo visto que em imagens com largura superior a uma palavra de 32 bits há que esperar que a unidade de armazenamento da SAVE seja preenchida até que existam palavras correspondentes de linhas seguidas. As operações compostas podem demorar até mais 4 ciclos do que as operações elementares.
+A SAVE processa com complexidade $O(w m)$. Mais uma vez esta unidade processa apenas palavras que não sejam exclusivamente \textit{padding}. O \textit{throughput} desta unidade é inferior a 1 palavra por ciclo visto que em imagens com largura superior à da palavra há que esperar que a unidade de armazenamento da SAVE seja preenchida até que existam palavras correspondentes de linhas seguidas. As operações compostas podem demorar até mais 4 ciclos do que as operações elementares.
 
 Do \textit{padder} saem $4\times m$ resultados independentemente do valor de $w$, devido à expansão das linhas para 4 palavras de forma a que seja respeitado o formato definido para a imagem na \autoref{sec:formato_imagens}. No entanto é possível acelerar a escrita na BRAM de saída de forma a que as palavras de \textit{padding} sejam escritas mais rapidamente que as restantes, fazendo com que o \textit{padder} não seja um ponto de ``engarrafamentos''.
 
@@ -385,9 +385,9 @@ Os diversos módulos da arquitectura não foram unidos, nem foi feita a interfac
 No caso de ser feita uma adenda ao projecto e à arquitectura, serão feitas as seguintes alterações:
 
 \begin{itemize}
-        \item A Unidade de Armazenamento descrita em \ref{sssec:SAVE_Datapath} e representada na \autoref{fig:SAVE_storage_unit_wmux} é desnecessariamente complexa, a sua única funcionalidade é prevenir um pequeno atraso \textit{overhead} (de entre 1 a 3 ciclos) nas situações em que há padding.
+        \item A Unidade de Armazenamento descrita em \ref{sssec:SAVE_Datapath} e representada na \autoref{fig:SAVE_storage_unit_wmux} é desnecessariamente complexa, apenas com o intuito de prevenir um pequeno atraso \textit{overhead} (de entre 1 a 3 ciclos) nas situações em que há \textit{padding}.
 
-No entanto este ganho não é suficiente para justificar o elevado custo de hardware de todos os multiplexers extra. Esta Unidade de Armazenamento seria substituída pelo conceito simplificado da \autoref{fig:SAVE_storageunit_1}.
+No entanto este ganho não é suficiente para justificar o elevado custo de hardware de todos os multiplexers adicionais. Esta Unidade de Armazenamento seria substituída pelo conceito simplificado da \autoref{fig:SAVE_storageunit_1}.
 
         \item Os atrasos necessários para os sinais entre os diversos módulos devem ser feitos de maneira consistente e coerente.
 
