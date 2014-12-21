@@ -196,6 +196,15 @@ Para ter disponíveis as ditas três palavras, que estão separadas entre si por
 	\label{fig:SAVE_storageunit_1}
 \end{figure}
 
+No entanto, uma vez que o módulo HALF salta os blocos de padding, o conceito foi expandido de maneira a permitir ``saltos''. Assim, o que foi implementado está representado na \autoref{fig:SAVE_storage_unit_wmux}.
+
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=0.8\linewidth]{SAVE_storage_unit_wmux}
+	\caption{Unidade de Armazenamento do módulo SAVE revista}
+	\label{fig:SAVE_storage_unit_wmux}
+\end{figure}
+
 Uma vez disponíveis as três palavras relevantes (ou duas, no caso da primeira e última palavra, que não têm antecessor nem sucessor, respectivamente), são sobre si efectuadas as operações lógicas correspondentes à operação morfológica a realizar sobre a imagem (ver \autoref{fig:SAVE_datapath_E_D}).
 
 \begin{figure}[h]
