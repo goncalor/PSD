@@ -112,7 +112,7 @@ Devido aos atrasos causados pelos registos \texttt{\_accum} e \texttt{\_delay\_r
 
 Paralelamente à saída \texttt{output\_func} existe também a \textit{bus} \texttt{output\_orig} que é a palavra original correspondente à palavra transformada durante a HALF. A palavra original é usada apenas durante a SAVE e somente no caso da operação de extracção de contornos. A palavra original é atrasada fazendo uso do registo \texttt{d\_accum\_en}, que não é usado para outro fim durante extracções de contornos. Assim, a palavra original e transformada saem da datapath sincronizadas.
 
-O diagrama da datapath da HALF está patente na \autoref{fig:HALF_datapath}.
+O diagrama da datapath da HALF está patente na \autoref{fig:HALF_datapath}. Não são representados sinais de relógio.
 
 \begin{figure}[H]
 	\centerline{
@@ -134,11 +134,13 @@ A máquina de estados da HALF pode ser vista na \autoref{fig:HALF_FSM}.
 	\label{fig:HALF_FSM}
 \end{figure}
 
-Existem duas classes de outputs nesta máquina de estados: uns dependem apenas do estado actual, sendo independentes do tipo de operação; os outros dependem apenas do tipo de operação.
+Existem duas classes de outputs nesta máquina de estados: uns dependem apenas do estado actual, sendo independentes do tipo de operação; os outros dependem apenas do tipo de operação. Da primeira classe fazem parte os \textit{enables} dos blocos D e E, reset do \texttt{addman}, offset da BRAM de entrada e o offset da unidade de armazenamento do SAVE. Da outra classe fazem parte os sinais de controlo de multiplexers e os sinais de \textit{delay}.
 
-Da primeira classe fazem parte os \textit{enables} dos blocos D e E, reset do \texttt{addman}, offset da BRAM de entrada e o offset da unidade de armazenamento do SAVE.
+Para a primeira palavra de cada linha o \textit{carry enable} é desactivado, visto que o \textit{carry} nesse caso se refere a uma palavra da linha anterior. O \textit{accumulator enable} é desactivado para a última palavra de cada linha visto que nesse caso \texttt{acc\_in} se refere à primeira palavra da linha seguinte.
 
-Da outra classe fazem parte os sinais de controlo de multiplexers e os sinais de \textit{delay}.
+Os sinais de controlo dos multiplexers à entrada dos blocos D e E e o do mux de saída são alterados de acordo com a operação a executar. Nas operações compostas há que redireccionar a saída de um dos blocos para a entrada do outro. Para além disso numa opção composta há que activar o sinal de \textit{delay} de forma a atrasar o \textit{carry enable} e \textit{accumulator enable} do segundo bloco a actuar.
+
+O sinal de \textit{reset} do \texttt{addman} é activado apenas no estado \texttt{idle}. O sinal de \textit{offset} é gerado de forma a saltar palavras da memória que contenham apenas \textit{padding}.
 
 %\begin{table}
 %\small
