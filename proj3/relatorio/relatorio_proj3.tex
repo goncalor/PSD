@@ -311,7 +311,7 @@ A SAVE processa com complexidade $O(w m)$. Mais uma vez esta unidade processa ap
 
 Do \textit{padder} saem $4\times m$ resultados independentemente do valor de $w$, devido à expansão das linhas para 4 palavras de forma a que seja respeitado o formato definido para a imagem na \autoref{sec:formato_imagens}. No entanto é possível acelerar a escrita na BRAM de saída de forma a que as palavras de \textit{padding} sejam escritas mais rapidamente que as restantes, fazendo com que o \textit{padder} não seja um ponto de ``engarrafamentos''.
 
-Tendo em conta que as imagens a serem processadas têm no máximo 32 bits de largura, ou seja $w=4$, a complexidade da arquitectura desenhada é na sua totalidade $O(m)$, em que $m$ é o número de linhas da imagem.
+Tendo em conta que as imagens a serem processadas têm no máximo 128 bits de largura, ou seja $w=4$, a complexidade da arquitectura desenhada é na sua totalidade $O(m)$, em que $m$ é o número de linhas da imagem.
 
 Cada um dos 3 blocos principais da arquitectura foi sintetizado e a frequência máxima de cada bloco é mostrada na \autoref{tab:freqs_operacao}.
 
@@ -349,8 +349,29 @@ Cada um dos 3 blocos principais da arquitectura foi sintetizado e a frequência 
 
 \section{Conclusões e Comentários}
 
-A Unidade de Armazenamento descrita em \ref{sssec:SAVE_Datapath} e representada na \autoref{fig:SAVE_storage_unit_wmux} é desnecessariamente complexa, a sua única funcionalidade é prevenir um pequeno atraso \textit{overhead} (de entre 1 a 3 ciclos) nas situações em que há padding.
+Infelizmente, não foi possível concluir o projecto devido a limitações temporais.
 
-No entanto este ganho não é suficiente para justificar o elevado custo de hardware de todos os multiplexers extra. Numa adenda a este trabalho, esta Unidade de Armazenamento seria substituída pelo conceito simplificado da \autoref{fig:SAVE_storageunit_1}.
+O processo foi desafiante e estimulante. A premissa do projecto motivou e levou à descoberta de alternativas de melhor performance.
+
+Inicialmente, estava previsto fazer várias leituras e armazenar os seus resultados em registos sobre os quais seriam feitas as operações lógicas.
+
+Eventualmente descobriu-se o facto de que as componentes horizontais e verticais podem ser executadas separadamente, e a arquitectura foi dividida em duas.
+
+A utilização de \textit{padding} no formato de imagem foi motivado pelas complexidades implicadas pelas quebras de linha. No entanto, o formato de saída teria de ser o mesmo, pelo que a componente de \textit{padding} introduziu um novo elemento na arquitectura.
+
+Os diversos módulos da arquitectura não foram unidos, nem foi feita a interface com a placa, muito menos o seu teste.
+
+No caso de ser feita uma adenda ao projecto e à arquitectura, serão feitas as seguintes alterações:
+
+\begin{itemize}
+        \item A Unidade de Armazenamento descrita em \ref{sssec:SAVE_Datapath} e representada na \autoref{fig:SAVE_storage_unit_wmux} é desnecessariamente complexa, a sua única funcionalidade é prevenir um pequeno atraso \textit{overhead} (de entre 1 a 3 ciclos) nas situações em que há padding.
+
+No entanto este ganho não é suficiente para justificar o elevado custo de hardware de todos os multiplexers extra. Esta Unidade de Armazenamento seria substituída pelo conceito simplificado da \autoref{fig:SAVE_storageunit_1}.
+
+        \item Os atrasos necessários para os sinais entre os diversos módulos devem ser feitos de maneira consistente e coerente.
+
+\end{itemize}
+
+
 
 \end{document}
