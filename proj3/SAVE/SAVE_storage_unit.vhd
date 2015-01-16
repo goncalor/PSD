@@ -29,7 +29,6 @@ use IEEE.STD_LOGIC_UNSIGNED.ALL;
 
 entity SAVE_storage_unit is
 	Port ( data_in : in  STD_LOGIC_VECTOR (31 downto 0);
-		offset : in STD_LOGIC_VECTOR (1 downto 0);
 		clk : in STD_LOGIC;
 		out_0 : out  STD_LOGIC_VECTOR (31 downto 0);
 		out_1 : out  STD_LOGIC_VECTOR (31 downto 0);
@@ -50,48 +49,15 @@ begin
 	REGISTERS_PROC: process (clk)
 	begin
 		if (clk'event and clk = '1') then
-			case (offset) is
-				when "00" =>
-					it_9 <= it_8;
-					it_8 <= it_7;
-					it_7 <= it_6;
-					it_6 <= it_5;
-					it_5 <= it_4;
-					it_4 <= it_3;
-					it_3 <= it_2;
-					it_2 <= it_1;
-					it_1 <= data_in;
-				when "01" =>
-					it_9 <= it_7;
-					it_8 <= it_6;
-					it_7 <= it_5;
-					it_6 <= it_4;
-					it_5 <= it_3;
-					it_4 <= it_2;
-					it_3 <= it_1;
-					it_2 <= data_in;
-					it_1 <= data_in;
-				when "10" =>
-					it_9 <= it_6;
-					it_8 <= it_5;
-					it_7 <= it_4;
-					it_6 <= it_3;
-					it_5 <= it_2;
-					it_4 <= it_1;
-					it_3 <= data_in;
-					it_2 <= data_in;
-					it_1 <= data_in;
-				when others =>
-					it_9 <= it_5;
-					it_8 <= it_4;
-					it_7 <= it_3;
-					it_6 <= it_2;
-					it_5 <= it_1;
-					it_4 <= data_in;
-					it_3 <= data_in;
-					it_2 <= data_in;
-					it_1 <= data_in;
-			end case;
+			it_9 <= it_8;
+			it_8 <= it_7;
+			it_7 <= it_6;
+			it_6 <= it_5;
+			it_5 <= it_4;
+			it_4 <= it_3;
+			it_3 <= it_2;
+			it_2 <= it_1;
+			it_1 <= data_in;
 		end if;
 	end process;
 	

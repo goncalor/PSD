@@ -41,7 +41,6 @@ entity SAVE_datapath is
 		os : in STD_LOGIC;
 		data_in : in STD_LOGIC_VECTOR(31 downto 0);
 		original : in STD_LOGIC_VECTOR(31 downto 0);
-		offset: in STD_LOGIC_VECTOR(1 downto 0);
 		output: out STD_LOGIC_VECTOR(31 downto 0)
 	);
 end SAVE_datapath;
@@ -50,7 +49,6 @@ architecture Behavioral of SAVE_datapath is
 	COMPONENT SAVE_storage_unit
 	PORT(
 		data_in : IN std_logic_vector(31 downto 0);
-		offset : IN std_logic_vector(1 downto 0);
 		clk : IN std_logic;          
 		out_0 : OUT std_logic_vector(31 downto 0);
 		out_1 : OUT std_logic_vector(31 downto 0);
@@ -113,7 +111,6 @@ architecture Behavioral of SAVE_datapath is
 begin
 	SU_main: SAVE_storage_unit PORT MAP(
 		data_in => data_in,
-		offset => offset,
 		clk => clk,
 		out_0 => su_m_new,
 		out_1 => su_m_cur,
@@ -121,7 +118,6 @@ begin
 	);
 	SU_composite: SAVE_storage_unit PORT MAP(
 		data_in => su_c_in,
-		offset => offset,
 		clk => clk,
 		out_0 => su_c_new,
 		out_1 => su_c_cur,
