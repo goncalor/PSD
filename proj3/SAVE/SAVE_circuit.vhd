@@ -77,6 +77,7 @@ architecture Behavioral of SAVE_circuit is
 		os : IN std_logic;
 		data_in : IN std_logic_vector(31 downto 0);
 		original : IN std_logic_vector(31 downto 0);
+		offset : IN std_logic_vector(1 downto 0);
 		output : OUT std_logic_vector(31 downto 0)
 		);
 	END COMPONENT;
@@ -136,6 +137,7 @@ begin
 		os => os,
 		data_in => data_in,
 		original => original,
+		offset => offset,
 		output => output
 	);
 	

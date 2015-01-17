@@ -30,6 +30,7 @@ use IEEE.STD_LOGIC_UNSIGNED.ALL;
 entity SAVE_storage_unit is
 	Port ( data_in : in  STD_LOGIC_VECTOR (31 downto 0);
 		clk : in STD_LOGIC;
+		offset: in STD_LOGIC_VECTOR(1 downto 0);
 		out_0 : out  STD_LOGIC_VECTOR (31 downto 0);
 		out_1 : out  STD_LOGIC_VECTOR (31 downto 0);
 		out_2 : out  STD_LOGIC_VECTOR (31 downto 0));
@@ -60,9 +61,17 @@ begin
 			it_1 <= data_in;
 		end if;
 	end process;
-	
-	out_2 <= it_9;
-	out_1 <= it_5;
-	out_0 <= it_1;
-end Behavioral;
 
+	out_2 <= it_9 when offset = "00" else
+			 it_7 when offset = "01" else
+			 it_5 when offset = "10" else
+			 it_3; 
+
+	out_1 <= it_5 when offset = "00" else
+			 it_4 when offset = "01" else
+			 it_3 when offset = "10" else
+			 it_2; 
+
+	out_0 <= it_1;
+
+end Behavioral;
