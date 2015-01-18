@@ -33,7 +33,8 @@ entity SAVE_control is
 		clk : in  STD_LOGIC;
 		rst : in  STD_LOGIC;
 		op_type : in STD_LOGIC_VECTOR (2 downto 0);
-		
+		ww : in STD_LOGIC_VECTOR(2 downto 0);
+
 		orw_old : out STD_LOGIC; -- Overwrite old word (for first words)
 		m_ort : out STD_LOGIC; -- Overwrite type (if operation is dilation, 0, if erosion, 1, for instance)
 		c_ort : out STD_LOGIC;
@@ -42,13 +43,13 @@ entity SAVE_control is
 		cfs : out STD_LOGIC; -- Composite Operation Function block select
 		cs : out STD_LOGIC; -- Composite block input select
 		ofs : out STD_LOGIC; -- Output function select
-		os : out STD_LOGIC;
-		valid : out STD_LOGIC); -- Output select
+		os : out STD_LOGIC; -- Output select
+		valid : out STD_LOGIC);
 end SAVE_control;
 
 architecture Behavioral of SAVE_control is
 	--Use descriptive names for the states, like st1_reset, st2_search
-	type state_type is (sm_idle, first_line, normal, sm_stop); 
+	type state_type is (sm_idle, wait1, wait2, wait3, wait4, wait5, wait6, wait7, wait8, wait9, first_line0, first_line1, first_line2, first_line3, normal, sm_stop); 
 	signal state, next_state : state_type; 
 begin
 
@@ -60,6 +61,10 @@ SYNC_PROC: process (clk)
 			else
 				state <= next_state;
 			end if;
+
+--			if next_state = pre_wait then	-- state or next_state?
+--				wait_time <= wait_time - 1;
+--			end if;
 		end if;
 	end process;
 
@@ -78,7 +83,7 @@ SYNC_PROC: process (clk)
 				ofs <= 'X';
 				os <= 'X';
 				valid <= '0';
-			when first_line =>
+			when first_line0 | first_line1 | first_line2 | first_line3 =>
 				orw_old <= '1';
 				valid <= '1';
 				case (op_type) is
@@ -178,7 +183,7 @@ SYNC_PROC: process (clk)
 						ofs <= 'X';
 						os <= '1';
 				end case;
-			when others =>
+			when others =>	-- stop and wait1 ... wait9
 				orw_old <= 'X';
 				m_ort <= 'X';
 				c_ort <= 'X';
@@ -192,7 +197,7 @@ SYNC_PROC: process (clk)
 		end case;
 	end process;
 	
-	NEXT_STATE_DECODE: process (state, start, stop)
+	NEXT_STATE_DECODE: process (state, start, stop, op_type, ww)
 	begin
 	--declare default state for next_state to avoid latches
 		next_state <= state;  --default is to stay in current state
@@ -201,19 +206,74 @@ SYNC_PROC: process (clk)
 		case (state) is
 			when sm_idle =>
 				if start = '1' then
-					next_state <= first_line;
+					if op_type = "010" or op_type = "011" then	-- composite op
+						case ww is
+							when "001" => next_state <= wait3;
+							when "010" => next_state <= wait5;
+							when "011" => next_state <= wait7;
+							when others => next_state <= wait9;
+						end case;
+					else	-- simple op
+						case ww is
+							when "001" => next_state <= wait1;
+							when "010" => next_state <= wait3;
+							when "011" => next_state <= wait4;
+							when others => next_state <= wait5;
+						end case;
+					end if;
 				end if;
-			when first_line =>
+
+			when wait1 =>
+				case ww is
+					when "001" => next_state <= first_line3;
+					when "010" => next_state <= first_line2;
+					when "011" => next_state <= first_line1;
+					when others => next_state <= first_line0;
+				end case;
+			when wait2 =>
+				next_state <= wait1;
+			when wait3 =>
+				next_state <= wait2;
+			when wait4 =>
+				next_state <= wait3;
+			when wait5 =>
+				next_state <= wait4;
+			when wait6 =>
+				next_state <= wait5;
+			when wait7 =>
+				next_state <= wait6;
+			when wait8 =>
+				next_state <= wait7;
+			when wait9 =>
+				next_state <= wait8;
+
+			when first_line0 =>
+				next_state <= first_line1;
+				if stop = '1' then
+					next_state <= sm_stop;
+				end if;
+			when first_line1 =>
+				next_state <= first_line2;
+				if stop = '1' then
+					next_state <= sm_stop;
+				end if;
+			when first_line2 =>
+				next_state <= first_line3;
+				if stop = '1' then
+					next_state <= sm_stop;
+				end if;
+			when first_line3 =>
 				next_state <= normal;
 				if stop = '1' then
 					next_state <= sm_stop;
 				end if;
+
 			when normal =>
 				next_state <= normal;
 				if stop = '1' then
 					next_state <= sm_stop;
 				end if;
-			when others =>
+			when others =>	-- sm_stop
 				if start = '0' then
 					next_state <= sm_idle;
 				end if;
