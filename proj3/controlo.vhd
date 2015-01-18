@@ -28,7 +28,7 @@ use IEEE.STD_LOGIC_UNSIGNED.ALL;
 --use UNISIM.VComponents.all;
 
 entity controlo is
-  Port ( add1, add2 : out  std_logic_vector (10 downto 0);
+  Port ( add1, add2 : out  std_logic_vector (8 downto 0);
          start, clk, rst : in  std_logic;
          executing : out  std_logic);
 end controlo;
@@ -37,8 +37,8 @@ architecture Behavioral of controlo is
   type fsm_states is ( s_initial, s_end, s_exec, s_last_exec );
   signal currstate, nextstate: fsm_states;
   signal count_en, end_of_counting : std_logic;
-  signal count : std_logic_vector (10 downto 0);
-  constant countEND : std_logic_vector (10 downto 0) := (others => '1');
+  signal count : std_logic_vector (8 downto 0);
+  constant countEND : std_logic_vector (8 downto 0) := (others => '1');
 begin
   end_of_counting <= '1' when count = countEND else '0';
   state_reg: process (clk, rst)

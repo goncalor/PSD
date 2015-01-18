@@ -28,13 +28,13 @@ use IEEE.STD_LOGIC_UNSIGNED.ALL;
 --use UNISIM.VComponents.all;
 
 entity datapath is
-    Port ( datain : in  std_logic_vector (7 downto 0);
-           dataout : out  std_logic_vector (7 downto 0));
+    Port ( datain : in  std_logic_vector (31 downto 0);
+           dataout : out  std_logic_vector (31 downto 0));
 end datapath;
 
 architecture Behavioral of datapath is
 begin
-  dataout(7 downto 4) <= datain(3 downto 0) ;
-  dataout(3 downto 0) <= datain(7 downto 4) ;
+  dataout(31 downto 16) <= datain(15 downto 0) ;
+  dataout(15 downto 0) <= datain(31 downto 16) ;
 end Behavioral;
 

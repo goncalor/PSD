@@ -48,13 +48,13 @@ end BlockRam;
 architecture Structural of BlockRam is
 
 	Constant DntCare: std_logic_vector(0 downto 0) := "0";
+	Constant DntCare2: std_logic_vector(3 downto 0) := "0000";
 	-- DIPA and DIPB are defined as std_logic_vector(0 downto 0)
 
 begin
 
-
-	-- 2k 8bit memory block 
-	RamB2k8bit : RAMB16_S9_S36
+	-- 512 x 32bit memory block 
+	RAMB16_S9_S36_inst : RAMB16_S9_S36
 	generic map (
 		INIT_A => X"000",  --  Value of output RAM registers on Port A at startup
 		INIT_B => X"000",  --  Value of output RAM registers on Port B at startup
@@ -147,7 +147,7 @@ begin
 		DIA => busDiA,     -- Port A 8-bit Data Input
 		DIB => busDiB,     -- Port B 32-bit Data Input
 		DIPA => DntCare,   -- Port A 1-bit parity Input, never used
-		DIPB => DntCare,   -- Port-B 1-bit parity Input, never used
+		DIPB => DntCare2,   -- Port-B 1-bit parity Input, never used
 		ENA => ctlEnA,     -- Port A RAM Enable Input
 		ENB => ctlEnB,     -- Port B RAM Enable Input
 		SSRA => '0',       -- Port A Synchronous Set/Reset Input

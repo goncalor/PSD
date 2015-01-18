@@ -83,8 +83,8 @@ architecture Structural of usb2bram is
 	signal EppWrOut	: std_logic;
 	signal selBramCtrl : std_logic;
 
-	signal adrB1, adrB2, adrB1cnt, adrB2cnt	: std_logic_vector (10 downto 0);
-	signal dataB1, dataB2, dataB2in : std_logic_vector (7 downto 0);
+	signal adrB1, adrB2, adrB1cnt, adrB2cnt : std_logic_vector (8 downto 0);
+	signal dataB1, dataB2in, dataB2 : std_logic_vector (31 downto 0);
 
 	signal clk_disp7, clk_fast : std_logic;
 	signal write_enable, is_executing, not_executing : std_logic;
@@ -134,9 +134,9 @@ architecture Structural of usb2bram is
 			 ctlEnA : in		std_logic; 
 			 clkA	 : in		std_logic; 
 			 ctlWeB : in		std_logic; 
-			 busDiB : in		std_logic_vector (7 downto 0); 
-			 busDoB : out	 std_logic_vector (7 downto 0); 
-			 adrB	 : in		std_logic_vector (10 downto 0); 
+			 busDiB : in		std_logic_vector (31 downto 0); 
+			 busDoB : out	 std_logic_vector (31 downto 0); 
+			 adrB	 : in		std_logic_vector (8 downto 0); 
 			 ctlEnB : in		std_logic; 
 			 clkB	 : in		std_logic);
 	end component;
@@ -166,14 +166,14 @@ architecture Structural of usb2bram is
 
 	component datapath
 		port(
-			datain : in std_logic_vector(7 downto 0);
-			dataout : out std_logic_vector(7 downto 0)			
+			datain : in std_logic_vector(31 downto 0);
+			dataout : out std_logic_vector(31 downto 0)			
 		);
 	end component;
 	component controlo
 		port(
 			start, clk, rst : in std_logic;
-			add1, add2 : out std_logic_vector(10 downto 0);
+			add1, add2 : out std_logic_vector(8 downto 0);
 			executing : out std_logic
 		);
 	end component;
@@ -218,7 +218,7 @@ begin
 		adrA	 => BramAdrIn,
 		adrB	 => adrB1,
 		busDiA => BramDataIn,
-		busDiB => "00000000",
+		busDiB => X"00000000",
 		clkA	 => BramClkIn,
 		clkB	 => clk_fast,
 		ctlEnA => BramEnIn,
@@ -227,6 +227,7 @@ begin
 		ctlWeB => '0',
 		busDoA => open,
 		busDoB => dataB1);
+
 	BlockRamOUT : BlockRam port map (
 		adrA	 => BramAdrIn,
 		adrB	 => adrB2,
@@ -265,12 +266,16 @@ begin
 	
 	-- address values are defined by the control during execution
 	-- and by the board switches when not executing
-	adrB1 <= "000" & sw when not_executing = '1' else adrB1cnt;
-	adrB2 <= "000" & sw when not_executing = '1' else adrB2cnt;
+	adrB1 <= "0" & sw when not_executing = '1' else adrB1cnt;
+	adrB2 <= "0" & sw when not_executing = '1' else adrB2cnt;
 	write_enable <= is_executing;
 	not_executing <= not is_executing;
 	
-	Inst_datapath: datapath port map( datain => dataB1, dataout => dataB2in);
+	Inst_datapath: datapath port map(
+		datain => dataB1,
+		dataout => dataB2in
+		);
+
 	Inst_controlo: controlo port map(
 		add1 => adrB1cnt,
 		add2 => adrB2cnt,
