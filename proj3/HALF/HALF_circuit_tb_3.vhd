@@ -2,10 +2,10 @@
 -- Company: 
 -- Engineer:
 --
--- Create Date:   15:45:24 12/17/2014
+-- Create Date:   11:13:40 01/19/2015
 -- Design Name:   
--- Module Name:   /home/raffitz/Documents/2014-2015/1º Semestre/Xilinx/proj3_aux1/HALF_circuit_tb_1.vhd
--- Project Name:  proj3_aux1
+-- Module Name:   /home/raffitz/Documents/2014-2015/1º Semestre/Xilinx/psd_pr3_maisum/HALF_circuit_tb_3.vhd
+-- Project Name:  psd_pr3_maisum
 -- Target Device:  
 -- Tool versions:  
 -- Description:   
@@ -30,33 +30,33 @@ USE ieee.std_logic_1164.ALL;
 USE ieee.std_logic_unsigned.all;
 USE ieee.numeric_std.ALL;
  
-ENTITY HALF_circuit_tb_1 IS
-END HALF_circuit_tb_1;
+ENTITY HALF_circuit_tb_3 IS
+END HALF_circuit_tb_3;
  
-ARCHITECTURE behavior OF HALF_circuit_tb_1 IS 
- 
+ARCHITECTURE behavior OF HALF_circuit_tb_3 IS 
+
 	-- Component Declaration for the Unit Under Test (UUT)
- 
+
 	COMPONENT HALF_circuit
 	PORT(
-		start : IN std_logic;
-		clk : IN std_logic;
-		rst : IN std_logic;
-		ww : IN std_logic_vector(1 downto 0);
-		op_type : IN std_logic_vector(2 downto 0);
-		data_in : IN std_logic_vector(31 downto 0);
-		height : IN std_logic_vector(7 downto 0);
-		out_sel : IN std_logic;
-		stop : OUT std_logic;
-		valid : OUT std_logic;
-		i_en : OUT std_logic;
-		f_os : OUT std_logic_vector(1 downto 0);
-		i_address : OUT std_logic_vector(8 downto 0);
-		output_func : OUT std_logic_vector(31 downto 0);
-		output_orig : OUT std_logic_vector(31 downto 0)
+		start : IN  std_logic;
+		clk : IN  std_logic;
+		rst : IN  std_logic;
+		ww : IN  std_logic_vector(1 downto 0);
+		op_type : IN  std_logic_vector(2 downto 0);
+		data_in : IN  std_logic_vector(31 downto 0);
+		height : IN  std_logic_vector(7 downto 0);
+		out_sel : IN  std_logic;
+		stop : OUT  std_logic;
+		valid : OUT  std_logic;
+		i_en : OUT  std_logic;
+		f_os : OUT  std_logic_vector(1 downto 0);
+		i_address : OUT  std_logic_vector(8 downto 0);
+		output_func : OUT  std_logic_vector(31 downto 0);
+		output_orig : OUT  std_logic_vector(31 downto 0)
 		);
 	END COMPONENT;
-	
+
 
 	--Inputs
 	signal start : std_logic := '0';
@@ -68,9 +68,9 @@ ARCHITECTURE behavior OF HALF_circuit_tb_1 IS
 	signal height : std_logic_vector(7 downto 0) := (others => '0');
 	signal out_sel : std_logic := '0';
 
- 	--Outputs
- 	signal stop : std_logic;
- 	signal valid : std_logic;
+	--Outputs
+	signal stop : std_logic;
+	signal valid : std_logic;
 	signal i_en : std_logic;
 	signal f_os : std_logic_vector(1 downto 0);
 	signal i_address : std_logic_vector(8 downto 0);
@@ -103,7 +103,7 @@ BEGIN
 
 	-- Clock process definitions
 	clk_process :process
-	begin
+		begin
 		clk <= '0';
 		wait for clk_period/2;
 		clk <= '1';
@@ -114,34 +114,34 @@ BEGIN
 	-- Stimulus process
 	stim_proc: process
 	begin		
-	-- hold reset state for 100ns.
-	wait for 100ns;	
+		-- hold reset state for 100ms.
+		wait for 100ns;	
 
-	wait for clk_period*10;
+		wait for clk_period*10;
 
-	-- insert stimulus here 
+		-- insert stimulus here 
+		
+		rst <= '1' after 0 * clk_period,
+			'0' after 1 * clk_period;
 	
-	rst <= '1' after 0 * clk_period,
-		'0' after 1 * clk_period;
+		start <= '1' after 1 * clk_period;
 	
-	start <= '1' after 1 * clk_period;
+		ww <= "10" after 0 * clk_period; -- 2 words wide
 	
-	ww <= "10" after 0 * clk_period; -- 2 words wide
+		op_type <= "010" after 0 * clk_period; -- E+D
 	
-	op_type <= "000" after 0 * clk_period; -- Dilation
+		height <= "00000011" after 0 * clk_period; -- 3 bits high image
 	
-	height <= "00100000" after 0 * clk_period; -- 3 bits high image
+		out_sel <= '1' after 0 * clk_period; -- Because it's a hybrid
 	
-	out_sel <= '0' after 0 * clk_period; -- Because it's a Dilation
-	
-	data_in <= "11111111111111110000000000000000" after 2*clk_period,
-		"11111111111111110000000000000000" after 3*clk_period,
-		"00000000000000001111111111111111" after 4*clk_period,
-		"00000000000000001111111111111111" after 5*clk_period,
-		"11111111111111110000000000000000" after 6*clk_period,
-		"00000000000000001111111111111111" after 7*clk_period;
+		data_in <= "11111111111111110000000000000000" after 2*clk_period,
+			"11111111111111110000000000000000" after 3*clk_period,
+			"00000000000000001111111111111111" after 4*clk_period,
+			"00000000000000001111111111111111" after 5*clk_period,
+			"11111111111111110000000000000000" after 6*clk_period,
+			"00000000000000001111111111111111" after 7*clk_period;
 
-	wait;
+		wait;
 	end process;
 
 END;

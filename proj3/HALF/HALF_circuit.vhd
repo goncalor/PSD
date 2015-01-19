@@ -60,8 +60,9 @@ architecture Behavioral of HALF_circuit is
 		out_sel : IN std_logic;
 		e_delay : IN std_logic;
 		d_delay : IN std_logic;
+		ww : IN std_logic_vector(1 downto 0);
 		i_rs : IN std_logic;
-		i_os : IN std_logic_vector(2 downto 0);          
+		i_os : IN std_logic_vector(2 downto 0);
 		stop : OUT std_logic;
 		i_address : OUT std_logic_vector(8 downto 0);
 		output_func : OUT std_logic_vector(31 downto 0);
@@ -124,6 +125,7 @@ begin
 		out_sel => out_sel, --from outside
 		e_delay => e_delay,
 		d_delay => d_delay,
+		ww => ww,
 		i_rs => i_rs,
 		i_os => i_os,
 		stop => stop_s,

@@ -59,11 +59,13 @@ architecture Behavioral of HALF_control is
 	
 	signal valid_1 : STD_LOGIC;
 	signal valid_2 : STD_LOGIC;
+	signal valid_3 : STD_LOGIC;
 	signal valid_f : STD_LOGIC;
 	
 begin
 	
-	valid_f <= valid_2 when op_type(2 downto 1) = "01" else valid_1;
+	valid_f <= valid_3 when op_type(2 downto 1) = "01" else valid_1;
+	valid_o <= valid_f;
 	
 	SYNC_PROC: process (clk)
 	begin
@@ -76,6 +78,7 @@ begin
 			end if;
 			
 			-- Registers:
+			valid_3 <= valid_2;
 			valid_2 <= valid_1;
 			valid_1 <= valid;
 			

@@ -40,6 +40,7 @@ entity HALF_datapath is
 		out_sel : in STD_LOGIC;
 		e_delay : in STD_LOGIC;
 		d_delay : in STD_LOGIC;
+		ww : in STD_LOGIC_VECTOR(1 downto 0);
 		i_rs : in STD_LOGIC;
 		i_os : in STD_LOGIC_VECTOR(2 downto 0);
 		stop : out STD_LOGIC;
@@ -131,6 +132,7 @@ architecture Behavioral of HALF_datapath is
 	signal d_ae_2 : STD_LOGIC;
 	signal d_ae_f : STD_LOGIC;
 	
+	signal address_s : STD_LOGIC_VECTOR(8 downto 0);
 	
 	signal input_address : std_logic_vector(8 downto 0);
 	signal address_compare : std_logic_vector(7 downto 0);
@@ -248,7 +250,13 @@ begin
 	);
 	i_address <= input_address;
 	
-	address_compare <= height xor ("0"& input_address(8 downto 2));
+	with ww select address_s <=
+		input_address + 4 when "01",
+		input_address + 3 when "10",
+		input_address + 2 when "11",
+		input_address + 1 when others;
+	
+	address_compare <= height xor ("0"& address_s(8 downto 2));
 	stop <= '1' when address_compare = X"00" else '0';
 
 end Behavioral;

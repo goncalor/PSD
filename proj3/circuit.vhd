@@ -74,6 +74,7 @@ architecture Behavioral of circuit is
 		data_in : IN std_logic_vector(31 downto 0);
 		original : IN std_logic_vector(31 downto 0);
 		offset : IN std_logic_vector(1 downto 0);
+		ww : IN std_logic_vector(1 downto 0);
 		valid : OUT std_logic;
 		output : OUT std_logic_vector(31 downto 0)
 		);
@@ -114,6 +115,7 @@ begin
 		data_in => data_HALF,
 		original => data_orig,
 		offset => offset,
+		ww => ww,
 		valid => valid,
 		output => output
 	);

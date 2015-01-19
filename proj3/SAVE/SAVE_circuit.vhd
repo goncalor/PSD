@@ -37,7 +37,7 @@ entity SAVE_circuit is
 		data_in : IN std_logic_vector(31 downto 0);
 		original : IN std_logic_vector(31 downto 0);
 		offset : IN std_logic_vector(1 downto 0);
-		ww : IN std_logic_vector(2 downto 0);  
+		ww : IN std_logic_vector(1 downto 0);
 		valid : OUT std_logic;
 		output : OUT std_logic_vector(31 downto 0)
 	);
@@ -51,7 +51,7 @@ architecture Behavioral of SAVE_circuit is
 		clk : IN std_logic;
 		rst : IN std_logic;
 		op_type : IN std_logic_vector(2 downto 0);          
-		ww : IN std_logic_vector(2 downto 0);  
+		ww : IN std_logic_vector(1 downto 0);  
 		orw_old : OUT std_logic;
 		m_ort : OUT std_logic;
 		c_ort : OUT std_logic;

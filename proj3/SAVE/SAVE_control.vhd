@@ -33,7 +33,7 @@ entity SAVE_control is
 		clk : in  STD_LOGIC;
 		rst : in  STD_LOGIC;
 		op_type : in STD_LOGIC_VECTOR (2 downto 0);
-		ww : in STD_LOGIC_VECTOR(2 downto 0);
+		ww : in STD_LOGIC_VECTOR(1 downto 0);
 
 		orw_old : out STD_LOGIC; -- Overwrite old word (for first words)
 		m_ort : out STD_LOGIC; -- Overwrite type (if operation is dilation, 0, if erosion, 1, for instance)
@@ -208,16 +208,16 @@ SYNC_PROC: process (clk)
 				if start = '1' then
 					if op_type = "010" or op_type = "011" then	-- composite op
 						case ww is
-							when "001" => next_state <= wait3;
-							when "010" => next_state <= wait5;
-							when "011" => next_state <= wait7;
+							when "01" => next_state <= wait3;
+							when "10" => next_state <= wait5;
+							when "11" => next_state <= wait7;
 							when others => next_state <= wait9;
 						end case;
 					else	-- simple op
 						case ww is
-							when "001" => next_state <= wait1;
-							when "010" => next_state <= wait3;
-							when "011" => next_state <= wait4;
+							when "01" => next_state <= wait1;
+							when "10" => next_state <= wait3;
+							when "11" => next_state <= wait4;
 							when others => next_state <= wait5;
 						end case;
 					end if;
@@ -225,9 +225,9 @@ SYNC_PROC: process (clk)
 
 			when wait1 =>
 				case ww is
-					when "001" => next_state <= first_line3;
-					when "010" => next_state <= first_line2;
-					when "011" => next_state <= first_line1;
+					when "01" => next_state <= first_line3;
+					when "10" => next_state <= first_line2;
+					when "11" => next_state <= first_line1;
 					when others => next_state <= first_line0;
 				end case;
 			when wait2 =>
