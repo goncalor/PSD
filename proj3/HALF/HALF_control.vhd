@@ -34,6 +34,7 @@ entity HALF_control is
 		rst : in  STD_LOGIC;
 		ww : in STD_LOGIC_VECTOR (1 downto 0);
 		op_type : in STD_LOGIC_VECTOR (2 downto 0);
+		valid_o : out STD_LOGIC;
 		mux_e : out  STD_LOGIC;
 		mux_d : out  STD_LOGIC;
 		e_carry_en : out  STD_LOGIC;
@@ -54,16 +55,30 @@ architecture Behavioral of HALF_control is
 	type state_type is (sm_idle, read1_1, read2_1, read2_2, read3_1, read3_2, read3_3, read4_1, read4_2, read4_3, read4_4, sm_stop); 
 	signal state, next_state : state_type; 
 	
+	signal valid : STD_LOGIC;
+	
+	signal valid_1 : STD_LOGIC;
+	signal valid_2 : STD_LOGIC;
+	signal valid_f : STD_LOGIC;
+	
 begin
-
+	
+	valid_f <= valid_2 when op_type(2 downto 1) = "01" else valid_1;
+	
 	SYNC_PROC: process (clk)
 	begin
 		if (clk'event and clk = '1') then
+			-- FSM state ctrl:
 			if (rst = '1') then
 				state <= sm_idle;
 			else
 				state <= next_state;
-			end if;        
+			end if;
+			
+			-- Registers:
+			valid_2 <= valid_1;
+			valid_1 <= valid;
+			
 		end if;
 	end process;
 
@@ -74,6 +89,7 @@ begin
 	--below is simple example
 		case (state) is
 			when sm_idle =>
+				valid <= '0';
 				mux_e <= 'X';
 				mux_d <= 'X';
 				e_carry_en <= 'X';
@@ -87,6 +103,7 @@ begin
 				i_os <= "XXX";
 				f_os <= "XX";
 			when read1_1 =>
+				valid <= '1';
 				case (op_type) is
 					when "000" => --> Erosion
 						mux_e <= '0';
@@ -155,6 +172,7 @@ begin
 						f_os <= "11";
 				end case;
 			when read2_1 =>
+				valid <= '1';
 				case (op_type) is
 					when "000" => --> Erosion
 						mux_e <= '0';
@@ -223,6 +241,7 @@ begin
 						f_os <= "00";
 				end case;
 			when read2_2 =>
+				valid <= '1';
 				case (op_type) is
 					when "000" => --> Erosion
 						mux_e <= '0';
@@ -291,6 +310,7 @@ begin
 						f_os <= "10";
 				end case;
 			when read3_1 =>
+				valid <= '1';
 				case (op_type) is
 					when "000" => --> Erosion
 						mux_e <= '0';
@@ -359,6 +379,7 @@ begin
 						f_os <= "00";
 				end case;
 			when read3_2 =>
+				valid <= '1';
 				case (op_type) is
 					when "000" => --> Erosion
 						mux_e <= '0';
@@ -427,6 +448,7 @@ begin
 						f_os <= "00";
 				end case;
 			when read3_3 =>
+				valid <= '1';
 				case (op_type) is
 					when "000" => --> Erosion
 						mux_e <= '0';
@@ -495,6 +517,7 @@ begin
 						f_os <= "01";
 				end case;
 			when read4_1 =>
+				valid <= '1';
 				case (op_type) is
 					when "000" => --> Erosion
 						mux_e <= '0';
@@ -563,6 +586,7 @@ begin
 						f_os <= "00";
 				end case;
 			when read4_2 =>
+				valid <= '1';
 				case (op_type) is
 					when "000" => --> Erosion
 						mux_e <= '0';
@@ -631,6 +655,7 @@ begin
 						f_os <= "00";
 				end case;
 			when read4_3 =>
+				valid <= '1';
 				case (op_type) is
 					when "000" => --> Erosion
 						mux_e <= '0';
@@ -699,6 +724,7 @@ begin
 						f_os <= "00";
 				end case;
 			when read4_4 =>
+				valid <= '1';
 				case (op_type) is
 					when "000" => --> Erosion
 						mux_e <= '0';
@@ -767,6 +793,7 @@ begin
 						f_os <= "00";
 				end case;
 			when others => -- Stop
+				valid <= '0';
 				mux_e <= 'X';
 				mux_d <= 'X';
 				e_carry_en <= 'X';
@@ -831,4 +858,5 @@ begin
 	end process;
 
 end Behavioral;
+
 

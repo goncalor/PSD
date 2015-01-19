@@ -56,6 +56,7 @@ architecture Behavioral of circuit is
 		height : IN std_logic_vector(7 downto 0);
 		out_sel : IN std_logic;
 		stop : OUT std_logic;
+		valid : OUT std_logic;
 		i_en : OUT std_logic;
 		f_os : OUT std_logic_vector(1 downto 0);
 		i_address : OUT std_logic_vector(8 downto 0);
@@ -82,6 +83,8 @@ architecture Behavioral of circuit is
 	signal offset : std_logic_vector(1 downto 0);
 	signal data_HALF : std_logic_vector(31 downto 0);
 	signal data_orig : std_logic_vector(31 downto 0);
+	
+	signal go_ahead : std_logic;
 begin
 
 	HALF: HALF_circuit PORT MAP(
@@ -94,6 +97,7 @@ begin
 		height => height,
 		out_sel => out_sel,
 		stop => stop,
+		valid => go_ahead,
 		i_en => i_en,
 		f_os => offset,
 		i_address => i_address,
@@ -105,7 +109,7 @@ begin
 		clk => clk,
 		rst => rst,
 		stop => stop,
-		start => start,
+		start => go_ahead,
 		op_type => op_type,
 		data_in => data_HALF,
 		original => data_orig,

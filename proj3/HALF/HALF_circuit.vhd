@@ -37,6 +37,7 @@ entity HALF_circuit is
 		height : in std_logic_vector(7 downto 0);
 		out_sel : in STD_LOGIC;
 		stop : out STD_LOGIC;
+		valid : out STD_LOGIC;
 		i_en : out  STD_LOGIC;
 		f_os : out  STD_LOGIC_VECTOR (1 downto 0);
 		i_address : out STD_LOGIC_VECTOR(8 downto 0);
@@ -74,7 +75,8 @@ architecture Behavioral of HALF_circuit is
 		clk : IN std_logic;
 		rst : IN std_logic;
 		ww : IN std_logic_vector(1 downto 0);
-		op_type : IN std_logic_vector(2 downto 0);          
+		op_type : IN std_logic_vector(2 downto 0);
+		valid_o : OUT std_logic;
 		mux_e : OUT std_logic;
 		mux_d : OUT std_logic;
 		e_carry_en : OUT std_logic;
@@ -149,6 +151,7 @@ begin
 		rst => rst, --from outside
 		ww => ww, --from outside
 		op_type => op_type, --from outside
+		valid_o => valid,
 		mux_e => mux_e,
 		mux_d => mux_d,
 		e_carry_en => e_carry_en,
