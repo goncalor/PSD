@@ -216,9 +216,9 @@ SYNC_PROC: process (clk)
 					else	-- simple op
 						case ww is
 							when "01" => next_state <= wait1;
-							when "10" => next_state <= wait3;
-							when "11" => next_state <= wait4;
-							when others => next_state <= wait5;
+							when "10" => next_state <= wait2;
+							when "11" => next_state <= wait3;
+							when others => next_state <= wait4;
 						end case;
 					end if;
 				end if;

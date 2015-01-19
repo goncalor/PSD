@@ -36,7 +36,6 @@ entity SAVE_circuit is
 		op_type : IN std_logic_vector(2 downto 0);  
 		data_in : IN std_logic_vector(31 downto 0);
 		original : IN std_logic_vector(31 downto 0);
-		offset : IN std_logic_vector(1 downto 0);
 		ww : IN std_logic_vector(1 downto 0);
 		valid : OUT std_logic;
 		output : OUT std_logic_vector(31 downto 0)
@@ -79,7 +78,7 @@ architecture Behavioral of SAVE_circuit is
 		os : IN std_logic;
 		data_in : IN std_logic_vector(31 downto 0);
 		original : IN std_logic_vector(31 downto 0);
-		offset : IN std_logic_vector(1 downto 0);
+		ww : IN std_logic_vector(1 downto 0);
 		output : OUT std_logic_vector(31 downto 0)
 		);
 	END COMPONENT;
@@ -99,18 +98,15 @@ architecture Behavioral of SAVE_circuit is
 	signal stop_3 : std_logic;
 	signal stop_4 : std_logic;
 	signal stop_5 : std_logic;
+	signal stop_6 : std_logic;
+	signal stop_7 : std_logic;
 	
-	signal start_1 : std_logic;
-	signal start_2 : std_logic;
-	signal start_3 : std_logic;
-	signal start_4 : std_logic;
-	signal start_5 : std_logic;
-	signal start_6 : std_logic;
+	signal stop_s : std_logic;
 begin
 	
 	SAVE_FSM: SAVE_control PORT MAP(
-		stop => stop_5,
-		start => start_6,
+		stop => stop_s,
+		start => start,
 		clk => clk,
 		rst => rst,
 		op_type => op_type,
@@ -129,7 +125,7 @@ begin
 	SAVE_D: SAVE_datapath PORT MAP(
 		clk => clk,
 		orw_old => orw_old,
-		orw_new => stop_1,
+		orw_new => stop_5, -- /!\
 		m_ort => m_ort,
 		c_ort => c_ort,
 		e_is => e_is,
@@ -140,7 +136,7 @@ begin
 		os => os,
 		data_in => data_in,
 		original => original,
-		offset => offset,
+		ww => ww,
 		output => output
 	);
 	
@@ -148,58 +144,31 @@ begin
 	REG_PROC: process (clk)
 	begin
 		if (clk'event and clk = '1') then
-			case (offset) is
-				when "00" =>
-					stop_5 <= stop_4;
-					stop_4 <= stop_3;
-					stop_3 <= stop_2;
-					stop_2 <= stop_1;
-					stop_1 <= stop;
-					start_6 <= start_5;
-					start_5 <= start_4;
-					start_4 <= start_3;
-					start_3 <= start_2;
-					start_2 <= start_1;
-					start_1 <= start;
-				when "01" =>
-					stop_5 <= stop_4;
-					stop_4 <= stop_2;
-					stop_3 <= stop_1;
-					stop_2 <= stop;
-					stop_1 <= stop;
-					start_6 <= start_5;
-					start_5 <= start_4;
-					start_4 <= start_2;
-					start_3 <= start_1;
-					start_2 <= start;
-					start_1 <= start;
-				when "10" =>
-					stop_5 <= stop_4;
-					stop_4 <= stop_1;
-					stop_3 <= stop;
-					stop_2 <= stop;
-					stop_1 <= stop;
-					start_6 <= start_5;
-					start_5 <= start_4;
-					start_4 <= start_1;
-					start_3 <= start;
-					start_2 <= start;
-					start_1 <= start;
-				when others =>
-					stop_5 <= stop_4;
-					stop_4 <= stop;
-					stop_3 <= stop;
-					stop_2 <= stop;
-					stop_1 <= stop;
-					start_6 <= start_5;
-					start_5 <= start_4;
-					start_4 <= start;
-					start_3 <= start;
-					start_2 <= start;
-					start_1 <= start;
-			end case;
+			if(rst='1') then
+				stop_7 <= '0';
+				stop_6 <= '0';
+				stop_5 <= '0';
+				stop_4 <= '0';
+				stop_3 <= '0';
+				stop_2 <= '0';
+				stop_1 <= '0';
+			else
+				stop_7 <= stop_6;
+				stop_6 <= stop_5;
+				stop_5 <= stop_4;
+				stop_4 <= stop_3;
+				stop_3 <= stop_2;
+				stop_2 <= stop_1;
+				stop_1 <= stop;
+			end if;
 		end if;
 	end process;
+	
+	with ww select stop_s <=
+		stop_3 when "01",
+		stop_4 when "10",
+		stop_5 when "11",
+		stop_6 when others;
 	
 end Behavioral;
 

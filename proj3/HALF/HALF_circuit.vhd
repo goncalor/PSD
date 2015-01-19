@@ -39,7 +39,6 @@ entity HALF_circuit is
 		stop : out STD_LOGIC;
 		valid : out STD_LOGIC;
 		i_en : out  STD_LOGIC;
-		f_os : out  STD_LOGIC_VECTOR (1 downto 0);
 		i_address : out STD_LOGIC_VECTOR(8 downto 0);
 		output_func : out  STD_LOGIC_VECTOR (31 downto 0);
 		output_orig : out  STD_LOGIC_VECTOR (31 downto 0));
@@ -88,8 +87,7 @@ architecture Behavioral of HALF_circuit is
 		d_delay : OUT std_logic;
 		i_rs : OUT std_logic;
 		i_en : OUT std_logic;
-		i_os : OUT std_logic_vector(2 downto 0);
-		f_os : OUT std_logic_vector(1 downto 0)
+		i_os : OUT std_logic_vector(2 downto 0)
 		);
 	END COMPONENT;
 	
@@ -104,11 +102,7 @@ architecture Behavioral of HALF_circuit is
 	signal i_rs : STD_LOGIC;
 	signal i_os : STD_LOGIC_VECTOR(2 downto 0);
 	signal stop_s : STD_LOGIC;
-	
-	signal f_os_out : STD_LOGIC_VECTOR (1 downto 0);
-	signal f_os_1 : STD_LOGIC_VECTOR (1 downto 0);
-	signal f_os_2 : STD_LOGIC_VECTOR (1 downto 0);
-	signal f_os_s : STD_LOGIC;
+
 	
 begin
 	
@@ -134,18 +128,6 @@ begin
 		output_orig => output_orig --to outside
 	);
 	
-	f_os_s <= e_delay or d_delay;
-	
-	DELAY_PROC: process (clk) -- Registers
-	begin
-		if (clk'event and clk = '1') then
-			f_os_2 <= f_os_1;
-			f_os_1 <= f_os_out;
-		end if;
-	end process;
-	
-	f_os <= f_os_2 when f_os_s = '1' else f_os_1;
-	
 	HALF_FSM: HALF_control PORT MAP(
 		stop => stop_s,
 		start => start, --from outside
@@ -164,8 +146,7 @@ begin
 		d_delay => d_delay,
 		i_rs => i_rs,
 		i_en => i_en, --to outside
-		i_os => i_os,
-		f_os => f_os_out --to delay
+		i_os => i_os
 	);
 	
 	stop <= stop_s;

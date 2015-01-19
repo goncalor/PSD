@@ -58,7 +58,6 @@ architecture Behavioral of circuit is
 		stop : OUT std_logic;
 		valid : OUT std_logic;
 		i_en : OUT std_logic;
-		f_os : OUT std_logic_vector(1 downto 0);
 		i_address : OUT std_logic_vector(8 downto 0);
 		output_func : OUT std_logic_vector(31 downto 0);
 		output_orig : OUT std_logic_vector(31 downto 0)
@@ -73,7 +72,6 @@ architecture Behavioral of circuit is
 		op_type : IN std_logic_vector(2 downto 0);
 		data_in : IN std_logic_vector(31 downto 0);
 		original : IN std_logic_vector(31 downto 0);
-		offset : IN std_logic_vector(1 downto 0);
 		ww : IN std_logic_vector(1 downto 0);
 		valid : OUT std_logic;
 		output : OUT std_logic_vector(31 downto 0)
@@ -81,7 +79,6 @@ architecture Behavioral of circuit is
 	END COMPONENT;
 	
 	signal stop : std_logic;
-	signal offset : std_logic_vector(1 downto 0);
 	signal data_HALF : std_logic_vector(31 downto 0);
 	signal data_orig : std_logic_vector(31 downto 0);
 	
@@ -100,7 +97,6 @@ begin
 		stop => stop,
 		valid => go_ahead,
 		i_en => i_en,
-		f_os => offset,
 		i_address => i_address,
 		output_func => data_HALF,
 		output_orig => data_orig
@@ -114,7 +110,6 @@ begin
 		op_type => op_type,
 		data_in => data_HALF,
 		original => data_orig,
-		offset => offset,
 		ww => ww,
 		valid => valid,
 		output => output

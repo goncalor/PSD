@@ -118,7 +118,7 @@ BEGIN
 	
 	ww <= "01" after 0*clk_period;
 	
-	op_type <= "111" after 0*clk_period; --Dilation;
+	op_type <= "111" after 0*clk_period; --Contour;
 	
 	height <= "00100000" after 0*clk_period;
 	

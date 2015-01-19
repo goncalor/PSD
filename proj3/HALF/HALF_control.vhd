@@ -45,8 +45,7 @@ entity HALF_control is
 		d_delay : out STD_LOGIC;
 		i_rs : out  STD_LOGIC;
 		i_en : out  STD_LOGIC;
-		i_os : out  STD_LOGIC_VECTOR (2 downto 0);
-		f_os : out  STD_LOGIC_VECTOR (1 downto 0));
+		i_os : out  STD_LOGIC_VECTOR (2 downto 0));
 end HALF_control;
 
 architecture Behavioral of HALF_control is
@@ -104,7 +103,6 @@ begin
 				i_rs <= '1';
 				i_en <= '0';
 				i_os <= "XXX";
-				f_os <= "XX";
 			when read1_1 =>
 				valid <= '1';
 				case (op_type) is
@@ -120,7 +118,6 @@ begin
 						i_rs <= '0';
 						i_en <= '1';
 						i_os <= "100";
-						f_os <= "11";
 					when "001" => --> Dilation
 						mux_e <= 'X';
 						mux_d <= '0';
@@ -133,7 +130,6 @@ begin
 						i_rs <= '0';
 						i_en <= '1';
 						i_os <= "100";
-						f_os <= "11";
 					when "010" => --> E+D
 						mux_e <= '0';
 						mux_d <= '1';
@@ -146,7 +142,6 @@ begin
 						i_rs <= '0';
 						i_en <= '1';
 						i_os <= "100";
-						f_os <= "11";
 					when "011" => --> D+E
 						mux_e <= '1';
 						mux_d <= '0';
@@ -159,7 +154,6 @@ begin
 						i_rs <= '0';
 						i_en <= '1';
 						i_os <= "100";
-						f_os <= "11";
 					when others => --> Edge find (E - O):
 						mux_e <= '0';
 						mux_d <= '0';
@@ -172,7 +166,6 @@ begin
 						i_rs <= '0';
 						i_en <= '1';
 						i_os <= "100";
-						f_os <= "11";
 				end case;
 			when read2_1 =>
 				valid <= '1';
@@ -189,7 +182,6 @@ begin
 						i_rs <= '0';
 						i_en <= '1';
 						i_os <= "001";
-						f_os <= "00";
 					when "001" => --> Dilation
 						mux_e <= 'X';
 						mux_d <= '0';
@@ -202,7 +194,6 @@ begin
 						i_rs <= '0';
 						i_en <= '1';
 						i_os <= "001";
-						f_os <= "00";
 					when "010" => --> E+D
 						mux_e <= '0';
 						mux_d <= '1';
@@ -215,7 +206,6 @@ begin
 						i_rs <= '0';
 						i_en <= '1';
 						i_os <= "001";
-						f_os <= "00";
 					when "011" => --> D+E
 						mux_e <= '1';
 						mux_d <= '0';
@@ -228,7 +218,6 @@ begin
 						i_rs <= '0';
 						i_en <= '1';
 						i_os <= "001";
-						f_os <= "00";
 					when others => --> Edge find:
 						mux_e <= '0';
 						mux_d <= '0';
@@ -241,7 +230,6 @@ begin
 						i_rs <= '0';
 						i_en <= '1';
 						i_os <= "001";
-						f_os <= "00";
 				end case;
 			when read2_2 =>
 				valid <= '1';
@@ -258,7 +246,6 @@ begin
 						i_rs <= '0';
 						i_en <= '1';
 						i_os <= "011";
-						f_os <= "10";
 					when "001" => --> Dilation
 						mux_e <= 'X';
 						mux_d <= '0';
@@ -271,7 +258,6 @@ begin
 						i_rs <= '0';
 						i_en <= '1';
 						i_os <= "011";
-						f_os <= "10";
 					when "010" => --> E+D
 						mux_e <= '0';
 						mux_d <= '1';
@@ -284,7 +270,6 @@ begin
 						i_rs <= '0';
 						i_en <= '1';
 						i_os <= "011";
-						f_os <= "10";
 					when "011" => --> D+E
 						mux_e <= '1';
 						mux_d <= '0';
@@ -297,7 +282,6 @@ begin
 						i_rs <= '0';
 						i_en <= '1';
 						i_os <= "011";
-						f_os <= "10";
 					when others => --> Edge find:
 						mux_e <= '0';
 						mux_d <= '0';
@@ -310,7 +294,6 @@ begin
 						i_rs <= '0';
 						i_en <= '1';
 						i_os <= "011";
-						f_os <= "10";
 				end case;
 			when read3_1 =>
 				valid <= '1';
@@ -327,7 +310,6 @@ begin
 						i_rs <= '0';
 						i_en <= '1';
 						i_os <= "001";
-						f_os <= "00";
 					when "001" => --> Dilation
 						mux_e <= 'X';
 						mux_d <= '0';
@@ -340,7 +322,6 @@ begin
 						i_rs <= '0';
 						i_en <= '1';
 						i_os <= "001";
-						f_os <= "00";
 					when "010" => --> E+D
 						mux_e <= '0';
 						mux_d <= '1';
@@ -353,7 +334,6 @@ begin
 						i_rs <= '0';
 						i_en <= '1';
 						i_os <= "001";
-						f_os <= "00";
 					when "011" => --> D+E
 						mux_e <= '1';
 						mux_d <= '0';
@@ -366,7 +346,6 @@ begin
 						i_rs <= '0';
 						i_en <= '1';
 						i_os <= "001";
-						f_os <= "00";
 					when others => --> Edge find:
 						mux_e <= '0';
 						mux_d <= '0';
@@ -379,7 +358,6 @@ begin
 						i_rs <= '0';
 						i_en <= '1';
 						i_os <= "001";
-						f_os <= "00";
 				end case;
 			when read3_2 =>
 				valid <= '1';
@@ -396,7 +374,6 @@ begin
 						i_rs <= '0';
 						i_en <= '1';
 						i_os <= "001";
-						f_os <= "00";
 					when "001" => --> Dilation
 						mux_e <= 'X';
 						mux_d <= '0';
@@ -409,7 +386,6 @@ begin
 						i_rs <= '0';
 						i_en <= '1';
 						i_os <= "001";
-						f_os <= "00";
 					when "010" => --> E+D
 						mux_e <= '0';
 						mux_d <= '1';
@@ -422,7 +398,6 @@ begin
 						i_rs <= '0';
 						i_en <= '1';
 						i_os <= "001";
-						f_os <= "00";
 					when "011" => --> D+E
 						mux_e <= '1';
 						mux_d <= '0';
@@ -435,7 +410,6 @@ begin
 						i_rs <= '0';
 						i_en <= '1';
 						i_os <= "001";
-						f_os <= "00";
 					when others => --> Edge find:
 						mux_e <= '0';
 						mux_d <= '0';
@@ -448,7 +422,6 @@ begin
 						i_rs <= '0';
 						i_en <= '1';
 						i_os <= "001";
-						f_os <= "00";
 				end case;
 			when read3_3 =>
 				valid <= '1';
@@ -465,7 +438,6 @@ begin
 						i_rs <= '0';
 						i_en <= '1';
 						i_os <= "010";
-						f_os <= "01";
 					when "001" => --> Dilation
 						mux_e <= 'X';
 						mux_d <= '0';
@@ -478,7 +450,6 @@ begin
 						i_rs <= '0';
 						i_en <= '1';
 						i_os <= "010";
-						f_os <= "01";
 					when "010" => --> E+D
 						mux_e <= '0';
 						mux_d <= '1';
@@ -491,7 +462,6 @@ begin
 						i_rs <= '0';
 						i_en <= '1';
 						i_os <= "010";
-						f_os <= "01";
 					when "011" => --> D+E
 						mux_e <= '1';
 						mux_d <= '0';
@@ -504,7 +474,6 @@ begin
 						i_rs <= '0';
 						i_en <= '1';
 						i_os <= "010";
-						f_os <= "01";
 					when others => --> Edge find:
 						mux_e <= '0';
 						mux_d <= '0';
@@ -517,7 +486,6 @@ begin
 						i_rs <= '0';
 						i_en <= '1';
 						i_os <= "010";
-						f_os <= "01";
 				end case;
 			when read4_1 =>
 				valid <= '1';
@@ -534,7 +502,6 @@ begin
 						i_rs <= '0';
 						i_en <= '1';
 						i_os <= "001";
-						f_os <= "00";
 					when "001" => --> Dilation
 						mux_e <= 'X';
 						mux_d <= '0';
@@ -547,7 +514,6 @@ begin
 						i_rs <= '0';
 						i_en <= '1';
 						i_os <= "001";
-						f_os <= "00";
 					when "010" => --> E+D
 						mux_e <= '0';
 						mux_d <= '1';
@@ -560,7 +526,6 @@ begin
 						i_rs <= '0';
 						i_en <= '1';
 						i_os <= "001";
-						f_os <= "00";
 					when "011" => --> D+E
 						mux_e <= '1';
 						mux_d <= '0';
@@ -573,7 +538,6 @@ begin
 						i_rs <= '0';
 						i_en <= '1';
 						i_os <= "001";
-						f_os <= "00";
 					when others => --> Edge find:
 						mux_e <= '0';
 						mux_d <= '0';
@@ -586,7 +550,6 @@ begin
 						i_rs <= '0';
 						i_en <= '1';
 						i_os <= "001";
-						f_os <= "00";
 				end case;
 			when read4_2 =>
 				valid <= '1';
@@ -603,7 +566,6 @@ begin
 						i_rs <= '0';
 						i_en <= '1';
 						i_os <= "001";
-						f_os <= "00";
 					when "001" => --> Dilation
 						mux_e <= 'X';
 						mux_d <= '0';
@@ -616,7 +578,6 @@ begin
 						i_rs <= '0';
 						i_en <= '1';
 						i_os <= "001";
-						f_os <= "00";
 					when "010" => --> E+D
 						mux_e <= '0';
 						mux_d <= '1';
@@ -629,7 +590,6 @@ begin
 						i_rs <= '0';
 						i_en <= '1';
 						i_os <= "001";
-						f_os <= "00";
 					when "011" => --> D+E
 						mux_e <= '1';
 						mux_d <= '0';
@@ -642,7 +602,6 @@ begin
 						i_rs <= '0';
 						i_en <= '1';
 						i_os <= "001";
-						f_os <= "00";
 					when others => --> Edge find:
 						mux_e <= '0';
 						mux_d <= '0';
@@ -655,7 +614,6 @@ begin
 						i_rs <= '0';
 						i_en <= '1';
 						i_os <= "001";
-						f_os <= "00";
 				end case;
 			when read4_3 =>
 				valid <= '1';
@@ -672,7 +630,6 @@ begin
 						i_rs <= '0';
 						i_en <= '1';
 						i_os <= "001";
-						f_os <= "00";
 					when "001" => --> Dilation
 						mux_e <= 'X';
 						mux_d <= '0';
@@ -685,7 +642,6 @@ begin
 						i_rs <= '0';
 						i_en <= '1';
 						i_os <= "001";
-						f_os <= "00";
 					when "010" => --> E+D
 						mux_e <= '0';
 						mux_d <= '1';
@@ -698,7 +654,6 @@ begin
 						i_rs <= '0';
 						i_en <= '1';
 						i_os <= "001";
-						f_os <= "00";
 					when "011" => --> D+E
 						mux_e <= '1';
 						mux_d <= '0';
@@ -711,7 +666,6 @@ begin
 						i_rs <= '0';
 						i_en <= '1';
 						i_os <= "001";
-						f_os <= "00";
 					when others => --> Edge find:
 						mux_e <= '0';
 						mux_d <= '0';
@@ -724,7 +678,6 @@ begin
 						i_rs <= '0';
 						i_en <= '1';
 						i_os <= "001";
-						f_os <= "00";
 				end case;
 			when read4_4 =>
 				valid <= '1';
@@ -741,7 +694,6 @@ begin
 						i_rs <= '0';
 						i_en <= '1';
 						i_os <= "001";
-						f_os <= "00";
 					when "001" => --> Dilation
 						mux_e <= 'X';
 						mux_d <= '0';
@@ -754,7 +706,6 @@ begin
 						i_rs <= '0';
 						i_en <= '1';
 						i_os <= "001";
-						f_os <= "00";
 					when "010" => --> E+D
 						mux_e <= '0';
 						mux_d <= '1';
@@ -767,7 +718,6 @@ begin
 						i_rs <= '0';
 						i_en <= '1';
 						i_os <= "001";
-						f_os <= "00";
 					when "011" => --> D+E
 						mux_e <= '1';
 						mux_d <= '0';
@@ -780,7 +730,6 @@ begin
 						i_rs <= '0';
 						i_en <= '1';
 						i_os <= "001";
-						f_os <= "00";
 					when others => --> Edge find:
 						mux_e <= '0';
 						mux_d <= '0';
@@ -793,7 +742,6 @@ begin
 						i_rs <= '0';
 						i_en <= '1';
 						i_os <= "001";
-						f_os <= "00";
 				end case;
 			when others => -- Stop
 				valid <= '0';
@@ -808,7 +756,6 @@ begin
 				i_rs <= 'X';
 				i_en <= '0';
 				i_os <= "XXX";
-				f_os <= "XX";
 		end case;
 	end process;
 
