@@ -2,9 +2,9 @@
 -- Company: 
 -- Engineer: 
 -- 
--- Create Date:    14:57:17 12/18/2014 
+-- Create Date:    16:52:54 01/19/2015 
 -- Design Name: 
--- Module Name:    SAVE_control - Behavioral 
+-- Module Name:    SAVE_control_sec - Behavioral 
 -- Project Name: 
 -- Target Devices: 
 -- Tool versions: 
@@ -27,7 +27,7 @@ use IEEE.STD_LOGIC_UNSIGNED.ALL;
 --library UNISIM;
 --use UNISIM.VComponents.all;
 
-entity SAVE_control is
+entity SAVE_control_sec is
 	PORT(stop : in  STD_LOGIC;
 		start : in  STD_LOGIC;
 		clk : in  STD_LOGIC;
@@ -35,14 +35,15 @@ entity SAVE_control is
 		op_type : in STD_LOGIC_VECTOR (2 downto 0);
 		ww : in STD_LOGIC_VECTOR(1 downto 0);
 
-		m_orw_old : out STD_LOGIC; -- Overwrite old word (for first words)
+		c_orw_old : out STD_LOGIC; -- Overwrite old word (for first words)
 		valid : out STD_LOGIC);
-end SAVE_control;
+end SAVE_control_sec;
 
-architecture Behavioral of SAVE_control is
+architecture Behavioral of SAVE_control_sec is
 	--Use descriptive names for the states, like st1_reset, st2_search
 	type state_type is (sm_idle, wait1, wait2, wait3, wait4, first_line0, first_line1, first_line2, first_line3, normal, sm_stop); 
 	signal state, next_state : state_type; 
+	
 begin
 
 SYNC_PROC: process (clk)
@@ -61,16 +62,16 @@ SYNC_PROC: process (clk)
 	begin
 		case (state) is
 			when sm_idle =>
-				m_orw_old <= 'X';
+				c_orw_old <= 'X';
 				valid <= '0';
 			when first_line0 | first_line1 | first_line2 | first_line3 =>
-				m_orw_old <= '1';
+				c_orw_old <= '1';
 				valid <= '1';
 			when normal =>
-				m_orw_old <= '0';
+				c_orw_old <= '0';
 				valid <= '1';
 			when others =>	-- stop and wait1 ... wait4
-				m_orw_old <= 'X';
+				c_orw_old <= 'X';
 				valid <= '0';
 		end case;
 	end process;
@@ -138,4 +139,3 @@ SYNC_PROC: process (clk)
 		end case;      
 	end process;
 end Behavioral;
-

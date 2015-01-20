@@ -29,8 +29,10 @@ use IEEE.STD_LOGIC_UNSIGNED.ALL;
 
 entity SAVE_datapath is
 	Port( clk : in STD_LOGIC;
-		orw_old : in STD_LOGIC;
-		orw_new : in STD_LOGIC;
+		m_orw_old : in STD_LOGIC;
+		m_orw_new : in STD_LOGIC;
+		c_orw_old : in STD_LOGIC;
+		c_orw_new : in STD_LOGIC;
 		m_ort : in STD_LOGIC;
 		c_ort : in STD_LOGIC;
 		e_is : in STD_LOGIC;
@@ -130,10 +132,10 @@ begin
 	
 	m_override <= X"FFFFFFFF" when m_ort = '1' else X"00000000";
 	c_override <= X"FFFFFFFF" when c_ort = '1' else X"00000000";
-	m_old <= m_override when orw_old = '1' else su_m_old;
-	m_new <= m_override when orw_new = '1' else su_m_new;
-	c_old <= c_override when orw_old = '1' else su_c_old;
-	c_new <= c_override when orw_new = '1' else su_c_new;
+	m_old <= m_override when m_orw_old = '1' else su_m_old;
+	m_new <= m_override when m_orw_new = '1' else su_m_new;
+	c_old <= c_override when c_orw_old = '1' else su_c_old;
+	c_new <= c_override when c_orw_new = '1' else su_c_new;
 	
 	e_in_new <= c_new when e_is = '1' else m_new;
 	e_in_old <= c_old when e_is = '1' else m_old;

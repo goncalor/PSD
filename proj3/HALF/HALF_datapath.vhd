@@ -108,9 +108,11 @@ architecture Behavioral of HALF_datapath is
 	
 	signal e_ce_1 : STD_LOGIC;
 	signal e_ce_2 : STD_LOGIC;
+	signal e_ce_3 : STD_LOGIC;
 	signal e_ce_f : STD_LOGIC;
 	signal e_ae_1 : STD_LOGIC;
 	signal e_ae_2 : STD_LOGIC;
+	signal e_ae_3 : STD_LOGIC;
 	signal e_ae_f : STD_LOGIC;
 	
 	
@@ -127,9 +129,11 @@ architecture Behavioral of HALF_datapath is
 	
 	signal d_ce_1 : STD_LOGIC;
 	signal d_ce_2 : STD_LOGIC;
+	signal d_ce_3 : STD_LOGIC;
 	signal d_ce_f : STD_LOGIC;
 	signal d_ae_1 : STD_LOGIC;
 	signal d_ae_2 : STD_LOGIC;
+	signal d_ae_3 : STD_LOGIC;
 	signal d_ae_f : STD_LOGIC;
 	
 	signal address_s : STD_LOGIC_VECTOR(8 downto 0);
@@ -143,13 +147,17 @@ begin
 	begin
 		if (clk'event and clk = '1') then
 			
+			e_ce_3 <= e_ce_2;
 			e_ce_2 <= e_ce_1;
 			e_ce_1 <= e_carry_en;
+			e_ae_3 <= e_ae_2;
 			e_ae_2 <= e_ae_1;
 			e_ae_1 <= e_acc_en;
 			
+			d_ce_3 <= d_ce_2;
 			d_ce_2 <= d_ce_1;
 			d_ce_1 <= d_carry_en;
+			d_ae_3 <= d_ae_2;
 			d_ae_2 <= d_ae_1;
 			d_ae_1 <= d_acc_en;
 			
@@ -189,11 +197,11 @@ begin
 	d_carry_a <= d_reg_out(0);
 	
 	
-	e_ce_f <= e_ce_2 when e_delay = '1' else e_ce_1;
-	e_ae_f <= e_ae_2 when e_delay = '1' else e_ae_1;
+	e_ce_f <= e_ce_3 when e_delay = '1' else e_ce_1;
+	e_ae_f <= e_ae_3 when e_delay = '1' else e_ae_1;
 	
-	d_ce_f <= d_ce_2 when d_delay = '1' else d_ce_1;
-	d_ae_f <= d_ae_2 when d_delay = '1' else d_ae_1;
+	d_ce_f <= d_ce_3 when d_delay = '1' else d_ce_1;
+	d_ae_f <= d_ae_3 when d_delay = '1' else d_ae_1;
 	
 	
 	E_block: HALF_erosion PORT MAP(
