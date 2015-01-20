@@ -50,6 +50,9 @@ int main(int argc, char** argv)
 	uint16_t displayheight;
 	
 	char filename[256];
+
+	uint8_t rwbuff;
+	uint16_t rwbuff_size = 32*height;
 	
 	if(argc<4) usage_error();
 	
@@ -77,15 +80,35 @@ int main(int argc, char** argv)
 	/* Memory allocation for image: */
 	data = (uint8_t*) malloc(bytesize);
 	if(data == NULL) general_error("Out of Memory");
+
+	rwbuff = (uint8_t*) malloc(rwbuff_size);
 	
 	/* File reading (if exists): */
 	picture = al_fopen(filename,"r");
 	if(picture == NULL){
 		memset((void*)data,0,bytesize);
 	}else{
-		if(al_fread(picture,(void*)data,bytesize)!=bytesize)
+		//if(al_fread(picture,(void*)data,bytesize)!=bytesize)
+		//	general_error("Read Error");
+		//al_fclose(picture);
+		if(al_fread(picture,(void*)rwbuff,rwbuff_size)!=rwbuff_size)
 			general_error("Read Error");
 		al_fclose(picture);
+		
+		/* write to data buffer (without padding) */
+		unsigned rwb, datab, h;
+
+		memset((void*)data,0,bytesize);
+		for(rwb=0, datab=0, h=0; datab < width*height; rwb++, datab++)
+		{
+			if(rwb >= width)
+			{
+				h++;
+				rwb = h * 256;
+			}
+
+			data[datab/8] |= ((rwbuff[rwb/8] >> (7-rwb%8)) << 7) >> (datab%8);
+		}
 	}
 	
 	/* Display initialization: */
@@ -195,8 +218,23 @@ int main(int argc, char** argv)
 			picture = al_fopen(filename,"w");
 			if(picture == NULL) general_error("Error saving file");
 			
-			al_fwrite(picture,data,bytesize);
-			
+			for(h=0; h<height; h++)
+			{
+				memset((void*)rwbuff+h*32, data[(h+1)*width-1], 32);
+			}
+
+			for(rwb=0, datab=0, h=0; datab < width*height; rwb++, datab++)
+			{
+				if(rwb >= width)
+				{
+					h++;
+					rwb = h * 256;
+				}
+
+				rwbuff[rwb/8] |= ((data[datab/8] >> (7-datab%8)) << 7) rwb%8;
+			}
+
+			al_fwrite(picture,rwbuf,rwbuff_size);
 			al_fclose(picture);
 		}
 		
