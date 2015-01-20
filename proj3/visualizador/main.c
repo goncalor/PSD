@@ -89,19 +89,15 @@ int main(int argc, char** argv)
 	if(picture == NULL){
 		memset((void*)data,0,bytesize);
 	}else{
-		//if(al_fread(picture,(void*)data,bytesize)!=bytesize)
-		//	general_error("Read Error");
-		//al_fclose(picture);
 		if(al_fread(picture,(void*)rwbuff,rwbuff_size)!=rwbuff_size)
 			general_error("Read Error");
 		al_fclose(picture);
 		
 		/* write to data buffer (without padding) */
-
 		memset((void*)data,0,bytesize);
 		for(rwb=0, datab=0, h=0; datab < width*height; rwb++, datab++)
 		{
-			if(rwb >= width)
+			if(rwb >= h*128 + width)
 			{
 				h++;
 				rwb = h * 128;
@@ -225,7 +221,7 @@ int main(int argc, char** argv)
 
 			for(rwb=0, datab=0, h=0; datab < width*height; rwb++, datab++)
 			{
-				if(rwb >= width)
+				if(rwb >= h*128 + width)
 				{
 					h++;
 					rwb = h * 128;
