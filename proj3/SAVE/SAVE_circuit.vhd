@@ -119,6 +119,9 @@ architecture Behavioral of SAVE_circuit is
 	signal stop_s : std_logic;
 	signal stop_cs : std_logic;
 	
+	signal stop_owm : std_logic;
+	signal stop_owc : std_logic;
+	
 	signal start_b : std_logic;
 	
 	signal valid_m : std_logic;
@@ -210,9 +213,9 @@ begin
 	SAVE_D: SAVE_datapath PORT MAP(
 		clk => clk,
 		m_orw_old => m_orw_old,
-		m_orw_new => stop_5, -- /!\ 
+		m_orw_new => stop_owm,
 		c_orw_old => c_orw_old,
-		c_orw_new => stop_7, -- /!\ 
+		c_orw_new => stop_owc, 
 		m_ort => m_ort,
 		c_ort => c_ort,
 		e_is => e_is,
@@ -269,11 +272,25 @@ begin
 		stop_5 when "11",
 		stop_6 when others;
 		
-	with ww select stop_cs <=
-		stop_7 when "01",
-		stop_9 when "10",
-		stop_11 when "11",
-		stop_13 when others;
+	with ww select stop_owm <=
+		stop_3 when "01",
+		stop_3 when "10",
+		stop_3 when "11",
+		stop_3 when others;
+		
+	with op_type(2) & ww select stop_cs <=
+		stop_7 when "001",
+		stop_9 when "010",
+		stop_11 when "011",
+		stop_13 when "000",
+		stop_s when others;
+	
+	with op_type(2) & ww select stop_owc <=
+		stop_7 when "001",
+		stop_8 when "010",
+		stop_9 when "011",
+		stop_10 when "000",
+		stop_owm when others;
 	
 end Behavioral;
 
