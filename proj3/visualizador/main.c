@@ -54,6 +54,7 @@ int main(int argc, char** argv)
 	uint8_t *rwbuff;
 	uint16_t rwbuff_size = 16*height;
 	unsigned rwb, datab, h;
+	char padbit;
 	
 	if(argc<4) usage_error();
 	
@@ -82,6 +83,7 @@ int main(int argc, char** argv)
 	data = (uint8_t*) malloc(bytesize);
 	if(data == NULL) general_error("Out of Memory");
 
+	rwbuff_size = 16*height;
 	rwbuff = (uint8_t*) malloc(rwbuff_size);
 	
 	/* File reading (if exists): */
@@ -213,23 +215,33 @@ int main(int argc, char** argv)
 			save = 0;
 			picture = al_fopen(filename,"w");
 			if(picture == NULL) general_error("Error saving file");
-			
-			for(h=0; h<height; h++)
-			{
-				memset((void*)rwbuff+h*16, data[(h+1)*width-1], 16);
-			}
+		
+			/* copy bits from 'data' to their positions in 'rwbuff' */
 
+			memset((void*)rwbuff, 0, rwbuff_size);
 			for(rwb=0, datab=0, h=0; datab < width*height; rwb++, datab++)
 			{
 				if(rwb >= h*128 + width)
 				{
 					h++;
-					rwb = h * 128;
+					rwb = h*128;
 				}
-
 				rwbuff[rwb/8] |= ((data[datab/8] >> (7-datab%8)) << 7) >> rwb%8;
 			}
 
+			/* pad 'rwbuff' with extension of the last valid bit in each line */
+
+			for(h=0; h<height; h++)
+			{
+				datab = (h+1)*width-1;
+				padbit = (data[datab/8] << datab%8 >> 7) & 1;
+
+				for(rwb = 128*h + width; rwb<128*(h+1); rwb++)
+				{
+					rwbuff[rwb/8] |= padbit << (7 - rwb%8);
+				}
+			}
+			
 			al_fwrite(picture,rwbuf,rwbuff_size);
 			al_fclose(picture);
 		}
