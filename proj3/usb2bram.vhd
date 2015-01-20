@@ -164,19 +164,23 @@ architecture Structural of usb2bram is
 			);
 	end component;
 
-	component datapath
-		port(
-			datain : in std_logic_vector(31 downto 0);
-			dataout : out std_logic_vector(31 downto 0)			
+	COMPONENT circuit
+	PORT(
+		start : IN std_logic;
+		clk : IN std_logic;
+		rst : IN std_logic;
+		ww : IN std_logic_vector(1 downto 0);
+		op_type : IN std_logic_vector(2 downto 0);
+		data_in : IN std_logic_vector(31 downto 0);
+		height : IN std_logic_vector(7 downto 0);
+		out_sel : IN std_logic;          
+		i_en : OUT std_logic;
+		i_address : OUT std_logic_vector(8 downto 0);
+		valid : OUT std_logic;
+		output : OUT std_logic_vector(31 downto 0)
 		);
-	end component;
-	component controlo
-		port(
-			start, clk, rst : in std_logic;
-			add1, add2 : out std_logic_vector(8 downto 0);
-			executing : out std_logic
-		);
-	end component;
+	END COMPONENT;
+	
 begin
 
 -- component instantiations
@@ -266,22 +270,23 @@ begin
 	
 	-- address values are defined by the control during execution
 	-- and by the board switches when not executing
-	adrB1 <= "0" & sw when not_executing = '1' else adrB1cnt;
-	adrB2 <= "0" & sw when not_executing = '1' else adrB2cnt;
-	write_enable <= is_executing;
-	not_executing <= not is_executing;
+	--adrB1 <= ("0" & sw) when not_executing = '1' else adrB1cnt;
+	--adrB2 <= ("0" & sw) when not_executing = '1' else adrB2cnt;
+	--write_enable <= is_executing;
+	--not_executing <= not is_executing;
 	
-	Inst_datapath: datapath port map(
-		datain => dataB1,
-		dataout => dataB2in
-		);
-
-	Inst_controlo: controlo port map(
-		add1 => adrB1cnt,
-		add2 => adrB2cnt,
+	Inst_circuit: circuit PORT MAP(
 		start => btn(1),
 		clk => clk_fast,
 		rst => btn(0),
-		executing => is_executing
-		);
+		ww => "00",
+		op_type => "010",
+		data_in => dataB1,
+		height => "10000000",
+		out_sel => '1',
+		i_en => open,
+		i_address => adrB1,
+		valid => write_enable,
+		output => dataB2in
+	);
 end Structural;
