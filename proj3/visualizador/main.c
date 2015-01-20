@@ -51,8 +51,9 @@ int main(int argc, char** argv)
 	
 	char filename[256];
 
-	uint8_t rwbuff;
-	uint16_t rwbuff_size = 32*height;
+	uint8_t *rwbuff;
+	uint16_t rwbuff_size = 16*height;
+	unsigned rwb, datab, h;
 	
 	if(argc<4) usage_error();
 	
@@ -96,7 +97,6 @@ int main(int argc, char** argv)
 		al_fclose(picture);
 		
 		/* write to data buffer (without padding) */
-		unsigned rwb, datab, h;
 
 		memset((void*)data,0,bytesize);
 		for(rwb=0, datab=0, h=0; datab < width*height; rwb++, datab++)
@@ -104,7 +104,7 @@ int main(int argc, char** argv)
 			if(rwb >= width)
 			{
 				h++;
-				rwb = h * 256;
+				rwb = h * 128;
 			}
 
 			data[datab/8] |= ((rwbuff[rwb/8] >> (7-rwb%8)) << 7) >> (datab%8);
@@ -220,7 +220,7 @@ int main(int argc, char** argv)
 			
 			for(h=0; h<height; h++)
 			{
-				memset((void*)rwbuff+h*32, data[(h+1)*width-1], 32);
+				memset((void*)rwbuff+h*16, data[(h+1)*width-1], 16);
 			}
 
 			for(rwb=0, datab=0, h=0; datab < width*height; rwb++, datab++)
@@ -228,10 +228,10 @@ int main(int argc, char** argv)
 				if(rwb >= width)
 				{
 					h++;
-					rwb = h * 256;
+					rwb = h * 128;
 				}
 
-				rwbuff[rwb/8] |= ((data[datab/8] >> (7-datab%8)) << 7) rwb%8;
+				rwbuff[rwb/8] |= ((data[datab/8] >> (7-datab%8)) << 7) >> rwb%8;
 			}
 
 			al_fwrite(picture,rwbuf,rwbuff_size);
