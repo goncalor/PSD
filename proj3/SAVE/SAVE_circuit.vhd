@@ -49,7 +49,6 @@ architecture Behavioral of SAVE_circuit is
 		start : IN std_logic;
 		clk : IN std_logic;
 		rst : IN std_logic;
-		op_type : IN std_logic_vector(2 downto 0);          
 		ww : IN std_logic_vector(1 downto 0);  
 		m_orw_old : OUT std_logic;
 		valid : OUT std_logic
@@ -62,7 +61,6 @@ architecture Behavioral of SAVE_circuit is
 		start : IN std_logic;
 		clk : IN std_logic;
 		rst : IN std_logic;
-		op_type : IN std_logic_vector(2 downto 0);          
 		ww : IN std_logic_vector(1 downto 0);  
 		c_orw_old : OUT std_logic;
 		valid : OUT std_logic
@@ -133,7 +131,6 @@ begin
 		start => start,
 		clk => clk,
 		rst => rst,
-		op_type => op_type,
 		ww => ww,
 		m_orw_old => m_orw_old,
 		valid => valid_m
@@ -144,7 +141,6 @@ begin
 		start => start_b,
 		clk => clk,
 		rst => rst,
-		op_type => op_type,
 		ww => ww,
 		c_orw_old => c_orw_old,
 		valid => valid_c

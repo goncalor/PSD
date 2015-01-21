@@ -32,7 +32,6 @@ entity SAVE_control is
 		start : in  STD_LOGIC;
 		clk : in  STD_LOGIC;
 		rst : in  STD_LOGIC;
-		op_type : in STD_LOGIC_VECTOR (2 downto 0);
 		ww : in STD_LOGIC_VECTOR(1 downto 0);
 
 		m_orw_old : out STD_LOGIC; -- Overwrite old word (for first words)
@@ -57,7 +56,7 @@ SYNC_PROC: process (clk)
 	end process;
 
 	--MOORE State-Machine - Outputs based on state only
-	OUTPUT_DECODE: process (state, op_type)
+	OUTPUT_DECODE: process (state)
 	begin
 		case (state) is
 			when sm_idle =>
@@ -75,7 +74,7 @@ SYNC_PROC: process (clk)
 		end case;
 	end process;
 	
-	NEXT_STATE_DECODE: process (state, start, stop, op_type, ww)
+	NEXT_STATE_DECODE: process (state, start, stop, ww)
 	begin
 	--declare default state for next_state to avoid latches
 		next_state <= state;  --default is to stay in current state

@@ -83,7 +83,7 @@ architecture Structural of usb2bram is
 	signal EppWrOut	: std_logic;
 	signal selBramCtrl : std_logic;
 
-	signal adrB1, adrB2, adrB1cnt, adrB2cnt : std_logic_vector (8 downto 0);
+	signal adrB1, adrB2 : std_logic_vector (8 downto 0);
 	signal dataB1, dataB2in, dataB2 : std_logic_vector (31 downto 0);
 
 	signal clk_disp7, clk_fast : std_logic;
@@ -202,6 +202,17 @@ architecture Structural of usb2bram is
 		);
 
 	END COMPONENT;
+	
+	COMPONENT o_am
+	PORT(
+		rst : IN std_logic;
+		clk : IN std_logic;
+		valid : IN std_logic;
+		ww : IN std_logic_vector(1 downto 0);          
+		address : OUT std_logic_vector(8 downto 0)
+		);
+	END COMPONENT;
+	
 	signal start : std_logic;
 	signal width : std_logic_vector(7 downto 0);
 	signal height : std_logic_vector(7 downto 0);
@@ -294,7 +305,7 @@ begin
 		);
 
 	-- 6 leftmost leds show the 6 lower bits of the adress counter.
-	led <= adrB1cnt(5 downto 0) & '0' & not write_enable;
+	led <= adrB1(5 downto 0) & '0' & not write_enable;
 	
 	-- address values are defined by the control during execution
 	-- and by the board switches when not executing
@@ -336,4 +347,12 @@ begin
 		width => width,
 		ww => ww
 		);
+		
+	Inst_o_am: o_am PORT MAP(
+		rst => btn(0),
+		clk => clk_fast,
+		valid => write_enable,
+		ww => ww,
+		address => adrB2
+	);
 end Structural;
