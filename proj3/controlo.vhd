@@ -112,7 +112,9 @@ begin
 			end if;
 		when others => -- s_end
 			start <= '0';
-			nextstate <= s_initial;
+			if btn = '0' then
+				nextstate <= s_initial;
+			end if;
 	end case;
 
 --    case currstate is

@@ -103,21 +103,21 @@ BEGIN
 		wait for clk_period*10;
 
 		-- insert stimulus here 
-		rst <= '1';
-		rst <= '0' after 10 ns;
-		valid <= '0';
+		rst <= '1',
+			   '0' after 10 ns;
 
-		btn <= '1' after 10 ns;
-		btn <= '0' after 30 ns;
-		btn <= '1' after 40 ns;
-		btn <= '0' after 50 ns;
-		btn <= '1' after 60 ns;
-		btn <= '0' after 70 ns;
-		-- ready
-		btn <= '1' after 80 ns;
-		-- start
-		valid <= '1' after 90 ns;
-		valid <= '0' after 150 ns;
+		btn <= '1' after 10 ns,
+			   '0' after 30 ns,
+			   '1' after 40 ns,
+			   '0' after 50 ns,
+			   '1' after 60 ns,
+			   '0' after 70 ns, -- ready
+			   '1' after 80 ns,
+			   '0' after 200 ns;
+-- start
+		valid <= '0',
+				 '1' after 90 ns,
+				 '0' after 150 ns;
 
 		wait;
 	end process;
