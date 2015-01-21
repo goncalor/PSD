@@ -233,7 +233,7 @@ int main(int argc, char** argv)
 
 			for(h=0; h<height; h++)
 			{
-				datab = (h+1)*width-1;
+				datab = (h+1)*width-1;	// position of last valid bit
 				padbit = (data[datab/8] << datab%8 >> 7) & 1;
 
 				for(rwb = 128*h + width; rwb<128*(h+1); rwb++)
