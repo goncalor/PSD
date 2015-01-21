@@ -52,7 +52,7 @@ int main(int argc, char** argv)
 	char filename[256];
 
 	uint8_t *rwbuff;
-	uint16_t rwbuff_size = 16*height;
+	uint16_t rwbuff_size;
 	unsigned rwb, datab, h;
 	char padbit;
 	
