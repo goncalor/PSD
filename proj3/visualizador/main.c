@@ -242,7 +242,7 @@ int main(int argc, char** argv)
 				}
 			}
 			
-			al_fwrite(picture,rwbuf,rwbuff_size);
+			al_fwrite(picture,rwbuff,rwbuff_size);
 			al_fclose(picture);
 		}
 		
