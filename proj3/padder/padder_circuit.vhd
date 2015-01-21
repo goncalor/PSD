@@ -33,7 +33,7 @@ entity padder_circuit is
     Port ( rst : in  STD_LOGIC;
 			start : in  STD_LOGIC;
 			stop : in  STD_LOGIC;
-			ww : in  STD_LOGIC_VECTOR (2 downto 0);
+			ww : in  STD_LOGIC_VECTOR (1 downto 0);
 			data_in : in  STD_LOGIC_VECTOR (31 downto 0);
 			width : in  STD_LOGIC_VECTOR (5 downto 0);
 			clk : in STD_LOGIC;
@@ -47,7 +47,7 @@ architecture Behavioral of padder_circuit is
 		rst : IN std_logic;
 		start : IN std_logic;
 		stop : IN std_logic;
-		ww : IN std_logic_vector(2 downto 0);
+		ww : IN std_logic_vector(1 downto 0);
 		clk : IN std_logic;          
 		en_wdec : OUT std_logic;
 		savebit_en : OUT std_logic;

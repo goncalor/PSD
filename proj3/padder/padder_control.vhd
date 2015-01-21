@@ -33,7 +33,7 @@ entity padder_FSM is
     Port ( rst : in  STD_LOGIC;
            start : in  STD_LOGIC;
            stop : in  STD_LOGIC;
-           ww : in  STD_LOGIC_VECTOR (2 downto 0);
+           ww : in  STD_LOGIC_VECTOR (1 downto 0);
 			  clk : in  STD_LOGIC;
            en_wdec : out  STD_LOGIC;
            savebit_en : out  STD_LOGIC;
@@ -165,13 +165,13 @@ begin
 		case (state) is
 			when idle =>
 				case ww is
-					when "001" =>
+					when "01" =>
 						next_state <= ww1_1;
-					when "010" =>
+					when "10" =>
 						next_state <= ww2_1;
-					when "011" =>
+					when "11" =>
 						next_state <= ww3_1;
-					when others => -- ww = X"4"
+					when others => -- ww = "00"
 						next_state <= ww4_1;
 				end case;
 
