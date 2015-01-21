@@ -87,7 +87,7 @@ architecture Structural of usb2bram is
 	signal dataB1, dataB2in, dataB2 : std_logic_vector (31 downto 0);
 
 	signal clk_disp7, clk_fast : std_logic;
-	signal write_enable, is_executing, not_executing : std_logic;
+	signal write_enable : std_logic;
 	
 -- component declarations
 	component EppCtrlAsync
@@ -180,7 +180,35 @@ architecture Structural of usb2bram is
 		output : OUT std_logic_vector(31 downto 0)
 		);
 	END COMPONENT;
-	
+
+	COMPONENT controlo
+		PORT(
+				switches : IN std_logic_vector(7 downto 0);
+				btn : IN std_logic;
+				valid : IN std_logic;
+				rst : IN std_logic;
+				clk : IN std_logic;          
+				start : OUT std_logic;
+				width : OUT std_logic_vector(7 downto 0);
+				height : OUT std_logic_vector(7 downto 0);
+				op_type : OUT std_logic_vector(2 downto 0)
+			);
+	END COMPONENT;
+
+	COMPONENT ww_calc
+	PORT(
+		width : IN std_logic_vector(7 downto 0);          
+		ww : OUT std_logic_vector(1 downto 0)
+		);
+
+	END COMPONENT;
+	signal start : std_logic;
+	signal width : std_logic_vector(7 downto 0);
+	signal height : std_logic_vector(7 downto 0);
+	signal op_type : std_logic_vector(2 downto 0);
+	signal ww : std_logic_vector(1 downto 0);
+	signal out_sel : std_logic;
+
 begin
 
 -- component instantiations
@@ -266,7 +294,7 @@ begin
 		);
 
 	-- 6 leftmost leds show the 6 lower bits of the adress counter.
-	led <= adrB1cnt(5 downto 0) & '0' & not_executing;
+	led <= adrB1cnt(5 downto 0) & '0' & not write_enable;
 	
 	-- address values are defined by the control during execution
 	-- and by the board switches when not executing
@@ -276,17 +304,36 @@ begin
 	--not_executing <= not is_executing;
 	
 	Inst_circuit: circuit PORT MAP(
-		start => btn(1),
+		start => start,
 		clk => clk_fast,
 		rst => btn(0),
-		ww => "00",
-		op_type => "010",
+		ww => ww,
+		op_type => op_type,
 		data_in => dataB1,
-		height => "10000000",
-		out_sel => '1',
+		height => height,
+		out_sel => out_sel,
 		i_en => open,
 		i_address => adrB1,
 		valid => write_enable,
 		output => dataB2in
 	);
+	
+	out_sel <= op_type(1) xor op_type(0) when op_type(2)='0' else '0';
+
+	Inst_controlo: controlo PORT MAP(
+		switches => sw,
+		btn => btn(1),
+		valid => write_enable,
+		rst => btn(0),
+		clk => clk_fast,
+		start => start,
+		width => width,
+		height => height,
+		op_type => op_type
+		);
+
+	Inst_ww_calc: ww_calc PORT MAP(
+		width => width,
+		ww => ww
+		);
 end Structural;

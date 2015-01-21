@@ -31,7 +31,7 @@ use IEEE.STD_LOGIC_1164.ALL;
 
 entity ww_calc is
     Port ( width : in  STD_LOGIC_VECTOR (7 downto 0);
-           ww : out  STD_LOGIC_VECTOR (2 downto 0));
+           ww : out  STD_LOGIC_VECTOR (1 downto 0));
 end ww_calc;
 
 architecture Behavioral of ww_calc is
@@ -55,11 +55,9 @@ begin
 --	10000000		ww 4
 
 	ww <=
-			"001" when (width(6 downto 5) = "00" or width = "00100000") else
-			"010" when (width(6 downto 5) = "01" or width = "01000000") else
-			"011" when (width(6 downto 5) = "10" or width = "01100000") else
-			"100" when (width(6 downto 5) = "11" or width = "10000000") else
-			"100";
+			"01" when (width(6 downto 5) = "00" or width = "00100000") else
+			"10" when (width(6 downto 5) = "01" or width = "01000000") else
+			"11" when (width(6 downto 5) = "10" or width = "01100000") else
+			"00";
 
 end Behavioral;
-
