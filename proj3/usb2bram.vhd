@@ -182,17 +182,17 @@ architecture Structural of usb2bram is
 	END COMPONENT;
 
 	COMPONENT controlo
-		PORT(
-				switches : IN std_logic_vector(7 downto 0);
-				btn : IN std_logic;
-				valid : IN std_logic;
-				rst : IN std_logic;
-				clk : IN std_logic;          
-				start : OUT std_logic;
-				width : OUT std_logic_vector(7 downto 0);
-				height : OUT std_logic_vector(7 downto 0);
-				op_type : OUT std_logic_vector(2 downto 0)
-			);
+	PORT(
+		switches : IN std_logic_vector(7 downto 0);
+		btn : IN std_logic;
+		valid : IN std_logic;
+		rst : IN std_logic;
+		clk : IN std_logic;          
+		start : OUT std_logic;
+		width : OUT std_logic_vector(7 downto 0);
+		height : OUT std_logic_vector(7 downto 0);
+		op_type : OUT std_logic_vector(2 downto 0)
+		);
 	END COMPONENT;
 
 	COMPONENT ww_calc
@@ -341,12 +341,12 @@ begin
 		width => width,
 		height => height,
 		op_type => op_type
-		);
+	);
 
 	Inst_ww_calc: ww_calc PORT MAP(
 		width => width,
 		ww => ww
-		);
+	);
 		
 	Inst_o_am: o_am PORT MAP(
 		rst => btn(0),
