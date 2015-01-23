@@ -39,13 +39,24 @@ Os pontos que se seguem resumem as alterações que foram feitas em relação à
 \section{Detalhes das Alterações}
 
 \subsection*{Unidade de Armazenamento}
-A unidade de armazenamento anteriormente projectada usava muitos multiplexers, o que se traduzia numa grande ocupação de hardware. Eram utilizados cerca de 224 multiplexers 4:1 com o único propósito de se conseguirem ganhar 1 a 3 ciclos. Esse ganho claramente não justifica o custo pelo que se redesenhou esta unidade.
+
+A unidade de armazenamento anteriormente projectada usava muitos multiplexers, o que se traduzia numa grande ocupação de hardware. Eram utilizados cerca de 224 multiplexers 4:1.
+
+O desenho era extremamente ineficiente. Em vez de alterar o fluxo de dados dentro da Unidade de Armazenamento, o novo desenho selecciona de dentro da UA quais os conjuntos de dados a fazer sair, diminuindo o hardware mas obtendo exactamente a mesma funcionalidade que o anterior.
 
 No novo desenho existem apenas 64 multiplexers 4:1.
 
+
 \subsection*{FSM do SAVE}
 
+A Máquina de Estados do SAVE foi completamente redesenhada, dividindo-se agora em duas (uma que funciona sempre e uma segunda que só funciona nas operações compostas).
+
+A primeira máquina de estados gere a Unidade de Armazenamento Principal e a primeira unidade funcional em uso, e a segunda gere a UA Secundária, bem como a segunda unidade funcional.
+
+Uma vez feitos os atrasos condicionais (via multiplexer) dos sinais relevantes, sincronizou-se o SAVE com o HALF.
+
 \subsection*{FSM de Input}
+
 A FSM de input permite ao utilizador inserir a largura e altura da imagem bem como a operação morfológica que pretende. Decidiu-se usar o botão 0 para \textit{reset} e o botão 1 para confirmar a inserção de cada parâmetro e mandar iniciar a transformação.
 
 A máquina de estados resultante é a da \autoref{fig:FSMinput}. No estado \texttt{start} o processamento da imagem começa. Quando a imagem acaba de ser processada a FSM passa ao estado \texttt{end}.
@@ -61,5 +72,9 @@ A máquina de estados resultante é a da \autoref{fig:FSMinput}. No estado \text
 Para usar as BRAMs, os ficheiros \texttt{BlockRam.vhd} e \texttt{usb2bram.vhd} foram alterados. No primeiro passou a usar-se a RAMB16\_S9\_S36, ou seja uma BRAM com 512 posições de memória cada uma com 32 bits (mais bits de paridade). Como a largura das palavras foi alterada, no ficheiro \texttt{usb2bram.vhd} alterou-se a largura das \textit{buses} de dados dos portos B para 32 bits e a largura dos endereços desses portos para 9 bits.
 
 De seguida, o ficheiro \texttt{controlo.vhd} foi substituido por outro contendo a FSM correspondente à \autoref{fig:FSMinput}; e \texttt{datapath.vdh} foi substituido por um componente que agrega as FSMDs do HALF e SAVE.
+
+\section{Falhas}
+
+Uma vez integradas as FSMDs no circuito com as BRAMs, detectou-se em simulação (e posteriormente em implementação) que não havia sincronismo na leitura da memória. Apesar dessa falha, era possível verificar que as 5 operações eram realizadas correctamente sobre os valores de inicialização das memórias.
 
 \end{document}
